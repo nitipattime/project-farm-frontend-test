@@ -1,0 +1,84 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+
+  const loaded = ref(false)
+  const loading = ref(false)
+
+  function onClick () {
+    loading.value = true
+    setTimeout(() => {
+      loading.value = false
+      loaded.value = true
+    }, 2000)
+  }
+
+</script>
+
+<template>
+  <VRow>
+    <VCol cols="12">
+      <VCard>
+        <VRow>
+          <!-- Column 1: รูป -->
+          <VCol cols="12" md="4" class="d-flex flex-column justify-center align-center">
+            <VCardTitle>จำนวนโรงเรือนทั้งหมด</VCardTitle>
+            <VCardTitle>3</VCardTitle>
+            <VCardTitle>โรงเรือน</VCardTitle>
+          </VCol>
+
+          <VDivider :vertical="$vuetify.display.mdAndUp" />
+
+          <!-- Column 2: ชื่อสินค้า -->
+          <VCol cols="12" md="4" class="d-flex flex-column justify-center align-center">
+            <VCardTitle>จำนวนโรงเรือนทั้งหมด</VCardTitle>
+            <VCardTitle>3</VCardTitle>
+            <VCardTitle>โรงเรือน</VCardTitle>
+          </VCol>
+
+          <VDivider :vertical="$vuetify.display.mdAndUp" />
+
+          <!-- Column 3: ราคา + ปุ่ม -->
+          <VCol cols="12" md="4" class="d-flex flex-column justify-center align-center">
+            <VCardTitle>จำนวนโรงเรือนทั้งหมด</VCardTitle>
+            <VCardTitle>3</VCardTitle>
+            <VCardTitle>โรงเรือน</VCardTitle>
+          </VCol>
+        </VRow>
+      </VCard>
+    </VCol>
+  
+  
+    <v-card-text>
+      <v-text-field
+      base-color="black"
+        :loading="loading"
+        append-inner-icon="mdi-magnify"
+        density="compact"
+        label="Search"
+        variant="solo"
+        hide-details
+        single-line
+        @click:append-inner="onClick"
+      ></v-text-field>
+       <v-text-field
+      class="black-label"
+      :loading="loading"
+      append-inner-icon="mdi-magnify"
+      density="compact"
+      label="Search templates"
+      variant="solo"
+      hide-details
+      single-line
+      @click:append-inner="onClick"
+    ></v-text-field>
+    </v-card-text>
+    
+  </VRow>
+
+</template>
+
+<style scoped>
+.black-label .v-field-label {
+  color: black !important;
+}
+</style>

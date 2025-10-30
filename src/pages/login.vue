@@ -1,42 +1,46 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
+import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useTheme } from 'vuetify'
-const router = useRouter()
-const auth = useAuthStore()
 
 import logo from '@images/logo.svg?raw'
 import authV1MaskDark from '@images/pages/auth-v1-mask-dark.png'
 import authV1MaskLight from '@images/pages/auth-v1-mask-light.png'
-import authV1Tree2 from '@images/pages/auth-v1-tree-2.png'
-import authV1Tree from '@images/pages/auth-v1-tree.png'
 
-const form = ref({
-  email: '',
-  password: '',
-  remember: false,
-})
+const router = useRouter()
+const auth = useAuthStore()
+const vuetifyTheme = useTheme()
 
+// form state
 const username = ref('')
 const password = ref('')
 const error = ref('')
+const isPasswordVisible = ref(false)
+const formRef = ref()
 
-const vuetifyTheme = useTheme()
-
+// theme mask
 const authThemeMask = computed(() => {
   return vuetifyTheme.global.name.value === 'light'
     ? authV1MaskLight
     : authV1MaskDark
 })
 
-const isPasswordVisible = ref(false)
+// ✅ Validation Rules
+const rules = {
+  required: (v: string) => !!v || 'This field is required',
+  email: (v: string) => /.+@.+\..+/.test(v) || 'Invalid email format',
+  min: (v: string) => v.length >= 6 || 'Password must be at least 6 characters',
+}
 
 async function handleLogin() {
-  console.log(username.value)
-  console.log(password.value)
+  // ตรวจสอบว่าฟอร์มผ่าน validation มั้ย
+  const isValid = await formRef.value?.validate()
+  if (!isValid) return
+
   const success = await auth.login(username.value, password.value)
-  console.log(success)
   if (success) {
-    router.push('/dashboard')
+    router.push('/dashboardV2')
   } else {
     error.value = 'Invalid credentials'
   }
@@ -44,47 +48,30 @@ async function handleLogin() {
 </script>
 
 <template>
-  <!-- eslint-disable vue/no-v-html -->
-
   <div class="auth-wrapper d-flex align-center justify-center pa-4">
-    <VCard
-      class="auth-card pa-4 pt-7"
-      max-width="448"
-    >
+    <VCard class="auth-card pa-4 pt-7" max-width="448">
       <VCardItem class="justify-center">
-        <RouterLink
-          to="/"
-          class="d-flex align-center gap-3"
-        >
-          <!-- eslint-disable vue/no-v-html -->
-          <div
-            class="d-flex"
-            v-html="logo"
-          />
-          <h2 class="font-weight-medium text-2xl text-uppercase">
-            Materio
-          </h2>
+        <RouterLink to="/" class="d-flex align-center gap-3">
+          <div class="d-flex" v-html="logo" />
+          <!-- <h2 class="font-weight-medium text-2xl text-uppercase">Materio</h2> -->
         </RouterLink>
       </VCardItem>
 
       <VCardText class="pt-2">
-        <h4 class="text-h4 mb-1">
-          Welcome to Materio!
-        </h4>
-        <p class="mb-0">
-          Please sign-in to your account and start the adventure
-        </p>
+        <h4 class="text-h4 mb-1">Welcome</h4>
+        <p class="mb-0">Please sign-in to your account</p>
       </VCardText>
 
       <VCardText>
-        <VForm @submit.prevent="handleLogin">
+        <VForm ref="formRef" @submit.prevent="handleLogin">
           <VRow>
             <!-- email -->
             <VCol cols="12">
               <VTextField
                 v-model="username"
-                label="Email"
+                label="Username"
                 type="email"
+                :rules="[rules.required, rules.email]"
               />
             </VCol>
 
@@ -96,6 +83,7 @@ async function handleLogin() {
                 placeholder="············"
                 :type="isPasswordVisible ? 'text' : 'password'"
                 autocomplete="password"
+                :rules="[rules.required, rules.min]"
               >
                 <template #append-inner>
                   <VIcon
@@ -105,66 +93,25 @@ async function handleLogin() {
                   />
                 </template>
               </VTextField>
-
-              <!-- remember me checkbox -->
-              <div class="d-flex align-center justify-space-between flex-wrap my-4">
-                <!-- <VCheckbox
-                  v-model="form.remember"
-                  label="Remember me"
-                />
-
-                <a
-                  class="text-primary"
-                  href="javascript:void(0)"
-                >
-                  Forgot Password?
-                </a> -->
-              </div>
-
-              <!-- login button -->
-              <VBtn
-                block
-                type="submit"
-              >
-                Login
-              </VBtn>
             </VCol>
 
-            <!-- create account -->
-            <!-- <VCol
-              cols="12"
-              class="text-center text-base"
-            >
-              <span>New on our platform?</span>
-              <RouterLink
-                class="text-primary ms-2"
-                to="/register"
-              >
-                Create an account
-              </RouterLink>
-            </VCol> -->
+            <!-- error -->
+            <VCol cols="12" v-if="error">
+              <p class="text-error text-center mt-2">{{ error }}</p>
+            </VCol>
+
+            <!-- login button -->
+            <VCol cols="12">
+              <VBtn block type="submit">Login</VBtn>
+            </VCol>
           </VRow>
         </VForm>
       </VCardText>
     </VCard>
 
-    <VImg
-      class="auth-footer-start-tree d-none d-md-block"
-      :src="authV1Tree"
-      :width="250"
-    />
-
-    <VImg
-      :src="authV1Tree2"
-      class="auth-footer-end-tree d-none d-md-block"
-      :width="350"
-    />
-
-    <!-- bg img -->
-    <VImg
-      class="auth-footer-mask d-none d-md-block"
-      :src="authThemeMask"
-    />
+    <!-- <VImg class="auth-footer-start-tree d-none d-md-block" :src="authV1Tree" :width="250" />
+    <VImg :src="authV1Tree2" class="auth-footer-end-tree d-none d-md-block" :width="350" />
+    <VImg class="auth-footer-mask d-none d-md-block" :src="authThemeMask" /> -->
   </div>
 </template>
 

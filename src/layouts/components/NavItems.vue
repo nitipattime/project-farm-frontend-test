@@ -10,7 +10,7 @@ import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
     :item="{
       title: 'Dashboard',
       icon: 'ri-bar-chart-box-line',
-      to: '/cards',
+      to: '/dashboardV2',
     }"
   />
 
