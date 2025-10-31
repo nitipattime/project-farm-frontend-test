@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { ref, computed, shallowRef, watch } from 'vue'
+import { computed, ref, shallowRef, watch } from 'vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const dialog = shallowRef(false)
 
 const loaded = ref(false)
@@ -131,6 +133,13 @@ function submitForm() {
   console.log(farmForm.value)
   dialog.value = false
 }
+
+// go to farm deatil
+function goToFarmDetail(items: any) {
+  console.log(items)
+  // router.push('/farmDetail') // หรือใช้ชื่อ route: router.push({ name: 'about' })
+  router.push({ name: 'farm-detail', params: { id: items.id } }) // หรือใช้ชื่อ route: router.push({ name: 'about' })
+}
 </script>
 
 <template>
@@ -140,9 +149,9 @@ function submitForm() {
         <VRow>
           <!-- Column 1: รูป -->
           <VCol cols="12" md="4" class="d-flex flex-column justify-center align-center">
-            <VCardTitle>จำนวนโรงเรือนทั้งหมด</VCardTitle>
+            <VCardTitle>จำนวนฟาร์มทั้งหมด</VCardTitle>
             <VCardTitle>3</VCardTitle>
-            <VCardTitle>โรงเรือน</VCardTitle>
+            <VCardTitle>ฟาร์ม</VCardTitle>
           </VCol>
 
           <!-- <VDivider :vertical="$vuetify.display.mdAndUp" /> -->
@@ -160,9 +169,9 @@ function submitForm() {
 
           <!-- Column 3: ราคา + ปุ่ม -->
           <VCol cols="12" md="4" class="d-flex flex-column justify-center align-center">
-            <VCardTitle>จำนวนโรงเรือนทั้งหมด</VCardTitle>
-            <VCardTitle>3</VCardTitle>
-            <VCardTitle>โรงเรือน</VCardTitle>
+            <VCardTitle>จำนวนไก่ทั้งหมด</VCardTitle>
+            <VCardTitle>10,000</VCardTitle>
+            <VCardTitle>ตัว</VCardTitle>
           </VCol>
         </VRow>
       </VCard>
@@ -194,7 +203,7 @@ function submitForm() {
 
           <!-- Create Farm Button -->
           <VBtn color="primary" class="text-white" @click="dialog = true" v-bind="activatorProps">
-            สร้างฟาร์ม
+            เพิ่มฟาร์ม
           </VBtn>
 
         </div>
@@ -217,7 +226,7 @@ function submitForm() {
               </VCardText>
 
               <VCardActions class="justify-space-between pt-0">
-                <VBtn color="primary" variant="flat" size="small">
+                <VBtn color="primary" variant="flat" size="small" @click="goToFarmDetail(course)">
                   View
                 </VBtn>
                 <VChip :color="course.status === 'Completed' ? 'success' : 'info'" size="small" label>

@@ -9,6 +9,18 @@ export const routes = [
         component: () => import('@/pages/dashboardV2.vue'),
       },
       {
+        path: '/farmDetail/:id',
+        name: 'farm-detail',
+        component: () => import('@/pages/farm-detail.vue'),
+        props: true,
+      },
+      {
+        path: '/houseDetail/:id',
+        name: 'house-detail',
+        component: () => import('@/pages/house-detail.vue'),
+        props: true,
+      },
+      {
         path: 'dashboard',
         component: () => import('@/pages/dashboard.vue'),
       },
