@@ -123,6 +123,14 @@ watch(() => farmForm.value.district, (newVal) => {
   selectedSubdistricts.value = subdistricts[newVal] || []
   farmForm.value.subdistrict = ''
 })
+
+// submitForm
+function submitForm() {
+  // ตรวจสอบว่าทุก field ผ่าน validation หรือไม่
+  // Vuetify v3 จะ validate อัตโนมัติเมื่อกดปุ่ม Save
+  console.log(farmForm.value)
+  dialog.value = false
+}
 </script>
 
 <template>
@@ -293,7 +301,7 @@ watch(() => farmForm.value.district, (newVal) => {
 
         <v-card-actions class="my-1 justify-center">
           <v-btn text="Close" variant="plain" @click="dialog = false"></v-btn>
-          <v-btn color="primary" text="Save" variant="tonal" @click="dialog = false"></v-btn>
+          <v-btn color="primary" text="Save" variant="tonal" @click="submitForm"></v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
