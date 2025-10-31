@@ -79,16 +79,12 @@ const sources: BundleScriptConfig = {
   json: [
     // Custom JSON file
     // 'json/gg.json',
-
     // Iconify JSON file (@iconify/json is a package name, /json/ is directory where files are, then filename)
     // require.resolve('@iconify-json/ri/icons.json'),
-    import.meta.resolve('@iconify-json/ri/icons.json'),
-
-    {
-      filename: new URL('@iconify-json/bxl/icons.json', import.meta.url).pathname,
-      icons: ['facebook', 'twitter', 'github', 'google', 'linkedin'],
-    },
-
+    // {
+    //   filename: require.resolve('@iconify-json/bxl/icons.json'),
+    //   icons: ['facebook', 'twitter', 'github', 'google', 'linkedin'],
+    // },
     // Custom file with only few icons
     // {
     //   filename: require.resolve('@iconify-json/line-md/icons.json'),
@@ -104,10 +100,6 @@ const sources: BundleScriptConfig = {
 }
 
 // File to save bundle to
-// const target = join(__dirname, 'icons.css')
-import { fileURLToPath } from 'url'
-
-const __dirname = dirname(fileURLToPath(import.meta.url))
 const target = join(__dirname, 'icons.css')
 
 /**
