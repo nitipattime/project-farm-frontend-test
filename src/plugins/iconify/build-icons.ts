@@ -85,7 +85,7 @@ const sources: BundleScriptConfig = {
     import.meta.resolve('@iconify-json/ri/icons.json'),
 
     {
-      filename: require.resolve('@iconify-json/bxl/icons.json'),
+      filename: new URL('@iconify-json/bxl/icons.json', import.meta.url).pathname,
       icons: ['facebook', 'twitter', 'github', 'google', 'linkedin'],
     },
 
