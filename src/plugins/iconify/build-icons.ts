@@ -104,6 +104,13 @@ const sources: BundleScriptConfig = {
 }
 
 // File to save bundle to
+// const target = join(__dirname, 'icons.css')
+// import { join, dirname } from 'path'
+import { fileURLToPath } from 'url'
+
+// แปลง import.meta.url → __dirname
+const __dirname = dirname(fileURLToPath(import.meta.url))
+
 const target = join(__dirname, 'icons.css')
 
 /**
