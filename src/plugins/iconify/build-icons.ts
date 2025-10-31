@@ -54,8 +54,6 @@ interface BundleScriptConfig {
   json?: (string | BundleScriptCustomJSONConfig)[]
 }
 
-const riIconsModule = await import('@iconify-json/ri/icons.json', { assert: { type: 'json' } })
-
 const sources: BundleScriptConfig = {
   svg: [
     // {
@@ -80,9 +78,18 @@ const sources: BundleScriptConfig = {
   ],
 
   json: [
+    // {
+    //   filename: new URL('@iconify-json/ri/icons.json', import.meta.url).pathname,
+    //   // ใส่ icons ถ้าอยากเลือกบางอัน, ไม่ใส่ = all
+    // },
     {
-      filename: new URL('@iconify-json/ri/icons.json', import.meta.url).pathname,
-      // ใส่ icons ถ้าอยากเลือกบางอัน, ไม่ใส่ = all
+      // import package โดยตรง, Node ESM จะ resolve จาก node_modules ให้เอง
+      filename: '@iconify-json/ri/icons.json',
+      // ไม่ใส่ icons = import ทั้งหมด
+    },
+    {
+      filename: '@iconify-json/bxl/icons.json',
+      icons: ['facebook', 'twitter', 'github', 'google', 'linkedin'],
     },
     // Custom JSON file
     // 'json/gg.json',
@@ -153,20 +160,16 @@ const target = join(__dirname, 'icons.css')
     for (let i = 0; i < sources.json.length; i++) {
       const item = sources.json[i]
 
-      // Load icon set
       const filename = typeof item === 'string' ? item : item.filename
-      const content = JSON.parse(await fs.readFile(filename, 'utf8')) as IconifyJSON
 
-      // Filter icons
+      // แทน fs.readFile ด้วย dynamic import
+      const module = await import(filename, { assert: { type: 'json' } })
+      const content = module.default as IconifyJSON
+
       if (typeof item !== 'string' && item.icons?.length) {
         const filteredContent = getIcons(content, item.icons)
-
-        if (!filteredContent) throw new Error(`Cannot find required icons in ${filename}`)
-
-        // Collect filtered icons
-        allIcons.push(filteredContent)
+        allIcons.push(filteredContent!)
       } else {
-        // Collect all icons from the JSON file
         allIcons.push(content)
       }
     }
