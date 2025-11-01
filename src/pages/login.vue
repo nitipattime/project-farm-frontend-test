@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/auth'
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useTheme } from 'vuetify'
+import { useAuthStore } from '@/stores/auth'
 
 import logo from '@images/logo.svg?raw'
 import authV1MaskDark from '@images/pages/auth-v1-mask-dark.png'
@@ -29,41 +29,57 @@ const authThemeMask = computed(() => {
 // ✅ Validation Rules
 const rules = {
   required: (v: string) => !!v || 'This field is required',
-  email: (v: string) => /.+@.+\..+/.test(v) || 'Invalid email format',
+  email: (v: string) => /.[^\n\r@\u2028\u2029]*@.+\..+/.test(v) || 'Invalid email format',
   min: (v: string) => v.length >= 6 || 'Password must be at least 6 characters',
 }
 
 async function handleLogin() {
   // ตรวจสอบว่าฟอร์มผ่าน validation มั้ย
   const isValid = await formRef.value?.validate()
-  if (!isValid) return
+  if (!isValid)
+    return
 
   const success = await auth.login(username.value, password.value)
-  if (success) {
+  if (success)
     router.push('/dashboardV2')
-  } else {
+  else
     error.value = 'Invalid credentials'
-  }
 }
 </script>
 
 <template>
   <div class="auth-wrapper d-flex align-center justify-center pa-4">
-    <VCard class="auth-card pa-4 pt-7" max-width="448">
+    <VCard
+      class="auth-card pa-4 pt-7"
+      max-width="448"
+    >
       <VCardItem class="justify-center">
-        <RouterLink to="/" class="d-flex align-center gap-3">
-          <div class="d-flex" v-html="logo" />
+        <RouterLink
+          to="/"
+          class="d-flex align-center gap-3"
+        >
+          <div
+            class="d-flex"
+            v-html="logo"
+          />
           <!-- <h2 class="font-weight-medium text-2xl text-uppercase">Materio</h2> -->
         </RouterLink>
       </VCardItem>
 
       <VCardText class="pt-2">
-        <h4 class="text-h4 mb-1">Welcome</h4>
-        <p class="mb-0">Please sign-in to your account</p>
+        <h4 class="text-h4 mb-1">
+          Welcome
+        </h4>
+        <p class="mb-0">
+          Please sign-in to your account
+        </p>
       </VCardText>
 
       <VCardText>
-        <VForm ref="formRef" @submit.prevent="handleLogin">
+        <VForm
+          ref="formRef"
+          @submit.prevent="handleLogin"
+        >
           <VRow>
             <!-- email -->
             <VCol cols="12">
@@ -88,30 +104,42 @@ async function handleLogin() {
                 <template #append-inner>
                   <VIcon
                     :icon="isPasswordVisible ? 'ri-eye-line' : 'ri-eye-off-line'"
-                    @click="isPasswordVisible = !isPasswordVisible"
                     class="cursor-pointer"
+                    @click="isPasswordVisible = !isPasswordVisible"
                   />
                 </template>
               </VTextField>
             </VCol>
 
             <!-- error -->
-            <VCol cols="12" v-if="error">
-              <p class="text-error text-center mt-2">{{ error }}</p>
+            <VCol
+              v-if="error"
+              cols="12"
+            >
+              <p class="text-error text-center mt-2">
+                {{ error }}
+              </p>
             </VCol>
 
             <!-- login button -->
             <VCol cols="12">
-              <VBtn block type="submit">Login</VBtn>
+              <VBtn
+                block
+                type="submit"
+              >
+                Login
+              </VBtn>
             </VCol>
           </VRow>
         </VForm>
       </VCardText>
     </VCard>
 
-    <!-- <VImg class="auth-footer-start-tree d-none d-md-block" :src="authV1Tree" :width="250" />
-    <VImg :src="authV1Tree2" class="auth-footer-end-tree d-none d-md-block" :width="350" />
-    <VImg class="auth-footer-mask d-none d-md-block" :src="authThemeMask" /> -->
+    <!--
+      <VImg class="auth-footer-start-tree d-none d-md-block" :src="authV1Tree" :width="250" />
+      <VImg :src="authV1Tree2" class="auth-footer-end-tree d-none d-md-block" :width="350" />
+      <VImg class="auth-footer-mask d-none d-md-block" :src="authThemeMask" />
+    -->
   </div>
 </template>
 
