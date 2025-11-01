@@ -152,11 +152,7 @@ function goToFarmDetail(items: any) {
       <VCard class="pa-6">
         <VRow>
           <!-- Column 1: รูป -->
-          <VCol
-            cols="12"
-            md="4"
-            class="d-flex flex-column justify-center align-center"
-          >
+          <VCol cols="12" md="4" class="d-flex flex-column justify-center align-center">
             <VCardTitle>จำนวนฟาร์มทั้งหมด</VCardTitle>
             <VCardTitle>3</VCardTitle>
             <VCardTitle>ฟาร์ม</VCardTitle>
@@ -166,11 +162,7 @@ function goToFarmDetail(items: any) {
           <VDivider vertical />
 
           <!-- Column 2: ชื่อสินค้า -->
-          <VCol
-            cols="12"
-            md="4"
-            class="d-flex flex-column justify-center align-center"
-          >
+          <VCol cols="12" md="4" class="d-flex flex-column justify-center align-center">
             <VCardTitle>จำนวนโรงเรือนทั้งหมด</VCardTitle>
             <VCardTitle>3</VCardTitle>
             <VCardTitle>โรงเรือน</VCardTitle>
@@ -180,11 +172,7 @@ function goToFarmDetail(items: any) {
           <VDivider vertical />
 
           <!-- Column 3: ราคา + ปุ่ม -->
-          <VCol
-            cols="12"
-            md="4"
-            class="d-flex flex-column justify-center align-center"
-          >
+          <VCol cols="12" md="4" class="d-flex flex-column justify-center align-center">
             <VCardTitle>จำนวนไก่ทั้งหมด</VCardTitle>
             <VCardTitle>10,000</VCardTitle>
             <VCardTitle>ตัว</VCardTitle>
@@ -217,44 +205,20 @@ function goToFarmDetail(items: any) {
         -->
         <div class="d-flex justify-space-between align-center mb-6">
           <!-- Search Field -->
-          <VTextField
-            v-model="searchQuery"
-            placeholder="ค้นหา"
-            persistent-placeholder
-            :loading="loading"
-            append-inner-icon="mdi-magnify"
-            clearable
-            hide-details
-            variant="outlined"
-            density="comfortable"
-            style="max-width: 300px"
-            @click:append-inner="onSearch"
-          />
+          <VTextField v-model="searchQuery" placeholder="ค้นหา" persistent-placeholder :loading="loading"
+            append-inner-icon="mdi-magnify" clearable hide-details variant="outlined" density="comfortable"
+            style="max-width: 300px" @click:append-inner="onSearch" />
 
           <!-- Create Farm Button -->
-          <VBtn
-            color="primary"
-            class="text-white"
-            v-bind="activatorProps"
-            @click="dialog = true"
-          >
+          <VBtn color="primary" class="text-white" v-bind="activatorProps" @click="dialog = true">
             เพิ่มฟาร์ม
           </VBtn>
         </div>
 
         <!-- Course Cards -->
         <VRow class="g-6">
-          <VCol
-            v-for="(course, i) in paginatedCourses"
-            :key="i"
-            cols="12"
-            sm="6"
-            md="4"
-          >
-            <VCard
-              elevation="2"
-              class="pa-4 h-100 border border-solid border-gray-800"
-            >
+          <VCol v-for="(course, i) in paginatedCourses" :key="i" cols="12" sm="6" md="4">
+            <VCard elevation="2" class="pa-4 h-100 border border-solid border-gray-800">
               <!-- <VImg :src="course.image" height="180" cover class="rounded mb-4" /> -->
 
               <VCardTitle class="text-h6 mb-1">
@@ -269,19 +233,10 @@ function goToFarmDetail(items: any) {
               </VCardText>
 
               <VCardActions class="justify-space-between pt-0">
-                <VBtn
-                  color="primary"
-                  variant="flat"
-                  size="small"
-                  @click="goToFarmDetail(course)"
-                >
+                <VBtn color="primary" variant="flat" size="small" @click="goToFarmDetail(course)">
                   View
                 </VBtn>
-                <VChip
-                  :color="course.status === 'Completed' ? 'success' : 'info'"
-                  size="small"
-                  label
-                >
+                <VChip :color="course.status === 'Completed' ? 'success' : 'info'" size="small" label>
                   {{ course.status }}
                 </VChip>
               </VCardActions>
@@ -290,31 +245,20 @@ function goToFarmDetail(items: any) {
         </VRow>
 
         <!-- No result -->
-        <div
-          v-if="paginatedCourses.length === 0"
-          class="text-center py-10 text-medium-emphasis"
-        >
+        <div v-if="paginatedCourses.length === 0" class="text-center py-10 text-medium-emphasis">
           No courses found.
         </div>
 
         <!-- Pagination -->
         <div class="mt-6 flex justify-center">
-          <VPagination
-            v-model="page"
-            :length="pageCount"
-            total-visible="5"
-            @update:model-value="onPageChange"
-          />
+          <VPagination v-model="page" :length="pageCount" total-visible="5" @update:model-value="onPageChange" />
         </div>
       </VCard>
     </VCol>
   </VRow>
 
   <div class="pa-4 text-center">
-    <VDialog
-      v-model="dialog"
-      max-width="600"
-    >
+    <VDialog v-model="dialog" max-width="600">
       <VCard>
         <VCardTitle class="text-h6 text-md-h5 text-lg-h4 mt-2">
           ข้อมูลฟาร์ม
@@ -325,64 +269,29 @@ function goToFarmDetail(items: any) {
 
         <VCardText class="mt-6">
           <VRow dense>
-            <VCol
-              cols="12"
-              md="12"
-              sm="6"
-            >
-              <VTextField
-                v-model="farmForm.name"
-                label="ชื่อ"
-                :rules="[requiredRule]"
-required
-              />
+            <VCol cols="12" md="12" sm="6">
+              <VTextField v-model="farmForm.name" label="ชื่อ" :rules="[requiredRule]" required />
             </VCol>
           </VRow>
         </VCardText>
 
         <VCardText>
           <VRow dense>
-            <VCol
-              cols="12"
-              md="12"
-              sm="6"
-            >
-              <VTextField
-                v-model="farmForm.contact"
-                label="ชื่อผู้ติดต่อ"
-                :rules="[requiredRule]"
-                required
-              />
+            <VCol cols="12" md="12" sm="6">
+              <VTextField v-model="farmForm.contact" label="ชื่อผู้ติดต่อ" :rules="[requiredRule]" required />
             </VCol>
           </VRow>
         </VCardText>
 
         <VCardText>
           <VRow dense>
-            <VCol
-              cols="12"
-              md="6"
-              sm="6"
-            >
-              <VTextField
-                v-model="farmForm.postcode"
-                label="รหัสไปรษณีย์"
-                :rules="[requiredRule, postcodeRule]"
-                required
-              />
+            <VCol cols="12" md="6" sm="6">
+              <VTextField v-model="farmForm.postcode" label="รหัสไปรษณีย์" :rules="[requiredRule, postcodeRule]"
+                required />
             </VCol>
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <VSelect
-                v-model="farmForm.province"
-                label="จังหวัด"
-                :items="provinces"
-                :rules="[requiredRule]"
-                placeholder="เลือกจังหวัด"
-                required
-              />
+            <VCol cols="12" md="6">
+              <VSelect v-model="farmForm.province" label="จังหวัด" :items="provinces" :rules="[requiredRule]"
+                placeholder="เลือกจังหวัด" required />
             </VCol>
             <!--
               <v-col cols="12" md="6" sm="6">
@@ -394,29 +303,13 @@ required
 
         <VCardText>
           <VRow dense>
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <VSelect
-                v-model="farmForm.district"
-                label="อำเภอ/เขต"
-                :items="selectedDistricts"
-                :rules="[requiredRule]"
-                required
-              />
+            <VCol cols="12" md="6">
+              <VSelect v-model="farmForm.district" label="อำเภอ/เขต" :items="selectedDistricts" :rules="[requiredRule]"
+                required />
             </VCol>
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <VSelect
-                v-model="farmForm.subdistrict"
-                label="ตำบล/แขวง"
-                :items="selectedSubdistricts"
-                :rules="[requiredRule]"
-                required
-              />
+            <VCol cols="12" md="6">
+              <VSelect v-model="farmForm.subdistrict" label="ตำบล/แขวง" :items="selectedSubdistricts"
+                :rules="[requiredRule]" required />
             </VCol>
           </VRow>
         </VCardText>
@@ -428,28 +321,15 @@ required
         </VCardText>
 
         <VCardActions class="my-1 justify-center">
-          <VBtn
-            text="Close"
-            variant="plain"
-            @click="dialog = false"
-          />
-          <VBtn
-            color="primary"
-            text="Save"
-            variant="tonal"
-            @click="submitForm"
-          />
+          <VBtn text="Close" variant="plain" @click="dialog = false" />
+          <VBtn color="primary" text="Save" variant="tonal" @click="submitForm" />
         </VCardActions>
       </VCard>
     </VDialog>
   </div>
 
   <VRow dense>
-    <VCol
-      cols="12"
-      md="4"
-      class="d-flex flex-column justify-center align-center"
-    >
+    <VCol cols="12" md="4" class="d-flex flex-column justify-center align-center">
       <VCard>
         ...
       </VCard>
@@ -457,11 +337,7 @@ required
 
     <VDivider :vertical="$vuetify.display.mdAndUp" />
 
-    <VCol
-      cols="12"
-      md="4"
-      class="d-flex flex-column justify-center align-center"
-    >
+    <VCol cols="12" md="4" class="d-flex flex-column justify-center align-center">
       <VCard>
         ...
       </VCard>
@@ -469,11 +345,7 @@ required
 
     <VDivider :vertical="$vuetify.display.mdAndUp" />
 
-    <VCol
-      cols="12"
-      md="4"
-      class="d-flex flex-column justify-center align-center"
-    >
+    <VCol cols="12" md="4" class="d-flex flex-column justify-center align-center">
       <VCard>
         ...
       </VCard>
@@ -482,49 +354,31 @@ required
 
   <VRow no-gutters>
     <!-- Column 1 -->
-    <VCol
-      cols="12"
-      md="4"
-      class="d-flex flex-column justify-center align-center"
-    >
+    <VCol cols="12" md="4" class="d-flex flex-column justify-center align-center">
       <VCardTitle>จำนวนโรงเรือนทั้งหมด</VCardTitle>
       <VCardTitle>3</VCardTitle>
       <VCardTitle>โรงเรือน</VCardTitle>
     </VCol>
 
     <!-- Divider -->
-    <VCol
-      cols="auto"
-      class="d-none d-md-flex justify-center"
-    >
+    <VCol cols="auto" class="d-none d-md-flex justify-center">
       <VDivider vertical />
     </VCol>
 
     <!-- Column 2 -->
-    <VCol
-      cols="12"
-      md="4"
-      class="d-flex flex-column justify-center align-center"
-    >
+    <VCol cols="12" md="4" class="d-flex flex-column justify-center align-center">
       <VCardTitle>จำนวนโรงเรือนทั้งหมด</VCardTitle>
       <VCardTitle>3</VCardTitle>
       <VCardTitle>โรงเรือน</VCardTitle>
     </VCol>
 
     <!-- Divider -->
-    <VCol
-      cols="auto"
-      class="d-none d-md-flex justify-center"
-    >
+    <VCol cols="auto" class="d-none d-md-flex justify-center">
       <VDivider vertical />
     </VCol>
 
     <!-- Column 3 -->
-    <VCol
-      cols="12"
-      md="4"
-      class="d-flex flex-column justify-center align-center"
-    >
+    <VCol cols="12" md="4" class="d-flex flex-column justify-center align-center">
       <VCardTitle>จำนวนโรงเรือนทั้งหมด</VCardTitle>
       <VCardTitle>3</VCardTitle>
       <VCardTitle>โรงเรือน</VCardTitle>
@@ -535,53 +389,16 @@ required
     <VCol cols="12">
       <VCard>
         <VCardText>
-          <VTextField
-            base-color="black"
-            :loading="loading"
-            append-inner-icon="mdi-magnify"
-            density="compact"
-            label="Search"
-            variant="solo"
-            hide-details
-            single-line
-            @click:append-inner="onClick"
-          />
-          <VTextField
-            class="black-label"
-            :loading="loading"
-            append-inner-icon="mdi-magnify"
-            density="compact"
-            label="Search templates"
-            variant="solo"
-            hide-details
-            single-line
-            @click:append-inner="onClick"
-          />
-          <VTextField
-            color="on-surface"
-            class="text-black"
-            :loading="loading"
-            append-inner-icon="mdi-magnify"
-            density="compact"
-            label="Search templates"
-            hide-details
-            single-line
-            @click:append-inner="onClick"
-          />
-          <VTextField
-            prepend-inner-icon="ri-user-line"
-            label="First Name"
-            placeholder="John"
-          />
+          <VTextField base-color="black" :loading="loading" append-inner-icon="mdi-magnify" density="compact"
+            label="Search" variant="solo" hide-details single-line @click:append-inner="onClick" />
+          <VTextField class="black-label" :loading="loading" append-inner-icon="mdi-magnify" density="compact"
+            label="Search templates" variant="solo" hide-details single-line @click:append-inner="onClick" />
+          <VTextField color="on-surface" class="text-black" :loading="loading" append-inner-icon="mdi-magnify"
+            density="compact" label="Search templates" hide-details single-line @click:append-inner="onClick" />
+          <VTextField prepend-inner-icon="ri-user-line" label="First Name" placeholder="John" />
 
-          <VTextField
-            id="firstName"
-            placeholder="John"
-            persistent-placeholder
-            :loading="loading"
-            append-inner-icon="mdi-magnify"
-            @click:append-inner="onClick"
-          />
+          <VTextField id="firstName" placeholder="John" persistent-placeholder :loading="loading"
+            append-inner-icon="mdi-magnify" @click:append-inner="onClick" />
         </VCardText>
       </VCard>
     </VCol>
@@ -599,34 +416,15 @@ required
 
         <!-- Dropdown Filter -->
         <div class="d-flex justify-space-between align-center mb-4">
-          <VSelect
-            v-model="selectedFilter"
-            :items="filters"
-            density="compact"
-            hide-details
-            variant="outlined"
-            style="max-width: 180px"
-          />
+          <VSelect v-model="selectedFilter" :items="filters" density="compact" hide-details variant="outlined"
+            style="max-width: 180px" />
         </div>
 
         <!-- Courses Grid -->
         <VRow>
-          <VCol
-            v-for="(course, i) in filteredCourses"
-            :key="i"
-            cols="12"
-            sm="6"
-            md="4"
-          >
-            <VCard
-              elevation="1"
-              class="h-100"
-            >
-              <VImg
-                :src="course.image"
-                height="160"
-                cover
-              />
+          <VCol v-for="(course, i) in filteredCourses" :key="i" cols="12" sm="6" md="4">
+            <VCard elevation="1" class="h-100">
+              <VImg :src="course.image" height="160" cover />
 
               <VCardItem>
                 <VCardTitle>{{ course.title }}</VCardTitle>
@@ -640,18 +438,10 @@ required
               </VCardText>
 
               <VCardActions class="justify-space-between">
-                <VBtn
-                  color="primary"
-                  variant="flat"
-                  size="small"
-                >
+                <VBtn color="primary" variant="flat" size="small">
                   View
                 </VBtn>
-                <VChip
-                  :color="course.status === 'Completed' ? 'success' : 'info'"
-                  size="small"
-                  label
-                >
+                <VChip :color="course.status === 'Completed' ? 'success' : 'info'" size="small" label>
                   {{ course.status }}
                 </VChip>
               </VCardActions>
@@ -675,36 +465,16 @@ required
 
         <!-- Filter Dropdown -->
         <div class="d-flex justify-space-between align-center mb-6">
-          <VSelect
-            v-model="selectedFilter"
-            :items="filters"
-            density="comfortable"
-            hide-details
-            variant="outlined"
-            style="max-width: 200px"
-          />
+          <VSelect v-model="selectedFilter" :items="filters" density="comfortable" hide-details variant="outlined"
+            style="max-width: 200px" />
         </div>
 
         <!-- Course Cards -->
         <VRow class="g-6">
           <!-- g-6 = ช่องว่างระหว่างคอลัมน์ -->
-          <VCol
-            v-for="(course, i) in filteredCourses"
-            :key="i"
-            cols="12"
-            sm="6"
-            md="4"
-          >
-            <VCard
-              elevation="2"
-              class="pa-4 h-100"
-            >
-              <VImg
-                :src="course.image"
-                height="180"
-                cover
-                class="rounded mb-4"
-              />
+          <VCol v-for="(course, i) in filteredCourses" :key="i" cols="12" sm="6" md="4">
+            <VCard elevation="2" class="pa-4 h-100">
+              <VImg :src="course.image" height="180" cover class="rounded mb-4" />
 
               <VCardTitle class="text-h6 mb-1">
                 {{ course.title }}
@@ -718,18 +488,10 @@ required
               </VCardText>
 
               <VCardActions class="justify-space-between pt-0">
-                <VBtn
-                  color="primary"
-                  variant="flat"
-                  size="small"
-                >
+                <VBtn color="primary" variant="flat" size="small">
                   View
                 </VBtn>
-                <VChip
-                  :color="course.status === 'Completed' ? 'success' : 'info'"
-                  size="small"
-                  label
-                >
+                <VChip :color="course.status === 'Completed' ? 'success' : 'info'" size="small" label>
                   {{ course.status }}
                 </VChip>
               </VCardActions>
@@ -753,35 +515,15 @@ required
 
         <!-- Search Field -->
         <div class="d-flex justify-space-between align-center mb-6">
-          <VTextField
-            id="firstName"
-            placeholder="John"
-            persistent-placeholder
-            :loading="loading"
-            append-inner-icon="mdi-magnify"
-            @click:append-inner="onClick"
-          />
+          <VTextField id="firstName" placeholder="John" persistent-placeholder :loading="loading"
+            append-inner-icon="mdi-magnify" @click:append-inner="onClick" />
         </div>
 
         <!-- Course Cards -->
         <VRow class="g-6">
-          <VCol
-            v-for="(course, i) in filteredCourses"
-            :key="i"
-            cols="12"
-            sm="6"
-            md="4"
-          >
-            <VCard
-              elevation="2"
-              class="pa-4 h-100"
-            >
-              <VImg
-                :src="course.image"
-                height="180"
-                cover
-                class="rounded mb-4"
-              />
+          <VCol v-for="(course, i) in filteredCourses" :key="i" cols="12" sm="6" md="4">
+            <VCard elevation="2" class="pa-4 h-100">
+              <VImg :src="course.image" height="180" cover class="rounded mb-4" />
 
               <VCardTitle class="text-h6 mb-1">
                 {{ course.title }}
@@ -795,18 +537,10 @@ required
               </VCardText>
 
               <VCardActions class="justify-space-between pt-0">
-                <VBtn
-                  color="primary"
-                  variant="flat"
-                  size="small"
-                >
+                <VBtn color="primary" variant="flat" size="small">
                   View
                 </VBtn>
-                <VChip
-                  :color="course.status === 'Completed' ? 'success' : 'info'"
-                  size="small"
-                  label
-                >
+                <VChip :color="course.status === 'Completed' ? 'success' : 'info'" size="small" label>
                   {{ course.status }}
                 </VChip>
               </VCardActions>
@@ -815,20 +549,12 @@ required
         </VRow>
 
         <!-- No result -->
-        <div
-          v-if="filteredCourses.length === 0"
-          class="text-center py-10 text-medium-emphasis"
-        >
+        <div v-if="filteredCourses.length === 0" class="text-center py-10 text-medium-emphasis">
           No courses found.
         </div>
         <!-- Pagination -->
         <div class="mt-6 flex justify-center">
-          <VPagination
-            v-model="page"
-            :length="pageCount"
-            total-visible="5"
-            @update:model-value="onPageChange"
-          />
+          <VPagination v-model="page" :length="pageCount" total-visible="5" @update:model-value="onPageChange" />
         </div>
       </VCard>
     </VCol>
@@ -836,25 +562,13 @@ required
 
   <div class="pa-6">
     <!-- Search field -->
-    <VTextField
-      v-model="searchQuery"
-      placeholder="Search courses"
-      persistent-placeholder
-      append-inner-icon="mdi-magnify"
-      clearable
-      hide-details
-      variant="outlined"
-      density="comfortable"
-      style="max-width: 300px"
-      @click:append-inner="fetchCourses"
-    />
+    <VTextField v-model="searchQuery" placeholder="Search courses" persistent-placeholder
+      append-inner-icon="mdi-magnify" clearable hide-details variant="outlined" density="comfortable"
+      style="max-width: 300px" @click:append-inner="fetchCourses" />
 
     <!-- Content list -->
     <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-      <VCard
-        v-for="item in paginatedCourses"
-        :key="item.id"
-      >
+      <VCard v-for="item in paginatedCourses" :key="item.id">
         <VCardTitle>{{ item.title }}</VCardTitle>
         <VCardSubtitle>{{ item.category }}</VCardSubtitle>
       </VCard>
@@ -862,12 +576,7 @@ required
 
     <!-- Pagination -->
     <div class="mt-6 flex justify-center">
-      <VPagination
-        v-model="page"
-        :length="pageCount"
-        total-visible="5"
-        @update:model-value="onPageChange"
-      />
+      <VPagination v-model="page" :length="pageCount" total-visible="5" @update:model-value="onPageChange" />
     </div>
   </div>
 </template>
