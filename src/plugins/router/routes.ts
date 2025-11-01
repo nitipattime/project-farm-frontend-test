@@ -21,6 +21,12 @@ export const routes = [
         props: true,
       },
       {
+        path: '/addHouseDetail/:id',
+        name: 'add-house-detail',
+        component: () => import('@/pages/add-house-detail.vue'),
+        props: true,
+      },
+      {
         path: 'dashboard',
         component: () => import('@/pages/dashboard.vue'),
       },
