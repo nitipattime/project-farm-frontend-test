@@ -1,7 +1,9 @@
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
-import { VBtn, VCol, VDatePicker, VForm, VRow, VSelect, VTextField } from 'vuetify/components'
+import { reactive, ref } from 'vue';
+import { useRouter } from 'vue-router'; // 👈 เพิ่มบรรทัดนี้
+import { VBtn, VCol, VDatePicker, VForm, VRow, VSelect, VTextField } from 'vuetify/components';
 
+const router = useRouter()
 const formRef = ref()
 
 const form = reactive({
@@ -15,8 +17,8 @@ const form = reactive({
     qty: '',
     weight_target: '',
     food: '',
-    start_date: '',
-    end_date: '',
+    start_date: null,
+    end_date: null,
     uniform: '',
 })
 
@@ -60,7 +62,7 @@ function submitForm() {
 }
 
 function goBack() {
-    console.log('Go Back')
+    router.back()
 }
 
 const startPicker = ref(false)
@@ -152,12 +154,24 @@ const checkbox = ref(false)
                     <!-- วันที่เริ่มเลี้ยง -->
                     <VCol cols="12" md="6">
                         <VTextField v-model="form.start_date" label="วันที่เริ่มเลี้ยง *"
-                            prepend-inner-icon="mdi-calendar" readonly @click="startPicker = true" />
+                            prepend-inner-icon="ri-calendar-line" readonly @click="startPicker = true" />
 
-                        <VDialog v-model="startPicker" width="290px">
+                        <!-- <VDialog v-model="startPicker" width="290px">
                             <VCard>
                                 <VCardText>
                                     <VDatePicker v-model="form.start_date" />
+                                </VCardText>
+                                <VCardActions>
+                                    <VSpacer />
+                                    <VBtn text="ยกเลิก" @click="startPicker = false" />
+                                    <VBtn text="ตกลง" color="primary" @click="startPicker = false" />
+                                </VCardActions>
+                            </VCard>
+                        </VDialog> -->
+                        <VDialog v-model="startPicker" width="390px">
+                            <VCard>
+                                <VCardText>
+                                    <VDatePicker v-if="startPicker" v-model="form.start_date" />
                                 </VCardText>
                                 <VCardActions>
                                     <VSpacer />
@@ -171,9 +185,9 @@ const checkbox = ref(false)
                     <!-- วันที่คาดว่าจะสิ้นสุด -->
                     <VCol cols="12" md="6">
                         <VTextField v-model="form.end_date" label="วันที่คาดว่าจะสิ้นสุด *"
-                            prepend-inner-icon="mdi-calendar" readonly @click="endPicker = true" />
+                            prepend-inner-icon="ri-calendar-line" readonly @click="endPicker = true" />
 
-                        <VDialog v-model="endPicker" width="290px">
+                        <VDialog v-model="endPicker" width="390px">
                             <VCard>
                                 <VCardText>
                                     <VDatePicker v-model="form.end_date" />
@@ -282,7 +296,7 @@ const checkbox = ref(false)
             </VCol>
 
             <VCol cols="12" class="d-flex justify-space-between align-center mb-6">
-                <VBtn type="reset" color="secondary" variant="outlined">
+                <VBtn type="reset" color="secondary" variant="outlined" @click="goBack">
                     ยกเลิก
                 </VBtn>
 
