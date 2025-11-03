@@ -3,7 +3,7 @@
     "target": "esnext",
     "useDefineForClassFields": true,
     "module": "esnext",
-    "moduleResolution": "Bundler",
+    "moduleResolution": "Node",
     "isolatedModules": true,
     "strict": true,
     "jsx": "preserve",
@@ -43,6 +43,7 @@
     ],
     "skipLibCheck": true,
     "types": [
+      "vue",
       "vite/client",
       "vite-plugin-vue-layouts/client"
     ]

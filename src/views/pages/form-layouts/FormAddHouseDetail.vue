@@ -137,14 +137,16 @@ const checkbox = ref(false)
                     :error-messages="errors.food" class="mt-4" @input="countFoodLength" />
 
                 <!-- วันที่เริ่ม + สิ้นสุด -->
-                <!-- <VRow class="mt-4">
-                    <VCol cols="6">
-                        <VTextField v-model="form.start_date" label="วันที่เริ่มเลี้ยง *" type="date" />
-                    </VCol>
-                    <VCol cols="6">
-                        <VTextField v-model="form.end_date" label="วันที่คาดว่าจะสิ้นสุด *" type="date" />
-                    </VCol>
-                </VRow> -->
+                <!--
+          <VRow class="mt-4">
+          <VCol cols="6">
+          <VTextField v-model="form.start_date" label="วันที่เริ่มเลี้ยง *" type="date" />
+          </VCol>
+          <VCol cols="6">
+          <VTextField v-model="form.end_date" label="วันที่คาดว่าจะสิ้นสุด *" type="date" />
+          </VCol>
+          </VRow>
+        -->
 
                 <VRow class="mt-4">
                     <!-- วันที่เริ่มเลี้ยง -->
@@ -243,7 +245,6 @@ const checkbox = ref(false)
             </VCol>
         </VRow>
 
-
         <VRow>
             <!-- 👉 First Name -->
             <VCol cols="12" md="6">
@@ -289,16 +290,18 @@ const checkbox = ref(false)
                     ยืนยัน
                 </VBtn>
             </VCol>
-            <!-- <div class="d-flex justify-space-between align-center mb-6">
-                            <VTextField v-model="searchQuery" placeholder="ค้นหา" persistent-placeholder
-                                :loading="loading" append-inner-icon="mdi-magnify" clearable hide-details
-                                variant="outlined" density="comfortable" style="max-width: 300px"
-                                @click:append-inner="onSearch" />
+            <!--
+        <div class="d-flex justify-space-between align-center mb-6">
+        <VTextField v-model="searchQuery" placeholder="ค้นหา" persistent-placeholder
+        :loading="loading" append-inner-icon="mdi-magnify" clearable hide-details
+        variant="outlined" density="comfortable" style="max-width: 300px"
+        @click:append-inner="onSearch" />
 
-                            <VBtn color="primary" class="text-white" v-bind="activatorProps" @click="dialog = true">
-                                เพิ่มฟาร์ม
-                            </VBtn>
-                        </div> -->
+        <VBtn color="primary" class="text-white" v-bind="activatorProps" @click="dialog = true">
+        เพิ่มฟาร์ม
+        </VBtn>
+        </div>
+      -->
         </VRow>
     </VForm>
 </template>
