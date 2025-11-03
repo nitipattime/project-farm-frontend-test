@@ -22,6 +22,9 @@ export default function (app: App) {
       defaultTheme: 'light',
       themes,
     },
+    typography: {
+      defaultFontFamily: 'Kanit, Roboto, sans-serif', // ใช้ฟอนต์ Kanit
+    },
   })
 
   app.use(vuetify)

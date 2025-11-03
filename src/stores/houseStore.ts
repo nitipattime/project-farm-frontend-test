@@ -1,4 +1,6 @@
 // src/store/farmStore.ts
+import { defineStore } from 'pinia'
+
 import {
   createHouse,
   getHouse,
@@ -10,7 +12,6 @@ import {
 } from '@/services/houseService'
 import type { HouseSummary } from '@/types/house'
 import { defaultHouseSummary } from '@/types/house'
-import { defineStore } from 'pinia'
 
 export const useHouseStore = defineStore('house', {
   state: () => ({
@@ -40,6 +41,7 @@ export const useHouseStore = defineStore('house', {
       this.loading = true
       try {
         const res = await getHouse(payload)
+
         this.houselist = res.data.list
         this.pagination = {
           page: res.data.page,
@@ -57,8 +59,7 @@ export const useHouseStore = defineStore('house', {
 
     async addHouse(houseData: any) {
       try {
-        const res = await createHouse(houseData)
-        return res
+        return await createHouse(houseData)
       } catch (err: any) {
         this.error = err.message
       }
@@ -68,7 +69,9 @@ export const useHouseStore = defineStore('house', {
       this.loading = true
       try {
         const res = await getHouseSummary(payload)
+
         this.houseSummary = res.data
+
         return res
       } catch (err: any) {
         this.error = err.message
@@ -82,7 +85,9 @@ export const useHouseStore = defineStore('house', {
       this.loading = true
       try {
         const res = await getHouseWeekly(payload)
+
         this.houseWeekly = res.data
+
         return res
       } catch (err: any) {
         this.error = err.message
@@ -96,7 +101,9 @@ export const useHouseStore = defineStore('house', {
       this.loading = true
       try {
         const res = await getHouseCVHistory(payload)
+
         this.houseCVHistory = res.data
+
         return res
       } catch (err: any) {
         this.error = err.message
@@ -110,7 +117,9 @@ export const useHouseStore = defineStore('house', {
       this.loading = true
       try {
         const res = await getMachineAvailable()
+
         this.machines = res.data
+
         return res
       } catch (err: any) {
         this.error = err.message
@@ -124,7 +133,9 @@ export const useHouseStore = defineStore('house', {
       this.loading = true
       try {
         const res = await getMachineSilos()
+
         this.silos = res.data
+
         return res
       } catch (err: any) {
         this.error = err.message

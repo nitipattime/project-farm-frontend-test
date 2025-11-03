@@ -13,12 +13,10 @@ export const getFarms = async (data?: any) => {
       },
     })
 
-    if (response.status === 200 || response.status === 201) {
-      return response.data
-    } else {
-      return null
-    }
+    if (response.status === 200 || response.status === 201) return response.data
+    else return null
   } catch (error: any) {
+    console.log(error)
     throw error
   }
 }
@@ -30,11 +28,9 @@ export const createFarm = async (data: any) => {
         'x-api-key': API_KEY,
       },
     })
-    if (response.status === 200 || response.status === 201) {
-      return response.data
-    } else {
-      return null
-    }
+
+    if (response.status === 200 || response.status === 201) return response.data
+    else return null
   } catch (error: any) {
     throw error
   }
@@ -70,6 +66,7 @@ export const getDistricts = async (data: any) => {
         'x-api-key': API_KEY,
       },
     })
+
     if (response.status === 200 || response.status === 201) {
       return response.data.data.map((item: any) => ({
         label: item.name_th,
@@ -82,6 +79,7 @@ export const getDistricts = async (data: any) => {
     throw error
   }
 }
+
 // get subdistricts
 export const getSubDistricts = async (data: any) => {
   try {
@@ -105,6 +103,7 @@ export const getSubDistricts = async (data: any) => {
     throw error
   }
 }
+
 // get Address
 export const getAddress = async (data: any) => {
   try {
@@ -115,11 +114,8 @@ export const getAddress = async (data: any) => {
       },
     })
 
-    if (response.status === 200 || response.status === 201) {
-      return response.data.data
-    } else {
-      return null
-    }
+    if (response.status === 200 || response.status === 201) return response.data.data
+    else return null
   } catch (error: any) {
     throw error
   }

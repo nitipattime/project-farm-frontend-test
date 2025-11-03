@@ -344,6 +344,10 @@ function goToAddHouseDetail() {
                 {{ course.description }}
               </VCardText>
 
+              <VChip :color="course.status === 'Completed' ? 'success' : 'info'" size="small" label>
+                {{ course.status }}
+              </VChip>
+
               <!--
                 <VCardActions class="justify-space-between pt-0">
                 <VBtn color="primary" variant="flat" size="small">

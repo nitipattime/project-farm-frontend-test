@@ -1,11 +1,14 @@
 // src/store/farmStore.ts
+import { defineStore } from 'pinia'
+
 import { createFarm, getAddress, getDistricts, getFarms, getProvince, getSubDistricts } from '@/services/farmService'
 import type { Farm, Option } from '@/types/farm'
-import { defineStore } from 'pinia'
 
 export const useFarmStore = defineStore('farm', {
   state: () => ({
     farmlist: [] as Farm[],
+    test: 'test pinia',
+
     // farmlistV2: [] as FarmV2[],
     summary: {
       totalFarms: 0,
@@ -37,6 +40,7 @@ export const useFarmStore = defineStore('farm', {
       this.loading = true
       try {
         const res = await getFarms(payload)
+
         this.farmlist = res.data.list
         this.pagination = {
           page: res.data.page,
@@ -55,6 +59,7 @@ export const useFarmStore = defineStore('farm', {
     async addFarm(farmData: any) {
       try {
         const res = await createFarm(farmData)
+
         this.farmlist.push(res.data)
       } catch (err: any) {
         this.error = err.message
@@ -65,7 +70,9 @@ export const useFarmStore = defineStore('farm', {
       this.loading = true
       try {
         const res = await getDistricts(data)
+
         this.districts = res
+
         return res
       } catch (err: any) {
         this.error = err.message
@@ -77,7 +84,9 @@ export const useFarmStore = defineStore('farm', {
       this.loading = true
       try {
         const res = await getSubDistricts(data)
+
         this.subdistricts = res
+
         return res
       } catch (err: any) {
         this.error = err.message
@@ -89,7 +98,9 @@ export const useFarmStore = defineStore('farm', {
       this.loading = true
       try {
         const res = await getProvince()
+
         this.provinces = res
+
         return res
       } catch (err: any) {
         this.error = err.message
@@ -102,7 +113,9 @@ export const useFarmStore = defineStore('farm', {
       this.loading = true
       try {
         const res = await getAddress(data)
+
         this.address = res
+
         return res
       } catch (err: any) {
         this.error = err.message

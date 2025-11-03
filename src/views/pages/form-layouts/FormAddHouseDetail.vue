@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { reactive, ref } from 'vue';
+import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'; // 👈 เพิ่มบรรทัดนี้
-import { VBtn, VCol, VDatePicker, VForm, VRow, VSelect, VTextField } from 'vuetify/components';
+import { VBtn, VCol, VDatePicker, VForm, VRow, VSelect, VTextField } from 'vuetify/components'
 
 const router = useRouter()
 const formRef = ref()
@@ -156,18 +156,20 @@ const checkbox = ref(false)
                         <VTextField v-model="form.start_date" label="วันที่เริ่มเลี้ยง *"
                             prepend-inner-icon="ri-calendar-line" readonly @click="startPicker = true" />
 
-                        <!-- <VDialog v-model="startPicker" width="290px">
-                            <VCard>
-                                <VCardText>
-                                    <VDatePicker v-model="form.start_date" />
-                                </VCardText>
-                                <VCardActions>
-                                    <VSpacer />
-                                    <VBtn text="ยกเลิก" @click="startPicker = false" />
-                                    <VBtn text="ตกลง" color="primary" @click="startPicker = false" />
-                                </VCardActions>
-                            </VCard>
-                        </VDialog> -->
+                        <!--
+              <VDialog v-model="startPicker" width="290px">
+              <VCard>
+              <VCardText>
+              <VDatePicker v-model="form.start_date" />
+              </VCardText>
+              <VCardActions>
+              <VSpacer />
+              <VBtn text="ยกเลิก" @click="startPicker = false" />
+              <VBtn text="ตกลง" color="primary" @click="startPicker = false" />
+              </VCardActions>
+              </VCard>
+              </VDialog>
+            -->
                         <VDialog v-model="startPicker" width="390px">
                             <VCard>
                                 <VCardText>
@@ -207,94 +209,9 @@ const checkbox = ref(false)
                     counter="5" type="number" :error-messages="errors.uniform" class="mt-4"
                     @input="countUniformLength" />
             </VCol>
-
-            <VCol md="6">
-                <VSpacer>
-                    <VTextField v-model="firstName" label="โรงเรือน" placeholder="John" />
-                </VSpacer>
-                <VSpacer class="mt-6">
-                    <VTextField v-model="lastName" label="ประเภทของสัตว์" placeholder="Doe" />
-                </VSpacer>
-                <VSpacer class="mt-6">
-                    <VTextField v-model="lastName" label="สายพันธุ์" placeholder="Doe" />
-                </VSpacer>
-                <VCol cols="12" class="mt-6">
-                    <VSpacer md="3">
-                        <VTextField v-model="lastName" label="สายพันธุ์" placeholder="Doe" />
-                    </VSpacer>
-                    <VSpacer md="3">
-                        <VTextField v-model="lastName" label="สายพันธุ์" placeholder="Doe" />
-                    </VSpacer>
-                </VCol>
-            </VCol>
-
-            <!-- 👉 Last Name -->
-            <VCol cols="6" md="6">
-                <VTextField v-model="lastName" label="Last Name" placeholder="Doe" />
-            </VCol>
-
-            <!-- 👉 Email -->
-            <VCol cols="12" md="6">
-                <VTextField v-model="email" label="Email" placeholder="johndoe@email.com" />
-            </VCol>
-
-            <!-- 👉 City -->
-            <VCol cols="12" md="6">
-                <VTextField v-model="city" label="City" placeholder="New York" />
-            </VCol>
-
-            <!-- 👉 Country -->
-            <VCol cols="12" md="6">
-                <VTextField v-model="country" label="Country" placeholder="United States" />
-            </VCol>
-
-            <!-- 👉 Company -->
-            <VCol cols="12" md="6">
-                <VTextField v-model="company" label="Company" placeholder="Pixinvent" />
-            </VCol>
-
-            <!-- 👉 Remember me -->
-            <VCol cols="12">
-                <VCheckbox v-model="checkbox" label="Remember me" />
-            </VCol>
         </VRow>
 
         <VRow>
-            <!-- 👉 First Name -->
-            <VCol cols="12" md="6">
-                <VTextField v-model="firstName" label="First Name" placeholder="John" />
-            </VCol>
-
-            <!-- 👉 Last Name -->
-            <VCol cols="12" md="6">
-                <VTextField v-model="lastName" label="Last Name" placeholder="Doe" />
-            </VCol>
-
-            <!-- 👉 Email -->
-            <VCol cols="12" md="6">
-                <VTextField v-model="email" label="Email" placeholder="johndoe@email.com" />
-            </VCol>
-
-            <!-- 👉 City -->
-            <VCol cols="12" md="6">
-                <VTextField v-model="city" label="City" placeholder="New York" />
-            </VCol>
-
-            <!-- 👉 Country -->
-            <VCol cols="12" md="6">
-                <VTextField v-model="country" label="Country" placeholder="United States" />
-            </VCol>
-
-            <!-- 👉 Company -->
-            <VCol cols="12" md="6">
-                <VTextField v-model="company" label="Company" placeholder="Pixinvent" />
-            </VCol>
-
-            <!-- 👉 Remember me -->
-            <VCol cols="12">
-                <VCheckbox v-model="checkbox" label="Remember me" />
-            </VCol>
-
             <VCol cols="12" class="d-flex justify-space-between align-center mb-6">
                 <VBtn type="reset" color="secondary" variant="outlined" @click="goBack">
                     ยกเลิก

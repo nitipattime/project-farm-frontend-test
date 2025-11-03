@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import { computed, ref, shallowRef, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
+import { computed, ref, shallowRef, watch } from 'vue'
+
+import { useFarmStore } from '@/stores/farmStore'
+
 const router = useRouter()
+const farmStore = useFarmStore()
 const dialog = shallowRef(false)
 
 const loaded = ref(false)
@@ -156,6 +160,7 @@ function goToFarmDetail(items: any) {
             <VCardTitle>จำนวนฟาร์มทั้งหมด</VCardTitle>
             <VCardTitle>3</VCardTitle>
             <VCardTitle>ฟาร์ม</VCardTitle>
+            <VCardTitle>{{ farmStore.test }}</VCardTitle>
           </VCol>
 
           <!-- <VDivider :vertical="$vuetify.display.mdAndUp" /> -->
@@ -270,7 +275,7 @@ function goToFarmDetail(items: any) {
         <VCardText class="mt-6">
           <VRow dense>
             <VCol cols="12" md="12" sm="6">
-              <VTextField v-model="farmForm.name" label="ชื่อ" :rules="[requiredRule]" required />
+              <VTextField v-model="farmForm.name" label="ชื่อ" counter="20" :rules="[requiredRule]" required />
             </VCol>
           </VRow>
         </VCardText>
@@ -278,7 +283,8 @@ function goToFarmDetail(items: any) {
         <VCardText>
           <VRow dense>
             <VCol cols="12" md="12" sm="6">
-              <VTextField v-model="farmForm.contact" label="ชื่อผู้ติดต่อ" :rules="[requiredRule]" required />
+              <VTextField v-model="farmForm.contact" label="ชื่อผู้ติดต่อ" counter="20" :rules="[requiredRule]"
+                required />
             </VCol>
           </VRow>
         </VCardText>
@@ -286,8 +292,8 @@ function goToFarmDetail(items: any) {
         <VCardText>
           <VRow dense>
             <VCol cols="12" md="6" sm="6">
-              <VTextField v-model="farmForm.postcode" label="รหัสไปรษณีย์" :rules="[requiredRule, postcodeRule]"
-                required />
+              <VTextField v-model="farmForm.postcode" label="รหัสไปรษณีย์" counter="5"
+                :rules="[requiredRule, postcodeRule]" required />
             </VCol>
             <VCol cols="12" md="6">
               <VSelect v-model="farmForm.province" label="จังหวัด" :items="provinces" :rules="[requiredRule]"

@@ -15,3 +15,11 @@ registerPlugins(app)
 
 // Mount vue app
 app.mount('#app')
+
+// async function bootstrap() {
+//   const app = createApp(App)
+//   await registerPlugins(app) // await ฟอนต์ loader
+//   app.mount('#app')
+// }
+
+// bootstrap()
