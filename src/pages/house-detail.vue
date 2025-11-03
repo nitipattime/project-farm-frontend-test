@@ -1,15 +1,20 @@
 <script setup lang="ts">
-import AnalyticsSalesByCountries from '@/views/dashboard/AnalyticsSalesByCountries.vue'
-import Test from '@/views/dashboard/Test.vue'
 import { computed, ref, shallowRef, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
+import { useRealtime } from '@/composables/useSocket'
+import AnalyticsSalesByCountries from '@/views/dashboard/AnalyticsSalesByCountries.vue'
+import Test from '@/views/dashboard/Test.vue'
+
+const props = defineProps<{ id: string }>()
+
 const router = useRouter()
+const houseId = Number.parseInt(props.id || '0', 10)
+const { scalesData } = useRealtime(houseId)
 
 // import ShipmentStatisticsCard from '@/layouts/components/ShipmentStatisticsCard.vue'
 
 const dialog = shallowRef(false)
-const props = defineProps<{ id: string }>()
 const loaded = ref(false)
 const loading = ref(false)
 
@@ -145,6 +150,7 @@ function submitForm() {
 // go to add house deatil
 function goToAddHouseDetail() {
   console.log(props.id)
+
   // router.push('/farmDetail') // หรือใช้ชื่อ route: router.push({ name: 'about' })
   router.push({ name: 'add-house-detail', params: { id: props.id } }) // หรือใช้ชื่อ route: router.push({ name: 'about' })
 }
