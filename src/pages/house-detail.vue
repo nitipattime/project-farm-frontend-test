@@ -154,9 +154,429 @@ function goToAddHouseDetail() {
   // router.push('/farmDetail') // หรือใช้ชื่อ route: router.push({ name: 'about' })
   router.push({ name: 'add-house-detail', params: { id: props.id } }) // หรือใช้ชื่อ route: router.push({ name: 'about' })
 }
+
+const statistics = [
+  {
+    title: 'Uniform',
+    stats: '245k',
+    unit: 'กรัม',
+    icon: 'ri-pie-chart-2-line',
+    color: 'primary',
+  },
+  {
+    title: 'SD',
+    stats: '12.5k',
+    unit: 'กรัม',
+    icon: 'ri-pie-chart-2-line',
+    color: 'success',
+  },
+  {
+    title: 'CV',
+    stats: '1.54k',
+    unit: 'กรัม',
+    icon: 'ri-pie-chart-2-line',
+    color: 'warning',
+  },
+  {
+    title: 'น้ำหนักโดยเฉลี่ย',
+    stats: '$88k',
+    unit: 'กรัม',
+    icon: 'ri-weight-line',
+    color: 'info',
+  },
+  {
+    title: 'ปริมาณอาหาร',
+    stats: '$88k',
+    unit: 'กรัม',
+    icon: 'ri-restaurant-2-line',
+    color: 'info',
+  },
+  {
+    title: 'อายุเพาะเลี้ยง',
+    stats: '$88k',
+    unit: 'วัน',
+    icon: 'ri-time-line',
+    color: 'info',
+  },
+]
+
+const moreList = [
+  { title: 'Share', value: 'Share' },
+  { title: 'Refresh', value: 'Refresh' },
+  { title: 'Update', value: 'Update' },
+  { title: 'Update', value: 'Update' },
+  { title: 'Update', value: 'Update' },
+]
 </script>
 
 <template>
+  <VRow>
+    <VCol cols="12">
+      <VCard title="">
+        <template #subtitle>
+          <p class="text-body-1 mb-0">
+            <span class="d-inline-block font-weight-medium text-high-emphasis">ชื่อฟาร์ม</span> <span
+              class="text-high-emphasis">😎</span> this month
+          </p>
+          <p class="text-body-1 mb-0">
+            <span class="d-inline-block font-weight-medium text-high-emphasis">ชื่อโรงเรือน</span> <span
+              class="text-high-emphasis">😎</span> this month
+          </p>
+          <p class="text-body-1 mb-0">
+            <span class="d-inline-block font-weight-medium text-high-emphasis">ข้อมูลสายพันธ์</span> <span
+              class="text-high-emphasis">😎</span> this month
+          </p>
+          <p class="text-body-1 mb-0">
+            <span class="d-inline-block font-weight-medium text-high-emphasis">เพศ</span> <span
+              class="text-high-emphasis">😎</span> this month
+          </p>
+        </template>
+
+        <template #append>
+          <MoreBtn :menu-list="moreList" />
+        </template>
+
+        <VCardText class="pt-1">
+          <VRow>
+            <VCol v-for="item in statistics" :key="item.title" cols="12" sm="2" md="2">
+              <div class="d-flex align-center gap-x-3">
+                <VAvatar :color="item.color" rounded size="40" class="elevation-2">
+                  <VIcon size="24" :icon="item.icon" />
+                </VAvatar>
+
+                <div class="d-flex flex-column">
+                  <div class="text-h5">
+                    {{ item.title }}
+                  </div>
+                  <h5 class="text-h5 text-grey-600">
+                    {{ item.stats }} {{ item.unit }}
+                  </h5>
+                </div>
+              </div>
+            </VCol>
+          </VRow>
+        </VCardText>
+      </VCard>
+    </VCol>
+  </VRow>
+
+  <VRow>
+    <VCol cols="12">
+      <VRow>
+        <VCol cols="12" md="2">
+          <VCard class="position-relative">
+            <VCardText>
+              <div class="mb-2">
+                <h5 class="text-h5">
+                  เครื่องชั่งน้ำหนัก & รุ่น
+                </h5>
+                <!--
+                  <div class="text-body-1">
+                  Best seller of the month
+                  </div>
+                -->
+              </div>
+              <h4 class="text-h4 text-primary">
+                $42.8k
+              </h4>
+              <!--
+                <div class="text-body-1 mb-2">
+                78% of target <span class="text-high-emphasis">🚀</span>
+                </div>
+                <VBtn size="small">
+                View Sales
+                </VBtn>
+              -->
+            </VCardText>
+
+            <!-- Trophy -->
+            <VImg :src="trophy" class="trophy" />
+          </VCard>
+        </VCol>
+
+        <VCol cols="12" md="2">
+          <VCard class="position-relative">
+            <VCardText>
+              <div class="mb-2">
+                <h5 class="text-h5">
+                  สูตรอาหาร
+                </h5>
+                <!--
+                  <div class="text-body-1">
+                  Best seller of the month
+                  </div>
+                -->
+              </div>
+              <h4 class="text-h4 text-primary">
+                $42.8k
+              </h4>
+              <!--
+                <div class="text-body-1 mb-2">
+                78% of target <span class="text-high-emphasis">🚀</span>
+                </div>
+                <VBtn size="small">
+                View Sales
+                </VBtn>
+              -->
+            </VCardText>
+
+            <!-- Trophy -->
+            <VImg :src="trophy" class="trophy" />
+          </VCard>
+        </VCol>
+
+        <VCol cols="12" md="2">
+          <VCard class="position-relative">
+            <VCardText>
+              <div class="mb-2">
+                <h5 class="text-h5">
+                  วันที่เริ่มต้น
+                </h5>
+                <!--
+                  <div class="text-body-1">
+                  Best seller of the month
+                  </div>
+                -->
+              </div>
+              <h4 class="text-h4 text-primary">
+                $42.8k
+              </h4>
+              <!--
+                <div class="text-body-1 mb-2">
+                78% of target <span class="text-high-emphasis">🚀</span>
+                </div>
+                <VBtn size="small">
+                View Sales
+                </VBtn>
+              -->
+            </VCardText>
+
+            <!-- Trophy -->
+            <VImg :src="trophy" class="trophy" />
+          </VCard>
+        </VCol>
+
+        <VCol cols="12" md="2">
+          <VCard class="position-relative">
+            <VCardText>
+              <div class="mb-2">
+                <h5 class="text-h5">
+                  วันที่คาดว่าจะสิ้นสุด
+                </h5>
+                <!--
+                  <div class="text-body-1">
+                  Best seller of the month
+                  </div>
+                -->
+              </div>
+              <h4 class="text-h4 text-primary">
+                $42.8k
+              </h4>
+              <!--
+                <div class="text-body-1 mb-2">
+                78% of target <span class="text-high-emphasis">🚀</span>
+                </div>
+                <VBtn size="small">
+                View Sales
+                </VBtn>
+              -->
+            </VCardText>
+
+            <!-- Trophy -->
+            <VImg :src="trophy" class="trophy" />
+          </VCard>
+        </VCol>
+
+        <VCol cols="12" md="2">
+          <VCard class="position-relative">
+            <VCardText>
+              <div class="mb-2">
+                <h5 class="text-h5">
+                  วันที่สิ้นสุดจริง
+                </h5>
+                <!--
+                  <div class="text-body-1">
+                  Best seller of the month
+                  </div>
+                -->
+              </div>
+              <h4 class="text-h4 text-primary">
+                $42.8k
+              </h4>
+              <!--
+                <div class="text-body-1 mb-2">
+                78% of target <span class="text-high-emphasis">🚀</span>
+                </div>
+                <VBtn size="small">
+                View Sales
+                </VBtn>
+              -->
+            </VCardText>
+
+            <!-- Trophy -->
+            <VImg :src="trophy" class="trophy" />
+          </VCard>
+        </VCol>
+        <VCol cols="12" md="2">
+          <VCard class="position-relative">
+            <VCardText>
+              <div class="mb-2">
+                <h5 class="text-h5">
+                  สถานะการทำงาน
+                </h5>
+                <!--
+                  <div class="text-body-1">
+                  Best seller of the month
+                  </div>
+                -->
+              </div>
+              <h4 class="text-h4 text-primary">
+                $42.8k
+              </h4>
+              <!--
+                <div class="text-body-1 mb-2">
+                78% of target <span class="text-high-emphasis">🚀</span>
+                </div>
+              -->
+              <!--
+                <VBtn size="small">
+                View Sales
+                </VBtn>
+              -->
+            </VCardText>
+
+            <!-- Trophy -->
+            <VImg :src="trophy" class="trophy" />
+          </VCard>
+        </VCol>
+      </VRow>
+    </VCol>
+  </VRow>
+
+  <VRow>
+    <VCol cols="12">
+      <VCard class="pa-6">
+        <div class="d-flex justify-end align-center mb-6">
+          <!-- Create Farm Button -->
+          <VBtn color="primary" class="text-white me-2" @click="goToAddHouseDetail(course)">
+            เพิ่มรายละเอียด
+          </VBtn>
+
+          <VBtn color="primary" class="text-white" v-bind="activatorProps" @click="dialog = true">
+            สิ้นสุดการเลี้ยง
+          </VBtn>
+        </div>
+
+        <!-- Course Cards -->
+        <VRow class="g-6">
+          <VCol v-for="(course, i) in paginatedCourses" :key="i" cols="12" sm="6" md="4">
+            <VCard elevation="2" class="pa-4 h-100 border border-solid border-gray-800">
+              <!-- <VImg :src="course.image" height="180" cover class="rounded mb-4" /> -->
+
+              <VCardTitle class="text-h6 mb-1">
+                {{ course.title }}
+              </VCardTitle>
+              <VCardSubtitle class="mb-3">
+                {{ course.category }}
+              </VCardSubtitle>
+
+              <VCardText class="text-body-2 text-truncate mb-5">
+                {{ course.description }}
+              </VCardText>
+
+              <VChip :color="course.status === 'Completed' ? 'success' : 'info'" size="small" label>
+                {{ course.status }}
+              </VChip>
+
+              <!--
+                <VCardActions class="justify-space-between pt-0">
+                <VBtn color="primary" variant="flat" size="small">
+                View
+                </VBtn>
+                <VChip :color="course.status === 'Completed' ? 'success' : 'info'" size="small" label>
+                {{ course.status }}
+                </VChip>
+                </VCardActions>
+              -->
+            </VCard>
+          </VCol>
+        </VRow>
+
+        <!-- No result -->
+        <div v-if="paginatedCourses.length === 0" class="text-center py-10 text-medium-emphasis">
+          No courses found.
+        </div>
+
+        <!-- Pagination -->
+        <!--
+          <div class="mt-6 flex justify-center">
+          <VPagination v-model="page" :length="pageCount" total-visible="5"
+          @update:model-value="onPageChange" />
+          </div>
+        -->
+      </VCard>
+    </VCol>
+  </VRow>
+
+  <div class="pa-4 text-center">
+    <VDialog v-model="dialog" max-width="600">
+      <VCard>
+        <VCardTitle class="text-h6 text-md-h5 text-lg-h4 mt-2">
+          ข้อมูลโรงเรือน
+        </VCardTitle>
+        <VCardText>กรอกข้อมูลโรงเรือนให้ครบถ้วน</VCardText>
+
+        <VDivider />
+
+        <VCardText class="mt-6">
+          <VRow dense>
+            <VCol cols="12" md="12" sm="6">
+              <VTextField v-model="farmForm.name" label="ชื่อโรงเรือน" :rules="[requiredRule]" required />
+            </VCol>
+          </VRow>
+        </VCardText>
+
+        <VCardText>
+          <VRow dense>
+            <VCol cols="12" md="12" sm="6">
+              <VTextField v-model="farmForm.contact" label="ชื่อผู้ติดต่อ" :rules="[requiredRule]" required />
+            </VCol>
+          </VRow>
+        </VCardText>
+
+        <VDivider />
+
+        <VCardText class="mt-3">
+          * กรุณาตรวจสอบความถูกต้องของข้อมูลก่อนทำการบันทึก
+        </VCardText>
+
+        <VCardActions class="my-1 justify-center">
+          <VBtn text="Close" variant="plain" @click="dialog = false" />
+          <VBtn color="primary" text="Save" variant="tonal" @click="submitForm" />
+        </VCardActions>
+      </VCard>
+    </VDialog>
+  </div>
+
+  <VRow>
+    <VCol cols="12" md="9">
+      <!--
+        <VueApexCharts
+        :options="chartOptions"
+        :series="series"
+        :height="80"
+        class="my-1"
+        />
+      -->
+      <!-- <AnalyticsBarCharts /> -->
+      <Test />
+      <!-- <ShipmentStatisticsCard /> -->
+    </VCol>
+    <VCol cols="12" md="3">
+      <AnalyticsSalesByCountries />
+    </VCol>
+  </VRow>
+
   <VRow>
     <VCol cols="12">
       <VCard class="pa-6">
@@ -316,130 +736,6 @@ function goToAddHouseDetail() {
           </VCol>
         </VRow>
       </VCard>
-    </VCol>
-  </VRow>
-
-  <VRow>
-    <VCol cols="12">
-      <VCard class="pa-6">
-        <div class="d-flex justify-end align-center mb-6">
-          <!-- Create Farm Button -->
-          <VBtn color="primary" class="text-white me-2" @click="goToAddHouseDetail(course)">
-            เพิ่มรายละเอียด
-          </VBtn>
-
-          <VBtn color="primary" class="text-white" v-bind="activatorProps" @click="dialog = true">
-            สิ้นสุดการเลี้ยง
-          </VBtn>
-        </div>
-
-        <!-- Course Cards -->
-        <VRow class="g-6">
-          <VCol v-for="(course, i) in paginatedCourses" :key="i" cols="12" sm="6" md="4">
-            <VCard elevation="2" class="pa-4 h-100 border border-solid border-gray-800">
-              <!-- <VImg :src="course.image" height="180" cover class="rounded mb-4" /> -->
-
-              <VCardTitle class="text-h6 mb-1">
-                {{ course.title }}
-              </VCardTitle>
-              <VCardSubtitle class="mb-3">
-                {{ course.category }}
-              </VCardSubtitle>
-
-              <VCardText class="text-body-2 text-truncate mb-5">
-                {{ course.description }}
-              </VCardText>
-
-              <VChip :color="course.status === 'Completed' ? 'success' : 'info'" size="small" label>
-                {{ course.status }}
-              </VChip>
-
-              <!--
-                <VCardActions class="justify-space-between pt-0">
-                <VBtn color="primary" variant="flat" size="small">
-                View
-                </VBtn>
-                <VChip :color="course.status === 'Completed' ? 'success' : 'info'" size="small" label>
-                {{ course.status }}
-                </VChip>
-                </VCardActions>
-              -->
-            </VCard>
-          </VCol>
-        </VRow>
-
-        <!-- No result -->
-        <div v-if="paginatedCourses.length === 0" class="text-center py-10 text-medium-emphasis">
-          No courses found.
-        </div>
-
-        <!-- Pagination -->
-        <!--
-          <div class="mt-6 flex justify-center">
-          <VPagination v-model="page" :length="pageCount" total-visible="5"
-          @update:model-value="onPageChange" />
-          </div>
-        -->
-      </VCard>
-    </VCol>
-  </VRow>
-
-  <div class="pa-4 text-center">
-    <VDialog v-model="dialog" max-width="600">
-      <VCard>
-        <VCardTitle class="text-h6 text-md-h5 text-lg-h4 mt-2">
-          ข้อมูลโรงเรือน
-        </VCardTitle>
-        <VCardText>กรอกข้อมูลโรงเรือนให้ครบถ้วน</VCardText>
-
-        <VDivider />
-
-        <VCardText class="mt-6">
-          <VRow dense>
-            <VCol cols="12" md="12" sm="6">
-              <VTextField v-model="farmForm.name" label="ชื่อโรงเรือน" :rules="[requiredRule]" required />
-            </VCol>
-          </VRow>
-        </VCardText>
-
-        <VCardText>
-          <VRow dense>
-            <VCol cols="12" md="12" sm="6">
-              <VTextField v-model="farmForm.contact" label="ชื่อผู้ติดต่อ" :rules="[requiredRule]" required />
-            </VCol>
-          </VRow>
-        </VCardText>
-
-        <VDivider />
-
-        <VCardText class="mt-3">
-          * กรุณาตรวจสอบความถูกต้องของข้อมูลก่อนทำการบันทึก
-        </VCardText>
-
-        <VCardActions class="my-1 justify-center">
-          <VBtn text="Close" variant="plain" @click="dialog = false" />
-          <VBtn color="primary" text="Save" variant="tonal" @click="submitForm" />
-        </VCardActions>
-      </VCard>
-    </VDialog>
-  </div>
-
-  <VRow>
-    <VCol cols="12" md="9">
-      <!--
-        <VueApexCharts
-        :options="chartOptions"
-        :series="series"
-        :height="80"
-        class="my-1"
-        />
-      -->
-      <!-- <AnalyticsBarCharts /> -->
-      <Test />
-      <!-- <ShipmentStatisticsCard /> -->
-    </VCol>
-    <VCol cols="12" md="3">
-      <AnalyticsSalesByCountries />
     </VCol>
   </VRow>
 

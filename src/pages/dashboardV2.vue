@@ -153,37 +153,98 @@ function goToFarmDetail(items: any) {
 <template>
   <VRow>
     <VCol cols="12">
-      <VCard class="pa-6">
-        <VRow>
-          <!-- Column 1: รูป -->
-          <VCol cols="12" md="4" class="d-flex flex-column justify-center align-center">
-            <VCardTitle>จำนวนฟาร์มทั้งหมด</VCardTitle>
-            <VCardTitle>3</VCardTitle>
-            <VCardTitle>ฟาร์ม</VCardTitle>
-            <VCardTitle>{{ farmStore.test }}</VCardTitle>
-          </VCol>
+      <VRow>
+        <VCol cols="12" md="4">
+          <VCard class="position-relative" md="4">
+            <VCardText>
+              <div class="mb-2">
+                <h5 class="text-h5">
+                  จำนวนฟาร์มทั้งหมด
+                </h5>
+                <!--
+                  <div class="text-body-1">
+                  Best seller of the month
+                  </div>
+                -->
+              </div>
+              <h4 class="text-h4 text-primary">
+                $42.8k
+              </h4>
+              <div class="text-body-1 mb-2">
+                ฟาร์ม
+              </div>
+              <!--
+                <VBtn size="small">
+                View Sales
+                </VBtn>
+              -->
+            </VCardText>
 
-          <!-- <VDivider :vertical="$vuetify.display.mdAndUp" /> -->
-          <VDivider vertical />
+            <!-- Trophy -->
+            <VImg :src="trophy" class="trophy" />
+          </VCard>
+        </VCol>
+        <VCol cols="12" md="4">
+          <VCard class="position-relative" md="4">
+            <VCardText>
+              <div class="mb-2">
+                <h5 class="text-h5">
+                  จำนวนโรงเรือนทั้งหมด
+                </h5>
+                <!--
+                  <div class="text-body-1">
+                  Best seller of the month
+                  </div>
+                -->
+              </div>
+              <h4 class="text-h4 text-primary">
+                $42.8k
+              </h4>
+              <div class="text-body-1 mb-2">
+                โรงเรือน
+              </div>
+              <!--
+                <VBtn size="small">
+                View Sales
+                </VBtn>
+              -->
+            </VCardText>
 
-          <!-- Column 2: ชื่อสินค้า -->
-          <VCol cols="12" md="4" class="d-flex flex-column justify-center align-center">
-            <VCardTitle>จำนวนโรงเรือนทั้งหมด</VCardTitle>
-            <VCardTitle>3</VCardTitle>
-            <VCardTitle>โรงเรือน</VCardTitle>
-          </VCol>
+            <!-- Trophy -->
+            <VImg :src="trophy" class="trophy" />
+          </VCard>
+        </VCol>
+        <VCol cols="12" md="4">
+          <VCard class="position-relative" md="4">
+            <VCardText>
+              <div class="mb-2">
+                <h5 class="text-h5">
+                  จำนวนไก่ทั้งหมด
+                </h5>
+                <!--
+                  <div class="text-body-1">
+                  Best seller of the month
+                  </div>
+                -->
+              </div>
+              <h4 class="text-h4 text-primary">
+                $42.8k
+              </h4>
+              <div class="text-body-1 mb-2">
+                ตัว
+              </div>
+              <!--
+                <VBtn size="small">
+                View Sales
+                </VBtn>
+              -->
+            </VCardText>
 
-          <!-- <VDivider :vertical="$vuetify.display.mdAndUp" /> -->
-          <VDivider vertical />
-
-          <!-- Column 3: ราคา + ปุ่ม -->
-          <VCol cols="12" md="4" class="d-flex flex-column justify-center align-center">
-            <VCardTitle>จำนวนไก่ทั้งหมด</VCardTitle>
-            <VCardTitle>10,000</VCardTitle>
-            <VCardTitle>ตัว</VCardTitle>
-          </VCol>
-        </VRow>
-      </VCard>
+            <!-- Trophy -->
+            <VImg :src="trophy" class="trophy" />
+          </VCard>
+        </VCol>
+      </VRow>
     </VCol>
   </VRow>
 
