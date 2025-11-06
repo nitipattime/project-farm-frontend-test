@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 
-import { computed, ref, shallowRef, watch } from 'vue'
+import { computed, onMounted, ref, shallowRef, watch } from 'vue'
 
 import { useFarmStore } from '@/stores/farmStore'
 
@@ -148,6 +148,44 @@ function goToFarmDetail(items: any) {
   // router.push('/farmDetail') // หรือใช้ชื่อ route: router.push({ name: 'about' })
   router.push({ name: 'farm-detail', params: { id: items.id } }) // หรือใช้ชื่อ route: router.push({ name: 'about' })
 }
+
+async function handleGetCampaignList() {
+  const params = {
+    // offset: offset.value,
+    // limit: limit.value,
+    // search: textSearch.value,
+
+    // sort_by: sortBy.value,
+    // sort_dir: sortDirection.value,
+    // page: totalPages.value,
+  }
+
+  try {
+    await farmStore.fetchFarms(params)
+
+    // totalPages.value = farmStore.pagination.totalPages
+  }
+  catch (err) {
+    console.error(err)
+  }
+}
+
+const initialize = async () => {
+  await handleGetCampaignList()
+
+  // await handleGetAddress()
+  // await farmStore.fetchProvince()
+  // await farmStore.fetchDistrict()
+  // await farmStore.fetchSubDistrict()
+  // getDistricts
+  // getSubDistricts
+  // getAddress
+  // getProvince
+}
+
+onMounted(async () => {
+  await initialize()
+})
 </script>
 
 <template>

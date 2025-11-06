@@ -1,15 +1,15 @@
 // src/services/farmService.ts
 import axios from 'axios'
 
-const API_URL = 'https://jrlheater.com/api'
-const API_KEY = 'a3f8c2d7e9b1f045b2a3c6d7e8f9a0b1'
+const API_URL = import.meta.env.VITE_API_URL
 
 export const getFarms = async (data?: any) => {
+  const accessToken = localStorage.getItem('accessToken')
   try {
     const response = await axios.get(`${API_URL}/farms`, {
       params: data || {},
       headers: {
-        'x-api-key': API_KEY,
+        Authorization: `Bearer ${accessToken}`,
       },
     })
 
