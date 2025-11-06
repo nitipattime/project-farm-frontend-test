@@ -6,10 +6,13 @@ export const loginApi = (payload: { email: string; password: string }) => {
   return axios.post(`${API_URL}/login`, payload)
 }
 
-export const logoutApi = (accessToken: string | null) => {
+export const logoutApi = () => {
+  const accessToken = localStorage.getItem('accessToken')
+  const refreshToken = localStorage.getItem('refreshToken')
+
   return axios.post(
     `${API_URL}/logout`,
-    {},
+    { refreshToken },
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,
