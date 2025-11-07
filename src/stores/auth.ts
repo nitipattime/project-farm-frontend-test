@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-import { loginApi, logoutApi } from '@/services/authService'
+import { loginApi, logoutApi, refreshTokenApi } from '@/services/authService'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -49,9 +49,41 @@ export const useAuthStore = defineStore('auth', {
     async logout() {
       try {
         // เรียก API logout ถ้ามี
-        if (this.refreshToken) await logoutApi(this.accessToken)
+        if (this.refreshToken) await logoutApi()
       } catch (err: any) {
         console.warn('Logout API error:', err.response?.data || err.message)
+      } finally {
+        this.accessToken = null
+        this.refreshToken = null
+
+        localStorage.removeItem('accessToken')
+        localStorage.removeItem('refreshToken')
+      }
+    },
+    async refresh() {
+      try {
+        if (this.refreshToken) {
+          const res = await refreshTokenApi()
+          const data = res.data.data
+
+          this.accessToken = data.accessToken
+          this.refreshToken = data.refreshToken
+
+          // this.user = data.user
+          console.log('accessToken:')
+          console.log(data.accessToken)
+          console.log('refreshToken:')
+          console.log(data.refreshToken)
+
+          localStorage.setItem('accessToken', data.accessToken)
+          localStorage.setItem('refreshToken', data.refreshToken)
+
+          // localStorage.setItem('user', JSON.stringify(data.user))
+
+          return true
+        }
+      } catch (err: any) {
+        console.warn('Refresh API error:', err.response?.data || err.message)
       } finally {
         this.accessToken = null
         this.refreshToken = null

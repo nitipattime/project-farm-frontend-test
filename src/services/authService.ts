@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from '@/plugins/axios'
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -12,6 +12,21 @@ export const logoutApi = () => {
 
   return axios.post(
     `${API_URL}/logout`,
+    { refreshToken },
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    },
+  )
+}
+
+export const refreshTokenApi = () => {
+  const accessToken = localStorage.getItem('accessToken')
+  const refreshToken = localStorage.getItem('refreshToken')
+
+  return axios.post(
+    `${API_URL}/refresh`,
     { refreshToken },
     {
       headers: {

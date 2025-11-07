@@ -65,7 +65,7 @@ const courses = ref([
   { id: 9, title: 'Intro to Physics', category: 'Science' },
 ])
 
-const pageCount = computed(() => Math.ceil(courses.value.length / perPage))
+const pageCount = computed(() => Math.ceil(farmStore.pagination.page / perPage))
 
 const paginatedCourses = computed(() => {
   const start = (page.value - 1) * perPage
@@ -153,11 +153,11 @@ async function handleGetCampaignList() {
   const params = {
     // offset: offset.value,
     // limit: limit.value,
-    // search: textSearch.value,
+    search: searchQuery.value,
 
     // sort_by: sortBy.value,
     // sort_dir: sortDirection.value,
-    // page: totalPages.value,
+    page: farmStore.pagination.page,
   }
 
   try {
@@ -166,7 +166,9 @@ async function handleGetCampaignList() {
     // totalPages.value = farmStore.pagination.totalPages
   }
   catch (err) {
-    console.error(err)
+    const error = err as any
+
+    console.error(error)
   }
 }
 
@@ -186,6 +188,26 @@ const initialize = async () => {
 onMounted(async () => {
   await initialize()
 })
+
+const onSearch = async () => {
+  console.log(searchQuery.value)
+
+  // ถ้าไม่มีคำค้นหา ก็ไม่ต้องยิง API
+  // if (!searchQuery.value.trim())
+  //   return
+
+  loading.value = true
+
+  try {
+    await handleGetCampaignList()
+  }
+  catch (error) {
+    console.error('Search error:', error)
+  }
+  finally {
+    loading.value = false
+  }
+}
 </script>
 
 <template>
@@ -206,7 +228,7 @@ onMounted(async () => {
                 -->
               </div>
               <h4 class="text-h4 text-primary">
-                $42.8k
+                {{ farmStore.summary.totalFarms }}
               </h4>
               <div class="text-body-1 mb-2">
                 ฟาร์ม
@@ -236,7 +258,7 @@ onMounted(async () => {
                 -->
               </div>
               <h4 class="text-h4 text-primary">
-                $42.8k
+                {{ farmStore.summary.totalHouses }}
               </h4>
               <div class="text-body-1 mb-2">
                 โรงเรือน
@@ -266,7 +288,7 @@ onMounted(async () => {
                 -->
               </div>
               <h4 class="text-h4 text-primary">
-                $42.8k
+                {{ farmStore.summary.totalChicken }}
               </h4>
               <div class="text-body-1 mb-2">
                 ตัว
@@ -310,8 +332,9 @@ onMounted(async () => {
         <div class="d-flex justify-space-between align-center mb-6">
           <!-- Search Field -->
           <VTextField v-model="searchQuery" placeholder="ค้นหา" persistent-placeholder :loading="loading"
-            append-inner-icon="mdi-magnify" clearable hide-details variant="outlined" density="comfortable"
-            style="max-width: 300px" @click:append-inner="onSearch" />
+            append-inner-icon="ri-search-line" clearable hide-details variant="outlined" density="comfortable"
+            style="max-width: 300px" @keyup.enter="onSearch" @click:append-inner="onSearch" @click:clear="onSearch" />
+          <!-- @click:append-inner="onSearch" -->
 
           <!-- Create Farm Button -->
           <VBtn color="primary" class="text-white" v-bind="activatorProps" @click="dialog = true">
@@ -320,42 +343,86 @@ onMounted(async () => {
         </div>
 
         <!-- Course Cards -->
-        <VRow class="g-6">
+        <!--
+          <VRow class="g-6">
           <VCol v-for="(course, i) in paginatedCourses" :key="i" cols="12" sm="6" md="4">
+          <VCard elevation="2" class="pa-4 h-100 border border-solid border-gray-800">
+
+          <VCardTitle class="text-h6 mb-1">
+          {{ course.title }}
+          </VCardTitle>
+          <VCardSubtitle class="mb-3">
+          {{ course.category }}
+          </VCardSubtitle>
+
+          <VCardText class="text-body-2 text-truncate mb-5">
+          {{ course.description }}
+          </VCardText>
+
+          <VCardActions class="justify-space-between pt-0">
+          <VBtn color="primary" variant="flat" size="small" @click="goToFarmDetail(course)">
+          View
+          </VBtn>
+          <VChip :color="course.status === 'Completed' ? 'success' : 'info'" size="small" label>
+          {{ course.status }}
+          </VChip>
+          </VCardActions>
+          </VCard>
+          </VCol>
+          </VRow>
+        -->
+        <VRow class="g-6">
+          <VCol v-for="(farm, i) in farmStore.farmlist" :key="i" cols="12" sm="6" md="4">
             <VCard elevation="2" class="pa-4 h-100 border border-solid border-gray-800">
-              <!-- <VImg :src="course.image" height="180" cover class="rounded mb-4" /> -->
-
-              <VCardTitle class="text-h6 mb-1">
-                {{ course.title }}
+              <VCardTitle class="text-h6">
+                ชื่อฟาร์ม : {{ farm.farm_name }}
               </VCardTitle>
-              <VCardSubtitle class="mb-3">
-                {{ course.category }}
-              </VCardSubtitle>
+              <VCardTitle class="text-h6">
+                จำนวนโรงเรือน : {{ farm.house_count }}
+              </VCardTitle>
+              <VCardTitle class="text-h6">
+                จังหวัด : {{ farm.province }}
+              </VCardTitle>
+              <VCardTitle class="text-h6">
+                ชื่อผู้ดูแล : {{ farm.contact_name }}
+              </VCardTitle>
+              <!--
+                <VCardSubtitle class="mb-3">
+                จำนวนโรงเรือน : {{ farm.house_count }} โรงเรือน
+                </VCardSubtitle>
 
-              <VCardText class="text-body-2 text-truncate mb-5">
-                {{ course.description }}
-              </VCardText>
+                <VCardText class="text-body-2 text-truncate mb-5">
+                จังหวัด : {{ farm.province }}
+                </VCardText>
+
+                <VCardText class="text-body-2 text-truncate mb-5">
+                ชื่อผู้ดูแล : {{ farm.contact_name }}
+                </VCardText>
+              -->
 
               <VCardActions class="justify-space-between pt-0">
-                <VBtn color="primary" variant="flat" size="small" @click="goToFarmDetail(course)">
+                <VBtn color="primary" variant="flat" size="small" @click="goToFarmDetail(farm)">
                   View
                 </VBtn>
-                <VChip :color="course.status === 'Completed' ? 'success' : 'info'" size="small" label>
-                  {{ course.status }}
-                </VChip>
+                <!--
+                  <VChip :color="farm.status === 'Completed' ? 'success' : 'info'" size="small" label>
+                  {{ farm.status }}
+                  </VChip>
+                -->
               </VCardActions>
             </VCard>
           </VCol>
         </VRow>
 
         <!-- No result -->
-        <div v-if="paginatedCourses.length === 0" class="text-center py-10 text-medium-emphasis">
+        <div v-if="farmStore.pagination.totalPages === 0" class="text-center py-10 text-medium-emphasis">
           No courses found.
         </div>
 
         <!-- Pagination -->
         <div class="mt-6 flex justify-center">
-          <VPagination v-model="page" :length="pageCount" total-visible="5" @update:model-value="onPageChange" />
+          <VPagination v-model="farmStore.pagination.page" :length="pageCount" total-visible="5"
+            @update:model-value="onPageChange" />
         </div>
       </VCard>
     </VCol>
@@ -431,258 +498,6 @@ onMounted(async () => {
         </VCardActions>
       </VCard>
     </VDialog>
-  </div>
-
-  <VRow dense>
-    <VCol cols="12" md="4" class="d-flex flex-column justify-center align-center">
-      <VCard>
-        ...
-      </VCard>
-    </VCol>
-
-    <VDivider :vertical="$vuetify.display.mdAndUp" />
-
-    <VCol cols="12" md="4" class="d-flex flex-column justify-center align-center">
-      <VCard>
-        ...
-      </VCard>
-    </VCol>
-
-    <VDivider :vertical="$vuetify.display.mdAndUp" />
-
-    <VCol cols="12" md="4" class="d-flex flex-column justify-center align-center">
-      <VCard>
-        ...
-      </VCard>
-    </VCol>
-  </VRow>
-
-  <VRow no-gutters>
-    <!-- Column 1 -->
-    <VCol cols="12" md="4" class="d-flex flex-column justify-center align-center">
-      <VCardTitle>จำนวนโรงเรือนทั้งหมด</VCardTitle>
-      <VCardTitle>3</VCardTitle>
-      <VCardTitle>โรงเรือน</VCardTitle>
-    </VCol>
-
-    <!-- Divider -->
-    <VCol cols="auto" class="d-none d-md-flex justify-center">
-      <VDivider vertical />
-    </VCol>
-
-    <!-- Column 2 -->
-    <VCol cols="12" md="4" class="d-flex flex-column justify-center align-center">
-      <VCardTitle>จำนวนโรงเรือนทั้งหมด</VCardTitle>
-      <VCardTitle>3</VCardTitle>
-      <VCardTitle>โรงเรือน</VCardTitle>
-    </VCol>
-
-    <!-- Divider -->
-    <VCol cols="auto" class="d-none d-md-flex justify-center">
-      <VDivider vertical />
-    </VCol>
-
-    <!-- Column 3 -->
-    <VCol cols="12" md="4" class="d-flex flex-column justify-center align-center">
-      <VCardTitle>จำนวนโรงเรือนทั้งหมด</VCardTitle>
-      <VCardTitle>3</VCardTitle>
-      <VCardTitle>โรงเรือน</VCardTitle>
-    </VCol>
-  </VRow>
-
-  <VRow>
-    <VCol cols="12">
-      <VCard>
-        <VCardText>
-          <VTextField base-color="black" :loading="loading" append-inner-icon="mdi-magnify" density="compact"
-            label="Search" variant="solo" hide-details single-line @click:append-inner="onClick" />
-          <VTextField class="black-label" :loading="loading" append-inner-icon="mdi-magnify" density="compact"
-            label="Search templates" variant="solo" hide-details single-line @click:append-inner="onClick" />
-          <VTextField color="on-surface" class="text-black" :loading="loading" append-inner-icon="mdi-magnify"
-            density="compact" label="Search templates" hide-details single-line @click:append-inner="onClick" />
-          <VTextField prepend-inner-icon="ri-user-line" label="First Name" placeholder="John" />
-
-          <VTextField id="firstName" placeholder="John" persistent-placeholder :loading="loading"
-            append-inner-icon="mdi-magnify" @click:append-inner="onClick" />
-        </VCardText>
-      </VCard>
-    </VCol>
-  </VRow>
-
-  <VRow>
-    <VCol cols="12">
-      <VCard>
-        <VCardTitle class="text-h5 font-weight-bold mb-2">
-          My Courses
-        </VCardTitle>
-        <VCardSubtitle class="mb-6">
-          Here’s a list of your enrolled courses
-        </VCardSubtitle>
-
-        <!-- Dropdown Filter -->
-        <div class="d-flex justify-space-between align-center mb-4">
-          <VSelect v-model="selectedFilter" :items="filters" density="compact" hide-details variant="outlined"
-            style="max-width: 180px" />
-        </div>
-
-        <!-- Courses Grid -->
-        <VRow>
-          <VCol v-for="(course, i) in filteredCourses" :key="i" cols="12" sm="6" md="4">
-            <VCard elevation="1" class="h-100">
-              <VImg :src="course.image" height="160" cover />
-
-              <VCardItem>
-                <VCardTitle>{{ course.title }}</VCardTitle>
-                <VCardSubtitle>{{ course.category }}</VCardSubtitle>
-              </VCardItem>
-
-              <VCardText>
-                <div class="text-body-2 text-truncate">
-                  {{ course.description }}
-                </div>
-              </VCardText>
-
-              <VCardActions class="justify-space-between">
-                <VBtn color="primary" variant="flat" size="small">
-                  View
-                </VBtn>
-                <VChip :color="course.status === 'Completed' ? 'success' : 'info'" size="small" label>
-                  {{ course.status }}
-                </VChip>
-              </VCardActions>
-            </VCard>
-          </VCol>
-        </VRow>
-      </VCard>
-    </VCol>
-  </VRow>
-
-  <VRow>
-    <VCol cols="12">
-      <VCard class="pa-6">
-        <!-- Title -->
-        <VCardTitle class="text-h5 font-weight-bold mb-2">
-          My Courses
-        </VCardTitle>
-        <VCardSubtitle class="mb-6">
-          Here’s a list of your enrolled courses
-        </VCardSubtitle>
-
-        <!-- Filter Dropdown -->
-        <div class="d-flex justify-space-between align-center mb-6">
-          <VSelect v-model="selectedFilter" :items="filters" density="comfortable" hide-details variant="outlined"
-            style="max-width: 200px" />
-        </div>
-
-        <!-- Course Cards -->
-        <VRow class="g-6">
-          <!-- g-6 = ช่องว่างระหว่างคอลัมน์ -->
-          <VCol v-for="(course, i) in filteredCourses" :key="i" cols="12" sm="6" md="4">
-            <VCard elevation="2" class="pa-4 h-100">
-              <VImg :src="course.image" height="180" cover class="rounded mb-4" />
-
-              <VCardTitle class="text-h6 mb-1">
-                {{ course.title }}
-              </VCardTitle>
-              <VCardSubtitle class="mb-3">
-                {{ course.category }}
-              </VCardSubtitle>
-
-              <VCardText class="text-body-2 text-truncate mb-5">
-                {{ course.description }}
-              </VCardText>
-
-              <VCardActions class="justify-space-between pt-0">
-                <VBtn color="primary" variant="flat" size="small">
-                  View
-                </VBtn>
-                <VChip :color="course.status === 'Completed' ? 'success' : 'info'" size="small" label>
-                  {{ course.status }}
-                </VChip>
-              </VCardActions>
-            </VCard>
-          </VCol>
-        </VRow>
-      </VCard>
-    </VCol>
-  </VRow>
-
-  <VRow>
-    <VCol cols="12">
-      <VCard class="pa-6">
-        <!-- Title -->
-        <VCardTitle class="text-h5 font-weight-bold mb-2">
-          My Courses
-        </VCardTitle>
-        <VCardSubtitle class="mb-6">
-          Here’s a list of your enrolled courses
-        </VCardSubtitle>
-
-        <!-- Search Field -->
-        <div class="d-flex justify-space-between align-center mb-6">
-          <VTextField id="firstName" placeholder="John" persistent-placeholder :loading="loading"
-            append-inner-icon="mdi-magnify" @click:append-inner="onClick" />
-        </div>
-
-        <!-- Course Cards -->
-        <VRow class="g-6">
-          <VCol v-for="(course, i) in filteredCourses" :key="i" cols="12" sm="6" md="4">
-            <VCard elevation="2" class="pa-4 h-100">
-              <VImg :src="course.image" height="180" cover class="rounded mb-4" />
-
-              <VCardTitle class="text-h6 mb-1">
-                {{ course.title }}
-              </VCardTitle>
-              <VCardSubtitle class="mb-3">
-                {{ course.category }}
-              </VCardSubtitle>
-
-              <VCardText class="text-body-2 text-truncate mb-5">
-                {{ course.description }}
-              </VCardText>
-
-              <VCardActions class="justify-space-between pt-0">
-                <VBtn color="primary" variant="flat" size="small">
-                  View
-                </VBtn>
-                <VChip :color="course.status === 'Completed' ? 'success' : 'info'" size="small" label>
-                  {{ course.status }}
-                </VChip>
-              </VCardActions>
-            </VCard>
-          </VCol>
-        </VRow>
-
-        <!-- No result -->
-        <div v-if="filteredCourses.length === 0" class="text-center py-10 text-medium-emphasis">
-          No courses found.
-        </div>
-        <!-- Pagination -->
-        <div class="mt-6 flex justify-center">
-          <VPagination v-model="page" :length="pageCount" total-visible="5" @update:model-value="onPageChange" />
-        </div>
-      </VCard>
-    </VCol>
-  </VRow>
-
-  <div class="pa-6">
-    <!-- Search field -->
-    <VTextField v-model="searchQuery" placeholder="Search courses" persistent-placeholder
-      append-inner-icon="mdi-magnify" clearable hide-details variant="outlined" density="comfortable"
-      style="max-width: 300px" @click:append-inner="fetchCourses" />
-
-    <!-- Content list -->
-    <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-      <VCard v-for="item in paginatedCourses" :key="item.id">
-        <VCardTitle>{{ item.title }}</VCardTitle>
-        <VCardSubtitle>{{ item.category }}</VCardSubtitle>
-      </VCard>
-    </div>
-
-    <!-- Pagination -->
-    <div class="mt-6 flex justify-center">
-      <VPagination v-model="page" :length="pageCount" total-visible="5" @update:model-value="onPageChange" />
-    </div>
   </div>
 </template>
 

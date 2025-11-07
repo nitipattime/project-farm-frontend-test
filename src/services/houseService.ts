@@ -1,40 +1,39 @@
 // src/services/farmService.ts
-import axios from 'axios'
-const API_URL = 'https://jrlheater.com/api'
-const API_KEY = 'a3f8c2d7e9b1f045b2a3c6d7e8f9a0b1'
+import axios from '@/plugins/axios'
+
+const API_URL = import.meta.env.VITE_API_URL
 
 export const getHouse = async (data?: any) => {
+  const accessToken = localStorage.getItem('accessToken')
   try {
     const response = await axios.get(`${API_URL}/houses`, {
       params: data || {},
       headers: {
-        'x-api-key': API_KEY,
+        Authorization: `Bearer ${accessToken}`,
       },
     })
 
-    if (response.status === 200 || response.status === 201) {
-      return response.data
-    } else {
-      return null
-    }
+    if (response.status === 200 || response.status === 201) return response.data
+    else return null
   } catch (error: any) {
+    console.log(error)
     throw error
   }
 }
 
 export const createHouse = async (data: any) => {
+  const accessToken = localStorage.getItem('accessToken')
   try {
     const response = await axios.post(`${API_URL}/houses`, data || {}, {
       headers: {
-        'x-api-key': API_KEY,
+        Authorization: `Bearer ${accessToken}`,
       },
     })
-    if (response.status === 200 || response.status === 201) {
-      return response.data
-    } else {
-      return null
-    }
+
+    if (response.status === 200 || response.status === 201) return response.data
+    else return null
   } catch (error: any) {
+    console.log(error)
     throw error
   }
 }
@@ -46,11 +45,9 @@ export const createHouseDetail = async (data: any, houseID: any) => {
         'x-api-key': API_KEY,
       },
     })
-    if (response.status === 200 || response.status === 201) {
-      return response.data
-    } else {
-      return null
-    }
+
+    if (response.status === 200 || response.status === 201) return response.data
+    else return null
   } catch (error: any) {
     throw error
   }
@@ -64,11 +61,8 @@ export const getHouseSummary = async (data: any) => {
       },
     })
 
-    if (response.status === 200 || response.status === 201) {
-      return response.data
-    } else {
-      return null
-    }
+    if (response.status === 200 || response.status === 201) return response.data
+    else return null
   } catch (error: any) {
     throw error
   }
@@ -82,11 +76,8 @@ export const getHouseCVHistory = async (data: any) => {
       },
     })
 
-    if (response.status === 200 || response.status === 201) {
-      return response.data
-    } else {
-      return null
-    }
+    if (response.status === 200 || response.status === 201) return response.data
+    else return null
   } catch (error: any) {
     throw error
   }
@@ -100,11 +91,9 @@ export const getHouseWeekly = async (data: any) => {
         'x-api-key': API_KEY,
       },
     })
-    if (response.status === 200 || response.status === 201) {
-      return response.data
-    } else {
-      return null
-    }
+
+    if (response.status === 200 || response.status === 201) return response.data
+    else return null
   } catch (error: any) {
     throw error
   }
@@ -118,11 +107,8 @@ export const getMachineAvailable = async () => {
       },
     })
 
-    if (response.status === 200 || response.status === 201) {
-      return response.data
-    } else {
-      return null
-    }
+    if (response.status === 200 || response.status === 201) return response.data
+    else return null
   } catch (error: any) {
     throw error
   }
@@ -136,11 +122,8 @@ export const getMachineSilos = async () => {
       },
     })
 
-    if (response.status === 200 || response.status === 201) {
-      return response.data
-    } else {
-      return null
-    }
+    if (response.status === 200 || response.status === 201) return response.data
+    else return null
   } catch (error: any) {
     throw error
   }
@@ -149,6 +132,7 @@ export const getMachineSilos = async () => {
 export const markHouseFinish = async (data: any) => {
   try {
     console.log(data)
+
     const response = await axios.put(
       `${API_URL}/houses/${data}/finish`,
       {},
@@ -159,11 +143,8 @@ export const markHouseFinish = async (data: any) => {
       },
     )
 
-    if (response.status === 200 || response.status === 201) {
-      return response.data
-    } else {
-      return null
-    }
+    if (response.status === 200 || response.status === 201) return response.data
+    else return null
   } catch (error: any) {
     throw error
   }

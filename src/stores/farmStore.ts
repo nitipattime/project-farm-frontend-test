@@ -50,6 +50,7 @@ export const useFarmStore = defineStore('farm', {
         }
         this.summary = res.data.summary
       } catch (err: any) {
+        return err
         this.error = err.message
       } finally {
         this.loading = false
