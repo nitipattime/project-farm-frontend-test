@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { computed, ref, shallowRef, watch } from 'vue'
+import { computed, onMounted, ref, shallowRef, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { useRealtime } from '@/composables/useSocket'
+import { useHouseStore } from '@/stores/houseStore'
 import AnalyticsSalesByCountries from '@/views/dashboard/AnalyticsSalesByCountries.vue'
 import Test from '@/views/dashboard/Test.vue'
 
 const props = defineProps<{ id: string }>()
 
+const houseStore = useHouseStore()
 const router = useRouter()
 const houseId = Number.parseInt(props.id || '0', 10)
 const { scalesData } = useRealtime(houseId)
@@ -62,13 +64,14 @@ const perPage = 6
 const courses = ref([
   { id: 1, title: 'Vue Basics', category: 'Frontend', status: 'Ongoing' },
   { id: 2, title: 'Golang Clean Architecture', category: 'Backend', status: 'Completed' },
-  { id: 3, title: 'Docker for Developers', category: 'DevOps' },
-  { id: 4, title: 'Advanced Vuetify', category: 'Frontend' },
-  { id: 5, title: 'REST & gRPC APIs', category: 'Backend' },
-  { id: 6, title: 'SQL Performance Tuning', category: 'Database' },
-  { id: 7, title: 'CI/CD with GitLab', category: 'DevOps' },
-  { id: 8, title: 'Tailwind UI Design', category: 'Frontend' },
-  { id: 9, title: 'Intro to Physics', category: 'Science' },
+
+  // { id: 3, title: 'Docker for Developers', category: 'DevOps' },
+  // { id: 4, title: 'Advanced Vuetify', category: 'Frontend' },
+  // { id: 5, title: 'REST & gRPC APIs', category: 'Backend' },
+  // { id: 6, title: 'SQL Performance Tuning', category: 'Database' },
+  // { id: 7, title: 'CI/CD with GitLab', category: 'DevOps' },
+  // { id: 8, title: 'Tailwind UI Design', category: 'Frontend' },
+  // { id: 9, title: 'Intro to Physics', category: 'Science' },
 ])
 
 const pageCount = computed(() => Math.ceil(courses.value.length / perPage))
@@ -99,10 +102,10 @@ const filteredCourses = computed(() => {
 const farmForm = ref({
   name: '',
   contact: '',
-  postcode: '',
-  province: '',
-  district: '',
-  subdistrict: '',
+  zip_code: '',
+  province_id: 0,
+  district_id: 0,
+  subdistrict_id: 0,
 })
 
 // rules
@@ -110,18 +113,18 @@ const requiredRule = value => !!value || 'กรุณากรอกข้อ�
 const postcodeRule = value => /^\d{5}$/.test(value) || 'รหัสไปรษณีย์ต้องมี 5 หลัก'
 
 // ข้อมูล dropdown
-const provinces = ['กรุงเทพมหานคร', 'เชียงใหม่', 'ชลบุรี'] // ตัวอย่าง
+// const provinces = ['กรุงเทพมหานคร', 'เชียงใหม่', 'ชลบุรี'] // ตัวอย่าง
 
-const districts = {
-  กรุงเทพมหานคร: ['เขตพระนคร', 'เขตดุสิต'],
-  เชียงใหม่: ['อำเภอเมืองเชียงใหม่', 'อำเภอสันกำแพง'],
-  ชลบุรี: ['อำเภอเมืองชลบุรี', 'อำเภอบางละมุง'],
-}
+// const districts = {
+//   กรุงเทพมหานคร: ['เขตพระนคร', 'เขตดุสิต'],
+//   เชียงใหม่: ['อำเภอเมืองเชียงใหม่', 'อำเภอสันกำแพง'],
+//   ชลบุรี: ['อำเภอเมืองชลบุรี', 'อำเภอบางละมุง'],
+// }
 
-const subdistricts = {
-  เขตพระนคร: ['พระบรมมหาราชวัง', 'วังบูรพา'],
-  เขตดุสิต: ['ดุสิต', 'วชิรพยาบาล'],
-}
+// const subdistricts = {
+//   เขตพระนคร: ['พระบรมมหาราชวัง', 'วังบูรพา'],
+//   เขตดุสิต: ['ดุสิต', 'วชิรพยาบาล'],
+// }
 
 // watch province/district เพื่อ update dropdown
 const selectedDistricts = ref([])
@@ -155,50 +158,50 @@ function goToAddHouseDetail() {
   router.push({ name: 'add-house-detail', params: { id: props.id } }) // หรือใช้ชื่อ route: router.push({ name: 'about' })
 }
 
-const statistics = [
+const statistics = computed(() => [
   {
     title: 'Uniform',
-    stats: '245k',
+    stats: houseStore.houseSummary.uniform ? houseStore.houseSummary.uniform : '-',
     unit: 'กรัม',
     icon: 'ri-pie-chart-2-line',
     color: 'primary',
   },
   {
     title: 'SD',
-    stats: '12.5k',
+    stats: houseStore.houseSummary.sd ? houseStore.houseSummary.sd : '-',
     unit: 'กรัม',
     icon: 'ri-pie-chart-2-line',
     color: 'success',
   },
   {
     title: 'CV',
-    stats: '1.54k',
+    stats: houseStore.houseSummary.cv ? houseStore.houseSummary.cv : '-',
     unit: 'กรัม',
     icon: 'ri-pie-chart-2-line',
     color: 'warning',
   },
   {
     title: 'น้ำหนักโดยเฉลี่ย',
-    stats: '$88k',
+    stats: houseStore.houseSummary.avg_weight ? houseStore.houseSummary.avg_weight : '-',
     unit: 'กรัม',
     icon: 'ri-weight-line',
     color: 'info',
   },
   {
     title: 'ปริมาณอาหาร',
-    stats: '$88k',
+    stats: houseStore.houseSummary.weight_target ? houseStore.houseSummary.weight_target : '-',
     unit: 'กรัม',
     icon: 'ri-restaurant-2-line',
     color: 'info',
   },
   {
     title: 'อายุเพาะเลี้ยง',
-    stats: '$88k',
+    stats: houseStore.houseSummary.duration_days ? houseStore.houseSummary.duration_days : '-',
     unit: 'วัน',
     icon: 'ri-time-line',
     color: 'info',
   },
-]
+])
 
 const moreList = [
   { title: 'Share', value: 'Share' },
@@ -207,6 +210,62 @@ const moreList = [
   { title: 'Update', value: 'Update' },
   { title: 'Update', value: 'Update' },
 ]
+
+async function handleGetHouseSummary() {
+  const params = {
+    houseID: houseId,
+  }
+
+  try {
+    await houseStore.fetchHouseSummary(params)
+  }
+  catch (err) {
+    console.error(err)
+  }
+}
+
+async function handleGetHouseWeekly() {
+  const params = {
+    houseID: houseId,
+  }
+
+  try {
+    await houseStore.fetchHouseWeekly(params)
+  }
+  catch (err) {
+    console.error(err)
+  }
+}
+
+const labels = ref<string[]>([])
+const chartData = ref<number[]>([])
+async function handleGetHouseCVHistory() {
+  const params = {
+    houseID: houseId,
+  }
+
+  try {
+    await houseStore.fetchHouseCVHistory(params)
+
+    const dataFromBackend = houseStore.houseCVHistory
+
+    labels.value = dataFromBackend.map(item => `${item.year}-${item.month}`)
+    chartData.value = dataFromBackend.map(item => Number(item.cv.toFixed(3)))
+  }
+  catch (err) {
+    console.error(err)
+  }
+}
+
+const initialize = async () => {
+  await handleGetHouseSummary()
+  await handleGetHouseWeekly()
+  await handleGetHouseCVHistory()
+}
+
+onMounted(async () => {
+  await initialize()
+})
 </script>
 
 <template>
@@ -215,20 +274,20 @@ const moreList = [
       <VCard title="">
         <template #subtitle>
           <p class="text-body-1 mb-0">
-            <span class="d-inline-block font-weight-medium text-high-emphasis">ชื่อฟาร์ม</span> <span
-              class="text-high-emphasis">😎</span> this month
+            <span class="d-inline-block font-weight-medium text-high-emphasis">ชื่อฟาร์ม</span> {{
+              houseStore.houseSummary.farm_name ? houseStore.houseSummary.farm_name : '-' }}
           </p>
           <p class="text-body-1 mb-0">
-            <span class="d-inline-block font-weight-medium text-high-emphasis">ชื่อโรงเรือน</span> <span
-              class="text-high-emphasis">😎</span> this month
+            <span class="d-inline-block font-weight-medium text-high-emphasis">ชื่อโรงเรือน</span> {{
+              houseStore.houseSummary.house_name ? houseStore.houseSummary.house_name : '-' }}
           </p>
           <p class="text-body-1 mb-0">
-            <span class="d-inline-block font-weight-medium text-high-emphasis">ข้อมูลสายพันธ์</span> <span
-              class="text-high-emphasis">😎</span> this month
+            <span class="d-inline-block font-weight-medium text-high-emphasis">ข้อมูลสายพันธ์</span> {{
+              houseStore.houseSummary.breed ? houseStore.houseSummary.breed : '-' }}
           </p>
           <p class="text-body-1 mb-0">
-            <span class="d-inline-block font-weight-medium text-high-emphasis">เพศ</span> <span
-              class="text-high-emphasis">😎</span> this month
+            <span class="d-inline-block font-weight-medium text-high-emphasis">เพศ</span> {{ houseStore.houseSummary.sex
+              ? houseStore.houseSummary.sex : '-' }}
           </p>
         </template>
 
@@ -277,7 +336,13 @@ const moreList = [
                 -->
               </div>
               <h4 class="text-h4 text-primary">
-                $42.8k
+                <div v-if="houseStore.houseSummary.machines.length">
+                  <div v-for="machine in houseStore.houseSummary.machines" :key="machine.mac">
+                    <div class="text-blue-600 text-md">
+                      {{ machine.mac }} {{ machine.sn }}
+                    </div>
+                  </div>
+                </div>
               </h4>
               <!--
                 <div class="text-body-1 mb-2">
@@ -308,7 +373,7 @@ const moreList = [
                 -->
               </div>
               <h4 class="text-h4 text-primary">
-                $42.8k
+                {{ houseStore.houseSummary.food ? houseStore.houseSummary.food : '-' }}
               </h4>
               <!--
                 <div class="text-body-1 mb-2">
@@ -339,7 +404,7 @@ const moreList = [
                 -->
               </div>
               <h4 class="text-h4 text-primary">
-                $42.8k
+                {{ houseStore.houseSummary.start_date ? houseStore.houseSummary.start_date.split("T")[0] : '-' }}
               </h4>
               <!--
                 <div class="text-body-1 mb-2">
@@ -370,7 +435,7 @@ const moreList = [
                 -->
               </div>
               <h4 class="text-h4 text-primary">
-                $42.8k
+                {{ houseStore.houseSummary.end_date ? houseStore.houseSummary.end_date.split("T")[0] : '-' }}
               </h4>
               <!--
                 <div class="text-body-1 mb-2">
@@ -401,7 +466,7 @@ const moreList = [
                 -->
               </div>
               <h4 class="text-h4 text-primary">
-                $42.8k
+                {{ houseStore.houseSummary.end_date ? houseStore.houseSummary.end_date.split("T")[0] : '-' }}
               </h4>
               <!--
                 <div class="text-body-1 mb-2">
@@ -431,7 +496,7 @@ const moreList = [
                 -->
               </div>
               <h4 class="text-h4 text-primary">
-                $42.8k
+                {{ houseStore.houseSummary.status ? houseStore.houseSummary.status : '-' }}
               </h4>
               <!--
                 <div class="text-body-1 mb-2">
@@ -469,7 +534,7 @@ const moreList = [
 
         <!-- Course Cards -->
         <VRow class="g-6">
-          <VCol v-for="(course, i) in paginatedCourses" :key="i" cols="12" sm="6" md="4">
+          <VCol v-for="(course, i) in paginatedCourses" :key="i" cols="12" sm="6" md="6">
             <VCard elevation="2" class="pa-4 h-100 border border-solid border-gray-800">
               <!-- <VImg :src="course.image" height="180" cover class="rounded mb-4" /> -->
 
@@ -576,420 +641,6 @@ const moreList = [
       <AnalyticsSalesByCountries />
     </VCol>
   </VRow>
-
-  <VRow>
-    <VCol cols="12">
-      <VCard class="pa-6">
-        <VRow class="d-flex flex-wrap">
-          <!-- Column 1: รูป -->
-          <VCol style="flex: 0 0 20%; max-width: 20%;" class="pa-4 text-center">
-            <VCardTitle>ข้อมูลฟาร์ม</VCardTitle>
-            <VCardTitle>ฟาร์มคุณวิชัย</VCardTitle>
-          </VCol>
-
-          <!-- <VDivider :vertical="$vuetify.display.mdAndUp" /> -->
-          <VDivider vertical />
-
-          <!-- Column 2: ชื่อสินค้า -->
-          <VCol style="flex: 0 0 20%; max-width: 20%;" class="pa-4 text-center">
-            <VCardTitle>โรงเรือน</VCardTitle>
-            <VCardTitle>4</VCardTitle>
-          </VCol>
-
-          <!-- <VDivider :vertical="$vuetify.display.mdAndUp" /> -->
-          <VDivider vertical />
-
-          <!-- Column 3: ราคา + ปุ่ม -->
-          <VCol style="flex: 0 0 20%; max-width: 20%;" class="pa-4 text-center">
-            <VCardTitle>ประเภทของสัตว์ & เพศ</VCardTitle>
-            <VCardTitle>10000</VCardTitle>
-          </VCol>
-
-          <VDivider vertical />
-
-          <!-- Column 3: ราคา + ปุ่ม -->
-          <VCol style="flex: 0 0 20%; max-width: 20%;" class="pa-4 text-center">
-            <VCardTitle>ข้อมูลสายพันธ์</VCardTitle>
-            <VCardTitle>10000</VCardTitle>
-          </VCol>
-
-          <VDivider vertical />
-
-          <!-- Column 3: ราคา + ปุ่ม -->
-          <VCol style="flex: 0 0 20%; max-width: 20%;" class="pa-4 text-center">
-            <VCardTitle>สถานะการทำงาน</VCardTitle>
-            <VCardTitle>10000</VCardTitle>
-          </VCol>
-        </VRow>
-      </VCard>
-    </VCol>
-  </VRow>
-
-  <VRow>
-    <VCol cols="12">
-      <VCard class="pa-6">
-        <VRow class="d-flex flex-wrap">
-          <!-- Column 1: รูป -->
-          <VCol style="flex: 0 0 20%; max-width: 20%;" class="pa-4 text-center">
-            <VCardTitle>น้ำหนักโดยเฉลี่ย</VCardTitle>
-            <VCardTitle>ฟาร์มคุณวิชัย</VCardTitle>
-            <VCardTitle>กรัม</VCardTitle>
-          </VCol>
-
-          <!-- <VDivider :vertical="$vuetify.display.mdAndUp" /> -->
-          <VDivider vertical />
-
-          <!-- Column 2: ชื่อสินค้า -->
-          <VCol style="flex: 0 0 20%; max-width: 20%;" class="pa-4 text-center">
-            <VCardTitle>จำนวนไก่ทั้งหมด</VCardTitle>
-            <VCardTitle>4</VCardTitle>
-            <VCardTitle>ตัว</VCardTitle>
-          </VCol>
-
-          <!-- <VDivider :vertical="$vuetify.display.mdAndUp" /> -->
-          <VDivider vertical />
-
-          <!-- Column 3: ราคา + ปุ่ม -->
-          <VCol style="flex: 0 0 20%; max-width: 20%;" class="pa-4 text-center">
-            <VCardTitle>อายุเพาะเลี้ยง</VCardTitle>
-            <VCardTitle>30</VCardTitle>
-            <VCardTitle>วัน</VCardTitle>
-          </VCol>
-
-          <VDivider vertical />
-
-          <!-- Column 3: ราคา + ปุ่ม -->
-          <VCol style="flex: 0 0 20%; max-width: 20%;" class="pa-4 text-center">
-            <VCardTitle>วันที่เริ่มต้น</VCardTitle>
-            <VCardTitle>10000</VCardTitle>
-          </VCol>
-
-          <VDivider vertical />
-
-          <!-- Column 3: ราคา + ปุ่ม -->
-          <VCol style="flex: 0 0 20%; max-width: 20%;" class="pa-4 text-center">
-            <VCardTitle>วันที่สิ้นสุด</VCardTitle>
-            <VCardTitle>10000</VCardTitle>
-          </VCol>
-        </VRow>
-      </VCard>
-    </VCol>
-  </VRow>
-
-  <VRow>
-    <VCol cols="12">
-      <VCard class="pa-6">
-        <VRow>
-          <!-- Column 1: รูป -->
-          <VCol cols="12" md="2" class="d-flex flex-column justify-center align-center">
-            <VCardTitle>ปริมาณอาหาร</VCardTitle>
-            <VCardTitle>ฟาร์มคุณวิชัย</VCardTitle>
-            <VCardTitle>วัน</VCardTitle>
-          </VCol>
-
-          <!-- <VDivider :vertical="$vuetify.display.mdAndUp" /> -->
-          <VDivider vertical />
-
-          <!-- Column 2: ชื่อสินค้า -->
-          <VCol cols="12" md="2" class="d-flex flex-column justify-center align-center">
-            <VCardTitle>สูตรอาหาร</VCardTitle>
-            <VCardTitle>4</VCardTitle>
-          </VCol>
-
-          <!-- <VDivider :vertical="$vuetify.display.mdAndUp" /> -->
-          <VDivider vertical />
-
-          <!-- Column 3: ราคา + ปุ่ม -->
-          <VCol cols="12" md="2" class="d-flex flex-column justify-center align-center">
-            <VCardTitle>เครื่องชั่งน้ำหนัก & รุ่น</VCardTitle>
-            <VCardTitle>10000</VCardTitle>
-          </VCol>
-
-          <!-- <VDivider :vertical="$vuetify.display.mdAndUp" /> -->
-          <VDivider vertical />
-
-          <!-- Column 3: ราคา + ปุ่ม -->
-          <VCol cols="12" md="2" class="d-flex flex-column justify-center align-center">
-            <VCardTitle>Uniform</VCardTitle>
-            <VCardTitle>10000</VCardTitle>
-            <VCardTitle>กรัม</VCardTitle>
-          </VCol>
-
-          <!-- <VDivider :vertical="$vuetify.display.mdAndUp" /> -->
-          <VDivider vertical />
-
-          <!-- Column 3: ราคา + ปุ่ม -->
-          <VCol cols="12" md="2" class="d-flex flex-column justify-center align-center">
-            <VCardTitle>SD</VCardTitle>
-            <VCardTitle>10000</VCardTitle>
-            <VCardTitle>กรัม</VCardTitle>
-          </VCol>
-
-          <!-- <VDivider :vertical="$vuetify.display.mdAndUp" /> -->
-          <VDivider vertical />
-
-          <!-- Column 3: ราคา + ปุ่ม -->
-          <VCol cols="12" md="2" class="d-flex flex-column justify-center align-center">
-            <VCardTitle>CV</VCardTitle>
-            <VCardTitle>10000</VCardTitle>
-            <VCardTitle>กรัม</VCardTitle>
-          </VCol>
-        </VRow>
-      </VCard>
-    </VCol>
-  </VRow>
-
-  <VRow dense>
-    <VCol cols="12" md="4" class="d-flex flex-column justify-center align-center">
-      <VCard>
-        ...
-      </VCard>
-    </VCol>
-
-    <VDivider :vertical="$vuetify.display.mdAndUp" />
-
-    <VCol cols="12" md="4" class="d-flex flex-column justify-center align-center">
-      <VCard>
-        ...
-      </VCard>
-    </VCol>
-
-    <VDivider :vertical="$vuetify.display.mdAndUp" />
-
-    <VCol cols="12" md="4" class="d-flex flex-column justify-center align-center">
-      <VCard>
-        ...
-      </VCard>
-    </VCol>
-  </VRow>
-
-  <VRow no-gutters>
-    <!-- Column 1 -->
-    <VCol cols="12" md="4" class="d-flex flex-column justify-center align-center">
-      <VCardTitle>จำนวนโรงเรือนทั้งหมด</VCardTitle>
-      <VCardTitle>3</VCardTitle>
-      <VCardTitle>โรงเรือน</VCardTitle>
-    </VCol>
-
-    <!-- Divider -->
-    <VCol cols="auto" class="d-none d-md-flex justify-center">
-      <VDivider vertical />
-    </VCol>
-
-    <!-- Column 2 -->
-    <VCol cols="12" md="4" class="d-flex flex-column justify-center align-center">
-      <VCardTitle>จำนวนโรงเรือนทั้งหมด</VCardTitle>
-      <VCardTitle>3</VCardTitle>
-      <VCardTitle>โรงเรือน</VCardTitle>
-    </VCol>
-
-    <!-- Divider -->
-    <VCol cols="auto" class="d-none d-md-flex justify-center">
-      <VDivider vertical />
-    </VCol>
-
-    <!-- Column 3 -->
-    <VCol cols="12" md="4" class="d-flex flex-column justify-center align-center">
-      <VCardTitle>จำนวนโรงเรือนทั้งหมด</VCardTitle>
-      <VCardTitle>3</VCardTitle>
-      <VCardTitle>โรงเรือน</VCardTitle>
-    </VCol>
-  </VRow>
-
-  <VRow>
-    <VCol cols="12">
-      <VCard>
-        <VCardText>
-          <VTextField base-color="black" :loading="loading" append-inner-icon="mdi-magnify" density="compact"
-            label="Search" variant="solo" hide-details single-line @click:append-inner="onClick" />
-          <VTextField class="black-label" :loading="loading" append-inner-icon="mdi-magnify" density="compact"
-            label="Search templates" variant="solo" hide-details single-line @click:append-inner="onClick" />
-          <VTextField color="on-surface" class="text-black" :loading="loading" append-inner-icon="mdi-magnify"
-            density="compact" label="Search templates" hide-details single-line @click:append-inner="onClick" />
-          <VTextField prepend-inner-icon="ri-user-line" label="First Name" placeholder="John" />
-
-          <VTextField id="firstName" placeholder="John" persistent-placeholder :loading="loading"
-            append-inner-icon="mdi-magnify" @click:append-inner="onClick" />
-        </VCardText>
-      </VCard>
-    </VCol>
-  </VRow>
-
-  <VRow>
-    <VCol cols="12">
-      <VCard>
-        <VCardTitle class="text-h5 font-weight-bold mb-2">
-          My Courses
-        </VCardTitle>
-        <VCardSubtitle class="mb-6">
-          Here’s a list of your enrolled courses
-        </VCardSubtitle>
-
-        <!-- Dropdown Filter -->
-        <div class="d-flex justify-space-between align-center mb-4">
-          <VSelect v-model="selectedFilter" :items="filters" density="compact" hide-details variant="outlined"
-            style="max-width: 180px" />
-        </div>
-
-        <!-- Courses Grid -->
-        <VRow>
-          <VCol v-for="(course, i) in filteredCourses" :key="i" cols="12" sm="6" md="4">
-            <VCard elevation="1" class="h-100">
-              <VImg :src="course.image" height="160" cover />
-
-              <VCardItem>
-                <VCardTitle>{{ course.title }}</VCardTitle>
-                <VCardSubtitle>{{ course.category }}</VCardSubtitle>
-              </VCardItem>
-
-              <VCardText>
-                <div class="text-body-2 text-truncate">
-                  {{ course.description }}
-                </div>
-              </VCardText>
-
-              <VCardActions class="justify-space-between">
-                <VBtn color="primary" variant="flat" size="small">
-                  View
-                </VBtn>
-                <VChip :color="course.status === 'Completed' ? 'success' : 'info'" size="small" label>
-                  {{ course.status }}
-                </VChip>
-              </VCardActions>
-            </VCard>
-          </VCol>
-        </VRow>
-      </VCard>
-    </VCol>
-  </VRow>
-
-  <VRow>
-    <VCol cols="12">
-      <VCard class="pa-6">
-        <!-- Title -->
-        <VCardTitle class="text-h5 font-weight-bold mb-2">
-          My Courses
-        </VCardTitle>
-        <VCardSubtitle class="mb-6">
-          Here’s a list of your enrolled courses
-        </VCardSubtitle>
-
-        <!-- Filter Dropdown -->
-        <div class="d-flex justify-space-between align-center mb-6">
-          <VSelect v-model="selectedFilter" :items="filters" density="comfortable" hide-details variant="outlined"
-            style="max-width: 200px" />
-        </div>
-
-        <!-- Course Cards -->
-        <VRow class="g-6">
-          <!-- g-6 = ช่องว่างระหว่างคอลัมน์ -->
-          <VCol v-for="(course, i) in filteredCourses" :key="i" cols="12" sm="6" md="4">
-            <VCard elevation="2" class="pa-4 h-100">
-              <VImg :src="course.image" height="180" cover class="rounded mb-4" />
-
-              <VCardTitle class="text-h6 mb-1">
-                {{ course.title }}
-              </VCardTitle>
-              <VCardSubtitle class="mb-3">
-                {{ course.category }}
-              </VCardSubtitle>
-
-              <VCardText class="text-body-2 text-truncate mb-5">
-                {{ course.description }}
-              </VCardText>
-
-              <VCardActions class="justify-space-between pt-0">
-                <VBtn color="primary" variant="flat" size="small">
-                  View
-                </VBtn>
-                <VChip :color="course.status === 'Completed' ? 'success' : 'info'" size="small" label>
-                  {{ course.status }}
-                </VChip>
-              </VCardActions>
-            </VCard>
-          </VCol>
-        </VRow>
-      </VCard>
-    </VCol>
-  </VRow>
-
-  <VRow>
-    <VCol cols="12">
-      <VCard class="pa-6">
-        <!-- Title -->
-        <VCardTitle class="text-h5 font-weight-bold mb-2">
-          My Courses
-        </VCardTitle>
-        <VCardSubtitle class="mb-6">
-          Here’s a list of your enrolled courses
-        </VCardSubtitle>
-
-        <!-- Search Field -->
-        <div class="d-flex justify-space-between align-center mb-6">
-          <VTextField id="firstName" placeholder="John" persistent-placeholder :loading="loading"
-            append-inner-icon="mdi-magnify" @click:append-inner="onClick" />
-        </div>
-
-        <!-- Course Cards -->
-        <VRow class="g-6">
-          <VCol v-for="(course, i) in filteredCourses" :key="i" cols="12" sm="6" md="4">
-            <VCard elevation="2" class="pa-4 h-100">
-              <VImg :src="course.image" height="180" cover class="rounded mb-4" />
-
-              <VCardTitle class="text-h6 mb-1">
-                {{ course.title }}
-              </VCardTitle>
-              <VCardSubtitle class="mb-3">
-                {{ course.category }}
-              </VCardSubtitle>
-
-              <VCardText class="text-body-2 text-truncate mb-5">
-                {{ course.description }}
-              </VCardText>
-
-              <VCardActions class="justify-space-between pt-0">
-                <VBtn color="primary" variant="flat" size="small">
-                  View
-                </VBtn>
-                <VChip :color="course.status === 'Completed' ? 'success' : 'info'" size="small" label>
-                  {{ course.status }}
-                </VChip>
-              </VCardActions>
-            </VCard>
-          </VCol>
-        </VRow>
-
-        <!-- No result -->
-        <div v-if="filteredCourses.length === 0" class="text-center py-10 text-medium-emphasis">
-          No courses found.
-        </div>
-        <!-- Pagination -->
-        <div class="mt-6 flex justify-center">
-          <VPagination v-model="page" :length="pageCount" total-visible="5" @update:model-value="onPageChange" />
-        </div>
-      </VCard>
-    </VCol>
-  </VRow>
-
-  <div class="pa-6">
-    <!-- Search field -->
-    <VTextField v-model="searchQuery" placeholder="Search courses" persistent-placeholder
-      append-inner-icon="mdi-magnify" clearable hide-details variant="outlined" density="comfortable"
-      style="max-width: 300px" @click:append-inner="fetchCourses" />
-
-    <!-- Content list -->
-    <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-      <VCard v-for="item in paginatedCourses" :key="item.id">
-        <VCardTitle>{{ item.title }}</VCardTitle>
-        <VCardSubtitle>{{ item.category }}</VCardSubtitle>
-      </VCard>
-    </div>
-
-    <!-- Pagination -->
-    <div class="mt-6 flex justify-center">
-      <VPagination v-model="page" :length="pageCount" total-visible="5" @update:model-value="onPageChange" />
-    </div>
-  </div>
 </template>
 
 <style scoped>

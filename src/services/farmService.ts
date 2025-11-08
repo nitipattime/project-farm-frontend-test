@@ -65,6 +65,9 @@ export const getProvince = async () => {
 // get districts
 export const getDistricts = async (data: any) => {
   const accessToken = localStorage.getItem('accessToken')
+
+  console.log('test')
+  console.log(data)
   try {
     const response = await axios.get(`${API_URL}/provinces/${data.provinceId}/districts`, {
       headers: {

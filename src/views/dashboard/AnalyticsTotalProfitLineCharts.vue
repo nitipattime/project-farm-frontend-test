@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { useTheme } from 'vuetify'
 import { hexToRgb } from '@layouts/utils'
+import { useTheme } from 'vuetify'
 
 const vuetifyTheme = useTheme()
 
 const series = [
   {
-    data: [0, 20, 5, 30, 15, 45],
+    data: [0, 5, 10, 30, 15, 45, 20, 50, 55],
   },
 ]
 
@@ -78,13 +78,7 @@ const chartOptions = computed(() => {
       <h4 class="text-h4">
         $86.4k
       </h4>
-      <VueApexCharts
-        type="line"
-        :options="chartOptions"
-        :series="series"
-        :height="80"
-        class="my-1"
-      />
+      <VueApexCharts type="line" :options="chartOptions" :series="series" :height="80" class="my-1" />
 
       <h6 class="text-h6 text-center">
         Total Profit

@@ -93,10 +93,10 @@ const filteredCourses = computed(() => {
 const farmForm = ref({
   name: '',
   contact: '',
-  postcode: '',
-  province: '',
-  district: '',
-  subdistrict: '',
+  zip_code: '',
+  province_id: null,
+  district_id: null,
+  subdistrict_id: null,
 })
 
 // rules
@@ -104,18 +104,18 @@ const requiredRule = value => !!value || 'กรุณากรอกข้อ�
 const postcodeRule = value => /^\d{5}$/.test(value) || 'รหัสไปรษณีย์ต้องมี 5 หลัก'
 
 // ข้อมูล dropdown
-const provinces = ['กรุงเทพมหานคร', 'เชียงใหม่', 'ชลบุรี'] // ตัวอย่าง
+// const provinces = ['กรุงเทพมหานคร', 'เชียงใหม่', 'ชลบุรี'] // ตัวอย่าง
 
-const districts = {
-  กรุงเทพมหานคร: ['เขตพระนคร', 'เขตดุสิต'],
-  เชียงใหม่: ['อำเภอเมืองเชียงใหม่', 'อำเภอสันกำแพง'],
-  ชลบุรี: ['อำเภอเมืองชลบุรี', 'อำเภอบางละมุง'],
-}
+// const districts = {
+//   กรุงเทพมหานคร: ['เขตพระนคร', 'เขตดุสิต'],
+//   เชียงใหม่: ['อำเภอเมืองเชียงใหม่', 'อำเภอสันกำแพง'],
+//   ชลบุรี: ['อำเภอเมืองชลบุรี', 'อำเภอบางละมุง'],
+// }
 
-const subdistricts = {
-  เขตพระนคร: ['พระบรมมหาราชวัง', 'วังบูรพา'],
-  เขตดุสิต: ['ดุสิต', 'วชิรพยาบาล'],
-}
+// const subdistricts = {
+//   เขตพระนคร: ['พระบรมมหาราชวัง', 'วังบูรพา'],
+//   เขตดุสิต: ['ดุสิต', 'วชิรพยาบาล'],
+// }
 
 // watch province/district เพื่อ update dropdown
 const selectedDistricts = ref([])
@@ -134,12 +134,12 @@ watch(() => farmForm.value.district, newVal => {
 })
 
 // submitForm
-function submitForm() {
-  // ตรวจสอบว่าทุก field ผ่าน validation หรือไม่
-  // Vuetify v3 จะ validate อัตโนมัติเมื่อกดปุ่ม Save
-  console.log(farmForm.value)
-  dialog.value = false
-}
+// function submitForm() {
+//   // ตรวจสอบว่าทุก field ผ่าน validation หรือไม่
+//   // Vuetify v3 จะ validate อัตโนมัติเมื่อกดปุ่ม Save
+//   console.log(farmForm.value)
+//   dialog.value = false
+// }
 
 // go to farm deatil
 function goToFarmDetail(items: any) {
@@ -172,23 +172,6 @@ async function handleGetCampaignList() {
   }
 }
 
-const initialize = async () => {
-  await handleGetCampaignList()
-
-  // await handleGetAddress()
-  // await farmStore.fetchProvince()
-  // await farmStore.fetchDistrict()
-  // await farmStore.fetchSubDistrict()
-  // getDistricts
-  // getSubDistricts
-  // getAddress
-  // getProvince
-}
-
-onMounted(async () => {
-  await initialize()
-})
-
 const onSearch = async () => {
   console.log(searchQuery.value)
 
@@ -208,9 +191,360 @@ const onSearch = async () => {
     loading.value = false
   }
 }
+
+// form add farm
+interface Province {
+  value: number
+  label: string
+}
+
+interface District {
+  value: number
+  label: string
+}
+interface Subdistrict {
+  value: number
+  label: string
+  zip_code: string
+}
+
+// interface SubdistrictOption {
+//   value: number
+//   label: string
+
+// }
+
+const provinces = ref<Province[]>([])
+const districts = ref<District[]>([])
+const subdistricts = ref<Subdistrict[]>([])
+
+const onProvinceChange = async (provinceId: number) => {
+  console.log('เลือกจังหวัด:', provinceId)
+
+  farmForm.value.province_id = provinceId
+  farmForm.value.district_id = null
+  farmForm.value.subdistrict_id = null
+  farmForm.value.zip_code = ''
+
+  const params = { provinceId }
+
+  const res = await farmStore.fetchDistrict(params)
+
+  districts.value = res
+}
+
+// const onProvinceChange = async (e: any) => {
+//   // farmForm.value.province_id = e.id
+//   // farmForm.value.district_id = 0
+//   // farmForm.value.subdistrict_id = 0
+//   // farmForm.value.zip_code = ''
+
+//   const params = { provinceId: e.id }
+
+//   console.log(e.id)
+//   console.log(params)
+
+//   const res = await farmStore.fetchDistrict(params)
+
+//   districts.value = res
+
+//   // console.log('@change="onDistrictChange"')
+
+//   // const id = Number(e.target.value)
+
+//   // farmForm.value.province_id = id
+//   // farmForm.value.district_id = 0
+//   // farmForm.value.subdistrict_id = 0
+//   // farmForm.value.zip_code = ''
+
+//   // const params = {
+//   //   provinceId: id,
+//   // }
+
+//   // const res = await farmStore.fetchDistrict(params)
+
+//   // districts.value = res
+// }
+
+const onDistrictChange = async (districtId: number) => {
+  console.log('เลือกอำเภอ:', districtId)
+
+  farmForm.value.district_id = districtId
+  farmForm.value.subdistrict_id = null
+  farmForm.value.zip_code = ''
+
+  const params = { districtId }
+  const res = await farmStore.fetchSubDistrict(params)
+
+  subdistricts.value = res
+}
+
+// const onDistrictChange = async (e: any) => {
+//   const id = Number(e.target.value)
+
+//   farmForm.value.district_id = id
+//   farmForm.value.subdistrict_id = 0
+//   farmForm.value.zip_code = ''
+
+//   const params = {
+//     districtId: id,
+//   }
+
+//   const res = await farmStore.fetchSubDistrict(params)
+
+//   subdistricts.value = res
+//   console.log('subdistrict2222')
+//   console.log(res)
+// }
+
+const onSubdistrictChange = (subdistrictId: number) => {
+  console.log('เลือกตำบล:', subdistrictId)
+
+  farmForm.value.subdistrict_id = subdistrictId
+
+  const subdistrict = subdistricts.value.find(s => s.value === subdistrictId)
+
+  farmForm.value.zip_code = subdistrict?.zip_code || ''
+}
+
+// const onSubdistrictChange = async (e: any) => {
+//   const id = Number(e.target.value)
+
+//   farmForm.value.subdistrict_id = id // ถ้าใน DB ต้องการ number
+
+//   const subdistrict = subdistricts.value.find(s => s.value === id)
+
+//   farmForm.value.zip_code = subdistrict?.zip_code || ''
+
+//   // const id = Number(e.target.value)
+//   // formV2.subdistrict_id = id
+
+//   // const subdistrict = subdistricts.value.find((s) => s.value === id)
+
+//   // formV2.zip_code = subdistrict?.zip_code || ''
+// }
+
+const fetchAddressByZip = async (zipCode: any) => {
+  if (!zipCode || zipCode.length < 5) {
+    // ถ้ากรอกไม่ครบ 5 หลัก แค่เคลียร์ district/subdistrict ก็พอ
+    farmForm.value.district_id = null
+    farmForm.value.subdistrict_id = null
+    farmForm.value.zip_code = zipCode
+    districts.value = []
+    subdistricts.value = []
+
+    return
+  }
+
+  try {
+    const params = { zip: zipCode }
+    const res = await farmStore.fetchAddress(params)
+
+    if (!res || res.length === 0) {
+      // ถ้าไม่เจอรหัสไปรษณีย์ เคลียร์เฉพาะ district/subdistrict
+      districts.value = []
+      subdistricts.value = []
+
+      return
+    }
+
+    const location = res[0]
+
+    // ตั้งค่า form
+    farmForm.value.province_id = location.province_id
+    farmForm.value.district_id = location.district_id
+    farmForm.value.subdistrict_id = location.subdistrict_id
+    farmForm.value.zip_code = zipCode
+
+    // โหลดเฉพาะ district/subdistrict ตามจังหวัดนั้น
+    const resDistricts = await farmStore.fetchDistrict({ provinceId: location.province_id })
+
+    districts.value = resDistricts
+
+    const resSubDistricts = await farmStore.fetchSubDistrict({ districtId: location.district_id })
+
+    subdistricts.value = resSubDistricts
+  }
+  catch (error) {
+    console.error('ไม่พบรหัสไปรษณีย์นี้:', error)
+
+    // เคลียร์เฉพาะ district/subdistrict
+    districts.value = []
+    subdistricts.value = []
+  }
+}
+
+// const fetchAddressByZip = async (zipCode: any) => {
+//   // const id = String(zipCode)
+//   const params = {
+//     zip: zipCode,
+//   }
+
+//   const res = await farmStore.fetchAddress(params)
+
+//   const location = res[0]
+
+//   farmForm.value.province_id = location.province_id
+//   farmForm.value.district_id = location.district_id
+//   farmForm.value.subdistrict_id = location.subdistrict_id
+//   farmForm.value.zip_code = zipCode
+
+//   // โหลด districts
+//   const resProvince = await farmStore.fetchProvince()
+
+//   provinces.value = resProvince
+
+//   // โหลด districts
+//   const paramsDistricts = {
+//     provinceId: location.province_id,
+//   }
+
+//   const resDistricts = await farmStore.fetchDistrict(paramsDistricts)
+
+//   districts.value = resDistricts
+
+//   // โหลด subdistricts
+//   const paramsSubDistricts = {
+//     districtId: location.district_id,
+//   }
+
+//   const resSubDistricts = await farmStore.fetchSubDistrict(paramsSubDistricts)
+
+//   subdistricts.value = resSubDistricts
+// }
+
+function clearAddressFields() {
+  farmForm.value.province_id = null
+  farmForm.value.district_id = null
+  farmForm.value.subdistrict_id = null
+  farmForm.value.zip_code = ''
+  districts.value = []
+  subdistricts.value = []
+}
+
+function closeDialog() {
+  dialog.value = false
+  resetForm()
+}
+
+function resetForm() {
+  farmForm.value = {
+    name: '',
+    contact: '',
+    zip_code: '',
+
+    // province_id: null,
+    district_id: null,
+    subdistrict_id: null,
+  }
+
+  // provinces.value = []
+  districts.value = []
+  subdistricts.value = []
+}
+
+// watch(dialog, (newVal: any) => {
+//   if (newVal === true)
+//     resetForm()
+// })
+
+watch(() => farmForm.value.zip_code, (newVal: any) => {
+  if (newVal && newVal.length === 5)
+    fetchAddressByZip(newVal)
+})
+
+watch(dialog, (val: any) => {
+  if (!val) {
+    // ถ้า dialog ปิด (เช่น คลิกข้างนอก)
+    resetForm()
+  }
+})
+
+const initialize = async () => {
+  await handleGetCampaignList()
+
+  const res = await farmStore.fetchProvince()
+
+  provinces.value = res
+
+  // const res =
+  //
+
+  // await handleGetAddress()
+  // await farmStore.fetchProvince()
+  // await farmStore.fetchDistrict()
+  // await farmStore.fetchSubDistrict()
+  // getDistricts
+  // getSubDistricts
+  // getAddress
+  // getProvince
+}
+
+onMounted(async () => {
+  await initialize()
+})
+
+const formRef = ref()
+const showAlert = ref(false)
+const alertMessage = ref('')
+const alertType = ref<'success' | 'error'>('success')
+
+async function submitForm() {
+  // ตรวจสอบว่ากรอกครบหรือยัง
+  // const { valid } = await formRef.value.validate()
+
+  // if (!valid) {
+  //   showAlert.value = true
+  //   alertType.value = 'error'
+  //   alertMessage.value = 'กรุณากรอกข้อมูลให้ครบถ้วน'
+
+  //   return
+  // }
+
+  try {
+    const payload = {
+      name: farmForm.value.name,
+      contact: farmForm.value.contact,
+      zip_code: farmForm.value.zip_code,
+      province_id: farmForm.value.province_id,
+      district_id: farmForm.value.district_id,
+      subdistrict_id: farmForm.value.subdistrict_id,
+    }
+
+    console.log(payload)
+
+    // await farmStore.createFarm(payload)
+
+    dialog.value = false
+    resetForm()
+
+    // showAlert.value = true
+    alertType.value = 'success'
+    alertMessage.value = 'บันทึกข้อมูลฟาร์มเรียบร้อยแล้ว'
+
+    setTimeout(() => {
+      showAlert.value = true
+    }, 250)
+  }
+  catch (error) {
+    showAlert.value = true
+    alertType.value = 'error'
+    alertMessage.value = 'เกิดข้อผิดพลาดในการบันทึกข้อมูล'
+    console.error(error)
+  }
+}
+
+// const showSnackbar = () => {
+//   showAlert.value = true
+//   alertType.value = 'success'
+//   alertMessage.value = 'บันทึกข้อมูลฟาร์มเรียบร้อยแล้ว'
+// }
 </script>
 
 <template>
+  <VSnackbar v-model="showAlert" :color="alertType" timeout="2000">
+    {{ alertMessage }}
+  </VSnackbar>
   <VRow>
     <VCol cols="12">
       <VRow>
@@ -429,7 +763,7 @@ const onSearch = async () => {
   </VRow>
 
   <div class="pa-4 text-center">
-    <VDialog v-model="dialog" max-width="600">
+    <VDialog v-model="dialog" max-width="600" @after-leave="showSnackbar">
       <VCard>
         <VCardTitle class="text-h6 text-md-h5 text-lg-h4 mt-2">
           ข้อมูลฟาร์ม
@@ -458,13 +792,24 @@ const onSearch = async () => {
         <VCardText>
           <VRow dense>
             <VCol cols="12" md="6" sm="6">
-              <VTextField v-model="farmForm.postcode" label="รหัสไปรษณีย์" counter="5"
-                :rules="[requiredRule, postcodeRule]" required />
+              <!--
+                <VTextField v-model="farmForm.zip_code" label="รหัสไปรษณีย์" counter="5"
+                :rules="[requiredRule, postcodeRule]" required @update:model-value="fetchAddressByZip" />
+              -->
+              <VTextField v-model="farmForm.zip_code" label="รหัสไปรษณีย์" counter="5"
+                :rules="[requiredRule, postcodeRule]" required @blur="fetchAddressByZip(farmForm.zip_code)" />
             </VCol>
             <VCol cols="12" md="6">
-              <VSelect v-model="farmForm.province" label="จังหวัด" :items="provinces" :rules="[requiredRule]"
-                placeholder="เลือกจังหวัด" required />
+              <!--
+                <VSelect v-model="farmForm.province_id" item-title="label" item-value="value" label="จังหวัด"
+                :items="provinces" :rules="[requiredRule]" placeholder="เลือกจังหวัด" required
+                @update:model-value="onProvinceChange" />
+              -->
+              <VSelect v-model="farmForm.province_id" item-title="label" item-value="value" label="จังหวัด"
+                :items="provinces" :rules="[requiredRule]" placeholder="เลือกจังหวัด" required
+                @update:model-value="onProvinceChange" />
             </VCol>
+            <!--  -->
             <!--
               <v-col cols="12" md="6" sm="6">
               <v-text-field label="จังหวัด" v-model="farmForm.province" :rules="[requiredRule]" required></v-text-field>
@@ -476,12 +821,12 @@ const onSearch = async () => {
         <VCardText>
           <VRow dense>
             <VCol cols="12" md="6">
-              <VSelect v-model="farmForm.district" label="อำเภอ/เขต" :items="selectedDistricts" :rules="[requiredRule]"
-                required />
+              <VSelect v-model="farmForm.district_id" item-title="label" item-value="value" label="อำเภอ/เขต"
+                :items="districts" :rules="[requiredRule]" required @update:model-value="onDistrictChange" />
             </VCol>
             <VCol cols="12" md="6">
-              <VSelect v-model="farmForm.subdistrict" label="ตำบล/แขวง" :items="selectedSubdistricts"
-                :rules="[requiredRule]" required />
+              <VSelect v-model="farmForm.subdistrict_id" item-title="label" item-value="value" label="ตำบล/แขวง"
+                :items="subdistricts" :rules="[requiredRule]" required @update:model-value="onSubdistrictChange" />
             </VCol>
           </VRow>
         </VCardText>
@@ -492,13 +837,25 @@ const onSearch = async () => {
           * กรุณาตรวจสอบความถูกต้องของข้อมูลก่อนทำการบันทึก
         </VCardText>
 
+        <!--
+          <VCardActions class="my-1 justify-center">
+          <VBtn text="Close" variant="plain" @click="closeDialog" />
+          <VBtn color="primary" text="Save" variant="tonal" @click="submitForm" />
+          </VCardActions>
+        -->
         <VCardActions class="my-1 justify-center">
-          <VBtn text="Close" variant="plain" @click="dialog = false" />
+          <VBtn text="Close" variant="plain" @click="closeDialog" />
           <VBtn color="primary" text="Save" variant="tonal" @click="submitForm" />
         </VCardActions>
       </VCard>
     </VDialog>
   </div>
+
+  <!--
+    <div v-if="showAlert">
+    <VAlert :color="alertType" :text="alertMessage" variant="tonal" />
+    </div>
+  -->
 </template>
 
 <style scoped>

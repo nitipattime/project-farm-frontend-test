@@ -16,7 +16,8 @@ router.beforeEach(to => {
   const publicPages = ['/login', '/register']
   const authRequired = !publicPages.includes(to.path)
 
-  if (authRequired && !auth.token) return '/login'
+  // if (authRequired && !auth.token) return '/login'
+  if (authRequired && !auth.accessToken) return '/login'
 })
 
 export default function (app: App) {

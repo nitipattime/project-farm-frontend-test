@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useTheme } from 'vuetify'
 
@@ -33,6 +33,33 @@ const rules = {
   min: (v: string) => v.length >= 6 || 'Password must be at least 6 characters',
 }
 
+// async function handleLogin() {
+//   const isValid = await formRef.value?.validate()
+//   if (!isValid)
+//     return
+
+//   const success = await auth.login({
+//     email: username.value,
+//     password: password.value,
+//   })
+
+//   if (success)
+//     router.push('/dashboardV2')
+//   else
+//     error.value = 'Invalid credentials'
+
+//   // // ตรวจสอบว่าฟอร์มผ่าน validation มั้ย
+//   // const isValid = await formRef.value?.validate()
+//   // if (!isValid)
+//   //   return
+
+//   // const success = await auth.login(username.value, password.value)
+//   // if (success)
+//   //   router.push('/dashboardV2')
+//   // else
+//   //   error.value = 'Invalid credentials'
+// }
+
 async function handleLogin() {
   const isValid = await formRef.value?.validate()
   if (!isValid)
@@ -43,21 +70,13 @@ async function handleLogin() {
     password: password.value,
   })
 
-  if (success)
+  if (success) {
+    await nextTick() // ✅ รอให้ state ของ Pinia อัปเดตเสร็จก่อน
     router.push('/dashboardV2')
-  else
+  }
+  else {
     error.value = 'Invalid credentials'
-
-  // // ตรวจสอบว่าฟอร์มผ่าน validation มั้ย
-  // const isValid = await formRef.value?.validate()
-  // if (!isValid)
-  //   return
-
-  // const success = await auth.login(username.value, password.value)
-  // if (success)
-  //   router.push('/dashboardV2')
-  // else
-  //   error.value = 'Invalid credentials'
+  }
 }
 </script>
 

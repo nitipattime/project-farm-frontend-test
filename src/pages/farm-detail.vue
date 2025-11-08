@@ -1,16 +1,22 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, shallowRef, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed, onMounted, ref, shallowRef, watch } from 'vue'
+import { useRouter } from 'vue-router'
 
-import { useHouseStore } from '@/stores/houseStore';
+import { useHouseStore } from '@/stores/houseStore'
+import { hexToRgb } from '@layouts/utils'
+import { useTheme } from 'vuetify'
 
 const props = defineProps<{ id: string }>()
+
+const vuetifyTheme = useTheme()
+
 const farmId = Number.parseInt(props.id || '0', 10)
 const router = useRouter()
 const dialog = shallowRef(false)
 const loaded = ref(false)
 const loading = ref(false)
 const houseStore = useHouseStore()
+const searchQuery = ref('')
 
 function onClick() {
   loading.value = true
@@ -32,6 +38,8 @@ async function handleGetCampaignList() {
     // sort_by: sortBy.value,
     // sort_dir: sortDirection.value,
     // page: tablePage.value,
+    search: searchQuery.value,
+    page: houseStore.pagination.page,
     farm_id: farmId,
   }
 
@@ -77,7 +85,6 @@ onMounted(async () => {
 
 // paginate
 
-const searchQuery = ref('')
 const page = ref(1)
 const perPage = 6
 
@@ -93,7 +100,7 @@ const courses = ref([
   { id: 9, title: 'Intro to Physics', category: 'Science' },
 ])
 
-const pageCount = computed(() => Math.ceil(courses.value.length / perPage))
+const pageCount = computed(() => Math.ceil(houseStore.pagination.page / perPage))
 
 const paginatedCourses = computed(() => {
   const start = (page.value - 1) * perPage
@@ -176,6 +183,96 @@ function goToHouseDetail(items: any) {
   // router.push('/farmDetail') // หรือใช้ชื่อ route: router.push({ name: 'about' })
   router.push({ name: 'house-detail', params: { id: items.id } }) // หรือใช้ชื่อ route: router.push({ name: 'about' })
 }
+
+const onSearch = async () => {
+  console.log(searchQuery.value)
+
+  // ถ้าไม่มีคำค้นหา ก็ไม่ต้องยิง API
+  // if (!searchQuery.value.trim())
+  //   return
+
+  loading.value = true
+
+  try {
+    await handleGetCampaignList()
+  }
+  catch (error) {
+    console.error('Search error:', error)
+  }
+  finally {
+    loading.value = false
+  }
+}
+
+const series = [
+  {
+    data: [0, 5, 10, 30, 15, 45, 20, 50, 55, 60, 70, 80, 95, 125, 100, 120, 135, 145, 120, 90, 135, 145, 120, 150, 155, 200, 300, 400, 600, 200, 600, 800],
+  },
+  {
+    data: [0, 100, 200, 300, 15, 45, 20, 50, 55, 60, 70, 80, 95, 125, 100, 120, 135, 145, 120, 90, 135, 145, 120, 150, 155, 200, 300, 400, 600, 200, 600, 800],
+  },
+]
+
+const chartOptions = computed(() => {
+  const currentTheme = vuetifyTheme.current.value.colors
+  const variableTheme = vuetifyTheme.current.value.variables
+
+  return {
+    chart: {
+      parentHeightOffset: 0,
+      toolbar: { show: false },
+    },
+    tooltip: { enabled: false },
+    grid: {
+      borderColor: `rgba(${hexToRgb(String(variableTheme['border-color']))},${variableTheme['border-opacity']})`,
+      strokeDashArray: 6,
+      xaxis: {
+        lines: { show: true },
+      },
+      yaxis: {
+        lines: { show: false },
+      },
+      padding: {
+        top: -10,
+        left: -7,
+        right: 5,
+        bottom: 5,
+      },
+    },
+    stroke: {
+      width: 3,
+      lineCap: 'butt',
+      curve: 'straight',
+    },
+    colors: [currentTheme.primary],
+    markers: {
+      size: 6,
+      offsetY: 4,
+      offsetX: -2,
+      strokeWidth: 3,
+      colors: ['transparent'],
+      strokeColors: 'transparent',
+      discrete: [
+        {
+          size: 5.5,
+          seriesIndex: 0,
+          strokeColor: currentTheme.primary,
+          fillColor: currentTheme.surface,
+          dataPointIndex: series[0].data.length - 1,
+        },
+      ],
+      hover: { size: 7 },
+    },
+    xaxis: {
+      labels: { show: false },
+      axisTicks: { show: false },
+      axisBorder: { show: false },
+    },
+    yaxis: {
+      labels: { show: false },
+    },
+  }
+})
 </script>
 
 <template>
@@ -277,7 +374,7 @@ function goToHouseDetail(items: any) {
           <!-- Search Field -->
           <VTextField v-model="searchQuery" placeholder="ค้นหา" persistent-placeholder :loading="loading"
             append-inner-icon="ri-search-line" clearable hide-details variant="outlined" density="comfortable"
-            style="max-width: 300px" @click:append-inner="onSearch" />
+            style="max-width: 300px" @keyup.enter="onSearch" @click:append-inner="onSearch" @click:clear="onSearch" />
 
           <!-- Create Farm Button -->
           <VBtn color="primary" class="text-white" v-bind="activatorProps" @click="dialog = true">
@@ -287,41 +384,69 @@ function goToHouseDetail(items: any) {
 
         <!-- Course Cards -->
         <VRow class="g-6">
-          <VCol v-for="(course, i) in paginatedCourses" :key="i" cols="12" sm="6" md="4">
+          <VCol v-for="(house, i) in houseStore.houselist" :key="i" cols="12" sm="6" md="4">
             <VCard elevation="2" class="pa-4 h-100 border border-solid border-gray-800">
               <!-- <VImg :src="course.image" height="180" cover class="rounded mb-4" /> -->
-
-              <VCardTitle class="text-h6 mb-1">
-                {{ course.title }}
+              <VCardTitle class="text-h6">
+                ชื่อโรงเรือน : {{ house.house_name ? house.house_name : '-' }}
               </VCardTitle>
-              <VCardSubtitle class="mb-3">
-                {{ course.category }}
-              </VCardSubtitle>
+              <VCardTitle class="text-h6">
+                ชื่อผู้ดูแล : {{ house.contact_name ? house.contact_name : '-' }}
+              </VCardTitle>
+              <VCardTitle class="text-h6">
+                ระยะเวลาเพาะเลี้ยงรวม : {{ house.duration_days ? house.duration_days : '0' }} วัน
+              </VCardTitle>
+              <VCardTitle class="text-h6">
+                สถานะการเพาะเลี้ยง : {{ house.status ? house.status : '-' }}
+              </VCardTitle>
+              <VRow class="mt-2" align="center" justify="space-between">
+                <VCol cols="6">
+                  <p>วันที่เริ่มต้น {{ house.start_date ? house.start_date.split("T")[0] : '--/--/--' }}</p>
+                </VCol>
 
-              <VCardText class="text-body-2 text-truncate mb-5">
+                <VCol cols="6" class="text-right">
+                  <p>วันที่สิ้นสุด {{ house.end_date ? house.end_date.split("T")[0] : '--/--/--' }}</p>
+                </VCol>
+              </VRow>
+
+              <VueApexCharts type="line" :options="chartOptions" :series="series" :height="120" class="my-1" />
+
+              <!--
+                <VCardTitle class="text-h6 mb-1">
+                {{ course.title }}
+                </VCardTitle>
+                <VCardSubtitle class="mb-3">
+                {{ course.category }}
+                </VCardSubtitle>
+
+                <VCardText class="text-body-2 text-truncate mb-5">
                 {{ course.description }}
-              </VCardText>
+                </VCardText>
+              -->
 
               <VCardActions class="justify-space-between pt-0">
-                <VBtn color="primary" variant="flat" size="small" @click="goToHouseDetail(course)">
+                <VBtn color="primary" variant="flat" size="small" @click="goToHouseDetail(house)">
                   View
                 </VBtn>
-                <VChip :color="course.status === 'Completed' ? 'success' : 'info'" size="small" label>
+                <!--
+                  <VChip :color="course.status === 'Completed' ? 'success' : 'info'" size="small" label>
                   {{ course.status }}
-                </VChip>
+                  </VChip>
+                -->
               </VCardActions>
             </VCard>
           </VCol>
         </VRow>
 
         <!-- No result -->
-        <div v-if="paginatedCourses.length === 0" class="text-center py-10 text-medium-emphasis">
+        <div v-if="houseStore.pagination.totalPages === 0" class="text-center py-10 text-medium-emphasis">
           No courses found.
         </div>
 
         <!-- Pagination -->
         <div class="mt-6 flex justify-center">
-          <VPagination v-model="page" :length="pageCount" total-visible="5" @update:model-value="onPageChange" />
+          <VPagination v-model="houseStore.pagination.page" :length="pageCount" total-visible="5"
+            @update:model-value="onPageChange" />
         </div>
       </VCard>
     </VCol>
