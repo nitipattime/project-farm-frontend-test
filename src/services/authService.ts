@@ -36,6 +36,16 @@ export const refreshTokenApi = () => {
   )
 }
 
+export const getMeInfoApi = () => {
+  const accessToken = localStorage.getItem('accessToken')
+
+  return axios.get(`${API_URL}/me`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+}
+
 // api.ts
 // import axios from 'axios'
 

@@ -503,17 +503,18 @@ async function submitForm() {
 
   try {
     const payload = {
-      name: farmForm.value.name,
-      contact: farmForm.value.contact,
-      zip_code: farmForm.value.zip_code,
-      province_id: farmForm.value.province_id,
-      district_id: farmForm.value.district_id,
-      subdistrict_id: farmForm.value.subdistrict_id,
+      farm_name: farmForm.value.name,
+      contact_name: farmForm.value.contact,
+      province: farmForm.value.province_id,
+      district: farmForm.value.district_id,
+      subdistrict: farmForm.value.subdistrict_id,
+
+      // zip_code: farmForm.value.zip_code,
     }
 
     console.log(payload)
 
-    // await farmStore.createFarm(payload)
+    await farmStore.addFarm(payload)
 
     dialog.value = false
     resetForm()

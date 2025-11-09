@@ -1,14 +1,20 @@
 import { defineStore } from 'pinia'
 
-import { loginApi, logoutApi, refreshTokenApi } from '@/services/authService'
+import { getMeInfoApi, loginApi, logoutApi, refreshTokenApi } from '@/services/authService'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     token: localStorage.getItem('accessToken') || '', // ดึง token จาก localStorage
     accessToken: localStorage.getItem('accessToken') || null,
     refreshToken: localStorage.getItem('refreshToken') || null,
-
-    // user: JSON.parse(localStorage.getItem('user') || 'null'),
+    user: (() => {
+      const user = localStorage.getItem('user')
+      try {
+        return user ? JSON.parse(user) : null
+      } catch {
+        return null
+      }
+    })(),
   }),
   actions: {
     setToken(token: string) {
@@ -35,7 +41,13 @@ export const useAuthStore = defineStore('auth', {
 
         localStorage.setItem('accessToken', data.accessToken)
         localStorage.setItem('refreshToken', data.refreshToken)
-        localStorage.setItem('user', JSON.stringify(data.user))
+
+        const resUserInfo = await getMeInfoApi()
+        const userData = resUserInfo.data.data
+
+        // เก็บข้อมูลผู้ใช้
+        // this.user = userData
+        localStorage.setItem('user', JSON.stringify(userData))
 
         return true
       } catch (err: any) {
@@ -58,6 +70,7 @@ export const useAuthStore = defineStore('auth', {
 
         localStorage.removeItem('accessToken')
         localStorage.removeItem('refreshToken')
+        localStorage.removeItem('user')
       }
     },
     async refresh() {
