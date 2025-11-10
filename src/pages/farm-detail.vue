@@ -128,10 +128,11 @@ const filteredCourses = computed(() => {
 const farmForm = ref({
   name: '',
   contact: '',
-  postcode: '',
-  province: '',
-  district: '',
-  subdistrict: '',
+
+  // postcode: '',
+  // province: '',
+  // district: '',
+  // subdistrict: '',
 })
 
 // rules
@@ -169,12 +170,12 @@ watch(() => farmForm.value.district, newVal => {
 })
 
 // submitForm
-function submitForm() {
-  // ตรวจสอบว่าทุก field ผ่าน validation หรือไม่
-  // Vuetify v3 จะ validate อัตโนมัติเมื่อกดปุ่ม Save
-  console.log(farmForm.value)
-  dialog.value = false
-}
+// function submitForm() {
+//   // ตรวจสอบว่าทุก field ผ่าน validation หรือไม่
+//   // Vuetify v3 จะ validate อัตโนมัติเมื่อกดปุ่ม Save
+//   console.log(farmForm.value)
+//   dialog.value = false
+// }
 
 // go to house deatil
 function goToHouseDetail(items: any) {
@@ -182,6 +183,71 @@ function goToHouseDetail(items: any) {
 
   // router.push('/farmDetail') // หรือใช้ชื่อ route: router.push({ name: 'about' })
   router.push({ name: 'house-detail', params: { id: items.id } }) // หรือใช้ชื่อ route: router.push({ name: 'about' })
+}
+
+const showAlert = ref(false)
+const alertMessage = ref('')
+const alertType = ref<'success' | 'error'>('success')
+
+function resetForm() {
+  farmForm.value = {
+    name: '',
+    contact: '',
+
+    // zip_code: '',
+
+    // province_id: null,
+    // district_id: null,
+    // subdistrict_id: null,
+  }
+
+  // provinces.value = []
+  // districts.value = []
+  // subdistricts.value = []
+}
+
+async function submitForm() {
+  // ตรวจสอบว่ากรอกครบหรือยัง
+  // const { valid } = await formRef.value.validate()
+
+  // if (!valid) {
+  //   showAlert.value = true
+  //   alertType.value = 'error'
+  //   alertMessage.value = 'กรุณากรอกข้อมูลให้ครบถ้วน'
+
+  //   return
+  // }
+
+  try {
+    const payload = {
+      house_name: farmForm.value.name,
+      contact_name: farmForm.value.contact,
+      farm_id: farmId,
+
+      // zip_code: farmForm.value.zip_code,
+    }
+
+    console.log(payload)
+
+    await houseStore.addHouse(payload)
+
+    dialog.value = false
+    resetForm()
+
+    // showAlert.value = true
+    alertType.value = 'success'
+    alertMessage.value = 'บันทึกข้อมูลฟาร์มเรียบร้อยแล้ว'
+
+    setTimeout(() => {
+      showAlert.value = true
+    }, 250)
+  }
+  catch (error) {
+    showAlert.value = true
+    alertType.value = 'error'
+    alertMessage.value = 'เกิดข้อผิดพลาดในการบันทึกข้อมูล'
+    console.error(error)
+  }
 }
 
 const onSearch = async () => {
@@ -491,6 +557,10 @@ const chartOptions = computed(() => {
       </VCard>
     </VDialog>
   </div>
+
+  <VSnackbar v-model="showAlert" :color="alertType" timeout="2000">
+    {{ alertMessage }}
+  </VSnackbar>
 </template>
 
 <style scoped>

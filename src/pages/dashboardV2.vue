@@ -65,7 +65,7 @@ const courses = ref([
   { id: 9, title: 'Intro to Physics', category: 'Science' },
 ])
 
-const pageCount = computed(() => Math.ceil(farmStore.pagination.page / perPage))
+const pageCount = computed(() => Math.ceil(farmStore.pagination.total / farmStore.pagination.limit))
 
 const paginatedCourses = computed(() => {
   const start = (page.value - 1) * perPage
@@ -78,8 +78,12 @@ const fetchCourses = () => {
   console.log('Searching:', searchQuery.value)
 }
 
-const onPageChange = (newPage: number) => {
+const onPageChange = async (newPage: number) => {
   console.log('Page changed:', newPage)
+  page.value = newPage
+
+  // farmStore.pagination.page = newPage
+  await handleGetCampaignList()
 }
 
 const filteredCourses = computed(() => {
@@ -157,7 +161,8 @@ async function handleGetCampaignList() {
 
     // sort_by: sortBy.value,
     // sort_dir: sortDirection.value,
-    page: farmStore.pagination.page,
+    // page: farmStore.pagination.page,
+    page: page.value,
   }
 
   try {
