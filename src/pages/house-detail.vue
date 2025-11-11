@@ -569,61 +569,61 @@ onMounted(async () => {
         </div>
 
         <!-- Course Cards -->
-        <!--
-          <VRow class="g-6">
+
+        <VRow class="g-6">
           <VCol v-for="machine in scalesData.machines" :key="machine.scale_name" cols="12" sm="6" md="6">
-          <VCard elevation="2" class="pa-4 h-100 border border-solid border-gray-800">
-          <h2 class="text-lg font-semibold mb-4">
-          Table by Scale (ชื่อเครื่องชั่ง 1) {{ machine.scale_name }}
-          </h2>
+            <VCard elevation="2" class="pa-4 h-100 border border-solid border-gray-800">
+              <h2 class="text-lg font-semibold mb-4">
+                Table by Scale (ชื่อเครื่องชั่ง 1) {{ machine.scale_name }}
+              </h2>
 
-          <div class="overflow-x-auto">
-          <table class="w-full border-collapse">
-          <thead>
-          <tr class="border-b text-left text-gray-700">
-          <th class="py-2 px-3">
-          Scale No.
-          </th>
-          <th class="py-2 px-3">
-          Mean Weight (g)
-          </th>
-          <th class="py-2 px-3">
-          SD
-          </th>
-          <th class="py-2 px-3">
-          CV%
-          </th>
-          <th class="py-2 px-3">
-          Count
-          </th>
-          </tr>
-          </thead>
+              <div class="overflow-x-auto">
+                <table class="w-full border-collapse">
+                  <thead>
+                    <tr class="border-b text-left text-gray-700">
+                      <th class="py-2 px-3">
+                        Scale No.
+                      </th>
+                      <th class="py-2 px-3">
+                        Mean Weight (g)
+                      </th>
+                      <th class="py-2 px-3">
+                        SD
+                      </th>
+                      <th class="py-2 px-3">
+                        CV%
+                      </th>
+                      <th class="py-2 px-3">
+                        Count
+                      </th>
+                    </tr>
+                  </thead>
 
-          <tbody class="text-gray-800">
-          <tr v-for="row in machine.data" :key="row.scale_id" class="border-b">
-          <td class="py-2 px-3">
-          {{ row.scale_no }}
-          </td>
-          <td class="py-2 px-3">
-          {{ Number(row.mean_weight).toFixed(4) }}
-          </td>
-          <td class="py-2 px-3">
-          {{ Number(row.sv).toFixed(4) }}
-          </td>
-          <td class="py-2 px-3">
-          {{ Number(row.cv).toFixed(4) }}
-          </td>
-          <td class="py-2 px-3">
-          {{ row.count }}
-          </td>
-          </tr>
-          </tbody>
-          </table>
-          </div>
-          </VCard>
+                  <tbody class="text-gray-800">
+                    <tr v-for="row in machine.data" :key="row.scale_id" class="border-b">
+                      <td class="py-2 px-3">
+                        {{ row.scale_no }}
+                      </td>
+                      <td class="py-2 px-3">
+                        {{ Number(row.mean_weight).toFixed(4) }}
+                      </td>
+                      <td class="py-2 px-3">
+                        {{ Number(row.sv).toFixed(4) }}
+                      </td>
+                      <td class="py-2 px-3">
+                        {{ Number(row.cv).toFixed(4) }}
+                      </td>
+                      <td class="py-2 px-3">
+                        {{ row.count }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </VCard>
           </VCol>
-          </VRow>
-        -->
+        </VRow>
+
         <!--
           <VRow class="g-6">
           <VCol v-for="(course, i) in paginatedCourses" :key="i" cols="12" sm="6" md="6">
