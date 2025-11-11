@@ -72,7 +72,28 @@ async function handleLogin() {
 
   if (success) {
     await nextTick() // ✅ รอให้ state ของ Pinia อัปเดตเสร็จก่อน
+
+    // const auth = useAuthStore()
+    // if (auth.user?.role === 'admin')
+    //   router.push('/admin')
+    // else
+    //   router.push('/dashboardV2')
+
+    // !!!!!!!
+    // const userStr = localStorage.getItem('user')
+    // if (userStr) {
+    //   const user = JSON.parse(userStr) // ✅ แปลง JSON string กลับเป็น object
+
+    //   if (user.role === 'admin')
+    //     router.push('/admin')
+    //   else
+    //     router.push('/dashboardV2')
+    // }
+    // else {
+    // ถ้าไม่มี user ใน localStorage
     router.push('/dashboardV2')
+
+    // }
   }
   else {
     error.value = 'Invalid credentials'

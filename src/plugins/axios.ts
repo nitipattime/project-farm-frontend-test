@@ -7,12 +7,11 @@ const instance = axios.create({
   baseURL: API_URL,
 })
 
-console.log('test axios')
-
 // ก่อนส่ง request → แนบ access token
 instance.interceptors.request.use(config => {
   const token = localStorage.getItem('accessToken')
-  if (token) config.headers.Authorization = `Bearer ${token}`
+  if (token)
+    config.headers.Authorization = `Bearer ${token}`
 
   return config
 })
@@ -43,7 +42,8 @@ instance.interceptors.response.use(
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
 
           return instance(originalRequest)
-        } catch (refreshError) {
+        }
+        catch (refreshError) {
           console.error('❌ Refresh token invalid', refreshError)
           localStorage.removeItem('accessToken')
           localStorage.removeItem('refreshToken')

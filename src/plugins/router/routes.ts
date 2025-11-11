@@ -27,6 +27,12 @@ export const routes = [
         props: true,
       },
       {
+        path: '/admin',
+        name: 'main-admin',
+        component: () => import('@/pages/main-admin.vue'),
+        props: true,
+      },
+      {
         path: 'dashboard',
         component: () => import('@/pages/dashboard.vue'),
       },

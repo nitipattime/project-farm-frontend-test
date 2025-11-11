@@ -10,7 +10,7 @@ const form = reactive({
     house_name: '',
     animal_type: '',
     breed: '',
-    sex: '',
+    sex: 'male',
     silo_id: '',
     machine1: '',
     machine2: '',
@@ -97,8 +97,14 @@ const checkbox = ref(false)
                 <!-- เพศ + Silo -->
                 <VRow class="mt-4">
                     <VCol cols="6">
-                        <VTextField v-model="form.sex" label="เพศ *" placeholder="ระบุเพศ" counter="5"
-                            :error-messages="errors.sex" @input="countSexLength" />
+                        <!--
+              <VTextField v-model="form.sex" label="เพศ *" placeholder="ระบุเพศ" counter="5"
+              :error-messages="errors.sex" @input="countSexLength" />
+            -->
+                        <VSelect v-model="form.sex" label="เพศ *" placeholder="เลือกเพศ" :items="[
+                            { title: 'เพศผู้', value: 'male' },
+                            { title: 'เพศเมีย', value: 'female' },
+                        ]" :error-messages="errors.sex" />
                     </VCol>
                     <VCol cols="6">
                         <VSelect v-model="form.silo_id" :items="siloOptions" label="Silo *" placeholder="เลือก Silo"
@@ -123,15 +129,17 @@ const checkbox = ref(false)
             <VCol cols="12" md="6">
                 <!-- จำนวนสัตว์ + เป้าหมายน้ำหนัก -->
                 <VRow>
-                    <VCol cols="6">
+                    <VCol cols="12">
                         <VTextField v-model="form.qty" label="จำนวนสัตว์ที่เลี้ยงในฟาร์ม *" placeholder="ระบุจำนวนสัตว์"
                             counter="13" type="number" :error-messages="errors.qty" @input="countQTYLength" />
                     </VCol>
-                    <VCol cols="6">
-                        <VTextField v-model="form.weight_target" label="เป้าหมายน้ำหนัก *"
-                            placeholder="ระบุน้ำหนัก (กรัม)" counter="13" type="number"
-                            :error-messages="errors.weight_target" @input="countWeightTargetLength" />
-                    </VCol>
+                    <!--
+            <VCol cols="6">
+            <VTextField v-model="form.weight_target" label="เป้าหมายน้ำหนัก *"
+            placeholder="ระบุน้ำหนัก (กรัม)" counter="13" type="number"
+            :error-messages="errors.weight_target" @input="countWeightTargetLength" />
+            </VCol>
+          -->
                 </VRow>
 
                 <!-- สูตรอาหาร -->
