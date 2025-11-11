@@ -15,12 +15,14 @@ interface ClientToServerEvents {
 const scalesData = ref<any>(null)
 
 export function useRealtime(houseId: number) {
+  const accessToken = localStorage.getItem('accessToken')
+
   const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io('https://jrlheater.com', {
     path: '/realtime',
 
     // path: '/socket/join-house',
     auth: {
-      token: import.meta.env.VITE_SOCKET_IO_TOKEN, // ใส่ token จาก env
+      token: accessToken,
     },
   })
 

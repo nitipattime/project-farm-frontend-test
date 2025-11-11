@@ -273,27 +273,63 @@ onMounted(async () => {
     <VCol cols="12">
       <VCard title="">
         <template #subtitle>
-          <p class="text-body-1 mb-0">
-            <span class="d-inline-block font-weight-medium text-high-emphasis">ชื่อฟาร์ม</span> {{
-              houseStore.houseSummary.farm_name ? houseStore.houseSummary.farm_name : '-' }}
-          </p>
-          <p class="text-body-1 mb-0">
-            <span class="d-inline-block font-weight-medium text-high-emphasis">ชื่อโรงเรือน</span> {{
-              houseStore.houseSummary.house_name ? houseStore.houseSummary.house_name : '-' }}
-          </p>
-          <p class="text-body-1 mb-0">
-            <span class="d-inline-block font-weight-medium text-high-emphasis">ข้อมูลสายพันธ์</span> {{
-              houseStore.houseSummary.breed ? houseStore.houseSummary.breed : '-' }}
-          </p>
-          <p class="text-body-1 mb-0">
-            <span class="d-inline-block font-weight-medium text-high-emphasis">เพศ</span> {{ houseStore.houseSummary.sex
-              ? houseStore.houseSummary.sex : '-' }}
-          </p>
+          <div class="text-h5 mb-0 flex items-center gap-2">
+            <span class="font-weight-medium text-high-emphasis">ชื่อฟาร์ม: </span>
+            <span class="text-grey-600">
+              {{ houseStore.houseSummary.farm_name || '-' }}
+            </span>
+          </div>
+          <div class="text-h5 mb-0 flex items-center gap-2">
+            <span class="font-weight-medium text-high-emphasis">ชื่อโรงเรือน: </span>
+            <span class="text-grey-600">
+              {{ houseStore.houseSummary.house_name || '-' }}
+            </span>
+          </div>
+          <div class="text-h5 mb-0 flex items-center gap-2">
+            <span class="font-weight-medium text-high-emphasis">ข้อมูลสายพันธ์: </span>
+            <span class="text-grey-600">
+              {{ houseStore.houseSummary.breed || '-' }}
+            </span>
+          </div>
+          <div class="text-h5 mb-0 flex items-center gap-2">
+            <span class="font-weight-medium text-high-emphasis">เพศ: </span>
+            <span class="text-grey-600">
+              {{ houseStore.houseSummary.sex || '-' }}
+            </span>
+          </div>
+          <!--
+            <div class="text-h5 mb-0">
+            <span class="d-inline-block font-weight-medium text-high-emphasis">ชื่อฟาร์ม </span>
+            <div class="text-grey-600">
+            {{
+            houseStore.houseSummary.farm_name ? houseStore.houseSummary.farm_name : '-' }}
+            </div>
+            </div>
+
+            <p class="text-h5 mb-0">
+            <span class="d-inline-block font-weight-medium text-high-emphasis">ชื่อโรงเรือน </span>
+            <span class="text-grey-600">{{
+            houseStore.houseSummary.house_name ? houseStore.houseSummary.house_name : '-' }}</span>
+            </p>
+            <p class="text-h5 mb-0">
+            <span class="d-inline-block font-weight-medium text-high-emphasis">ข้อมูลสายพันธ์ </span>
+            <span class="text-grey-600">{{
+            houseStore.houseSummary.breed ? houseStore.houseSummary.breed : '-' }}</span>
+            </p>
+            <p class="text-h5 mb-0">
+            <span class="d-inline-block font-weight-medium text-high-emphasis">เพศ </span>
+            <span class="text-grey-600">{{
+            houseStore.houseSummary.sex
+            ? houseStore.houseSummary.sex : '-' }}</span>
+            </p>
+          -->
         </template>
 
-        <template #append>
+        <!--
+          <template #append>
           <MoreBtn :menu-list="moreList" />
-        </template>
+          </template>
+        -->
 
         <VCardText class="pt-1">
           <VRow>
@@ -534,38 +570,82 @@ onMounted(async () => {
 
         <!-- Course Cards -->
         <VRow class="g-6">
-          <VCol v-for="(course, i) in paginatedCourses" :key="i" cols="12" sm="6" md="6">
+          <VCol v-for="machine in scalesData.machines" :key="machine.scale_name" cols="12" sm="6" md="6">
             <VCard elevation="2" class="pa-4 h-100 border border-solid border-gray-800">
-              <!-- <VImg :src="course.image" height="180" cover class="rounded mb-4" /> -->
+              <h2 class="text-lg font-semibold mb-4">
+                Table by Scale (ชื่อเครื่องชั่ง 1) {{ machine.scale_name }}
+              </h2>
 
-              <VCardTitle class="text-h6 mb-1">
-                {{ course.title }}
-              </VCardTitle>
-              <VCardSubtitle class="mb-3">
-                {{ course.category }}
-              </VCardSubtitle>
+              <div class="overflow-x-auto">
+                <table class="w-full border-collapse">
+                  <!-- หัวตาราง -->
+                  <thead>
+                    <tr class="border-b text-left text-gray-700">
+                      <th class="py-2 px-3">
+                        Scale No.
+                      </th>
+                      <th class="py-2 px-3">
+                        Mean Weight (g)
+                      </th>
+                      <th class="py-2 px-3">
+                        SD
+                      </th>
+                      <th class="py-2 px-3">
+                        CV%
+                      </th>
+                      <th class="py-2 px-3">
+                        Count
+                      </th>
+                    </tr>
+                  </thead>
 
-              <VCardText class="text-body-2 text-truncate mb-5">
-                {{ course.description }}
-              </VCardText>
-
-              <VChip :color="course.status === 'Completed' ? 'success' : 'info'" size="small" label>
-                {{ course.status }}
-              </VChip>
-
-              <!--
-                <VCardActions class="justify-space-between pt-0">
-                <VBtn color="primary" variant="flat" size="small">
-                View
-                </VBtn>
-                <VChip :color="course.status === 'Completed' ? 'success' : 'info'" size="small" label>
-                {{ course.status }}
-                </VChip>
-                </VCardActions>
-              -->
+                  <!-- ข้อมูล -->
+                  <tbody class="text-gray-800">
+                    <tr v-for="row in machine.data" :key="row.scale_id" class="border-b">
+                      <td class="py-2 px-3">
+                        {{ row.scale_no }}
+                      </td>
+                      <td class="py-2 px-3">
+                        {{ Number(row.mean_weight).toFixed(4) }}
+                      </td>
+                      <td class="py-2 px-3">
+                        {{ Number(row.sv).toFixed(4) }}
+                      </td>
+                      <td class="py-2 px-3">
+                        {{ Number(row.cv).toFixed(4) }}
+                      </td>
+                      <td class="py-2 px-3">
+                        {{ row.count }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </VCard>
           </VCol>
         </VRow>
+        <!--
+          <VRow class="g-6">
+          <VCol v-for="(course, i) in paginatedCourses" :key="i" cols="12" sm="6" md="6">
+          <VCard elevation="2" class="pa-4 h-100 border border-solid border-gray-800">
+          <VCardTitle class="text-h6 mb-1">
+          {{ course.title }}
+          </VCardTitle>
+          <VCardSubtitle class="mb-3">
+          {{ course.category }}
+          </VCardSubtitle>
+
+          <VCardText class="text-body-2 text-truncate mb-5">
+          {{ course.description }}
+          </VCardText>
+
+          <VChip :color="course.status === 'Completed' ? 'success' : 'info'" size="small" label>
+          {{ course.status }}
+          </VChip>
+          </VCard>
+          </VCol>
+          </VRow>
+        -->
 
         <!-- No result -->
         <div v-if="paginatedCourses.length === 0" class="text-center py-10 text-medium-emphasis">
