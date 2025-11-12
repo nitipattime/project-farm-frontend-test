@@ -5,6 +5,7 @@ export interface HouseSummary {
   sex: string
   breed: string
   status: string
+  statusDisplay: string
   avg_weight: string
   total_qty: string
   duration_days: string
@@ -37,6 +38,7 @@ export const defaultHouseSummary: HouseSummary = {
   sex: '',
   breed: '',
   status: '',
+  statusDisplay: '',
   avg_weight: '',
   total_qty: '',
   duration_days: '',

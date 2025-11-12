@@ -107,6 +107,24 @@ export const getHouseWeekly = async (data: any) => {
   }
 }
 
+export const getHouseWeightChart = async (data: any) => {
+  const accessToken = localStorage.getItem('accessToken')
+  try {
+    const response = await axios.get(`${API_URL}/houses/${data.houseID}/weight-chart`, {
+      params: data || {},
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+
+    if (response.status === 200 || response.status === 201) return response.data
+    else return null
+  } catch (error: any) {
+    console.log(error)
+    throw error
+  }
+}
+
 export const getMachineAvailable = async () => {
   const accessToken = localStorage.getItem('accessToken')
   try {

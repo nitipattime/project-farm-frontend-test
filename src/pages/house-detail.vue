@@ -4,8 +4,8 @@ import { useRouter } from 'vue-router'
 
 import { useRealtime } from '@/composables/useSocket'
 import { useHouseStore } from '@/stores/houseStore'
-import AnalyticsSalesByCountries from '@/views/dashboard/AnalyticsSalesByCountries.vue'
-import Test from '@/views/dashboard/Test.vue'
+import AnalyticsSalesByCountriesV2 from '@/views/dashboard/AnalyticsSalesByCountriesV2.vue'
+import TestV2 from '@/views/dashboard/TestV2.vue'
 
 const props = defineProps<{ id: string }>()
 
@@ -237,6 +237,19 @@ async function handleGetHouseWeekly() {
   }
 }
 
+async function handleGetHouseWeightChart() {
+  const params = {
+    houseID: houseId,
+  }
+
+  try {
+    await houseStore.fetchHouseWeightChart(params)
+  }
+  catch (err) {
+    console.error(err)
+  }
+}
+
 const labels = ref<string[]>([])
 const chartData = ref<number[]>([])
 async function handleGetHouseCVHistory() {
@@ -261,6 +274,7 @@ const initialize = async () => {
   await handleGetHouseSummary()
   await handleGetHouseWeekly()
   await handleGetHouseCVHistory()
+  await handleGetHouseWeightChart()
 }
 
 onMounted(async () => {
@@ -371,7 +385,7 @@ onMounted(async () => {
                   </div>
                 -->
               </div>
-              <h4 class="text-h4 text-primary">
+              <h4 class="text-h5 text-primary">
                 <div v-if="houseStore.houseSummary.machines.length">
                   <div v-for="machine in houseStore.houseSummary.machines" :key="machine.mac">
                     <div class="text-blue-600 text-md">
@@ -408,7 +422,7 @@ onMounted(async () => {
                   </div>
                 -->
               </div>
-              <h4 class="text-h4 text-primary">
+              <h4 class="text-h5 text-primary">
                 {{ houseStore.houseSummary.food ? houseStore.houseSummary.food : '-' }}
               </h4>
               <!--
@@ -439,7 +453,7 @@ onMounted(async () => {
                   </div>
                 -->
               </div>
-              <h4 class="text-h4 text-primary">
+              <h4 class="text-h5 text-primary">
                 {{ houseStore.houseSummary.start_date ? houseStore.houseSummary.start_date.split("T")[0] : '-' }}
               </h4>
               <!--
@@ -470,7 +484,7 @@ onMounted(async () => {
                   </div>
                 -->
               </div>
-              <h4 class="text-h4 text-primary">
+              <h4 class="text-h5 text-primary">
                 {{ houseStore.houseSummary.end_date ? houseStore.houseSummary.end_date.split("T")[0] : '-' }}
               </h4>
               <!--
@@ -501,7 +515,7 @@ onMounted(async () => {
                   </div>
                 -->
               </div>
-              <h4 class="text-h4 text-primary">
+              <h4 class="text-h5 text-primary">
                 {{ houseStore.houseSummary.end_date ? houseStore.houseSummary.end_date.split("T")[0] : '-' }}
               </h4>
               <!--
@@ -531,8 +545,8 @@ onMounted(async () => {
                   </div>
                 -->
               </div>
-              <h4 class="text-h4 text-primary">
-                {{ houseStore.houseSummary.status ? houseStore.houseSummary.status : '-' }}
+              <h4 class="text-h5 text-primary">
+                {{ houseStore.houseSummary.statusDisplay ? houseStore.houseSummary.statusDisplay : '-' }}
               </h4>
               <!--
                 <div class="text-body-1 mb-2">
@@ -714,11 +728,11 @@ onMounted(async () => {
         />
       -->
       <!-- <AnalyticsBarCharts /> -->
-      <Test />
+      <TestV2 :data="houseStore.houseWeightChart" />
       <!-- <ShipmentStatisticsCard /> -->
     </VCol>
     <VCol cols="12" md="3">
-      <AnalyticsSalesByCountries />
+      <AnalyticsSalesByCountriesV2 :data="houseStore.houseCVHistory" />
     </VCol>
   </VRow>
 </template>

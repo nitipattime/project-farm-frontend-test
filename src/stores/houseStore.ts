@@ -7,6 +7,7 @@ import {
   getHouseCVHistory,
   getHouseSummary,
   getHouseWeekly,
+  getHouseWeightChart,
   getMachineAvailable,
   getMachineSilos,
 } from '@/services/houseService'
@@ -29,6 +30,7 @@ export const useHouseStore = defineStore('house', {
     },
     houseSummary: { ...defaultHouseSummary } as HouseSummary,
     houseWeekly: [] as any[],
+    houseWeightChart: [] as any[],
     houseCVHistory: [] as any[],
     machines: [] as { id: number; mac: string; sn: string }[],
     silos: [] as { id: number; name: string }[],
@@ -81,7 +83,7 @@ export const useHouseStore = defineStore('house', {
     },
 
     async fetchHouseWeekly(payload: any) {
-      getHouseWeekly
+      // getHouseWeekly
       this.loading = true
       try {
         const res = await getHouseWeekly(payload)
@@ -96,8 +98,24 @@ export const useHouseStore = defineStore('house', {
       }
     },
 
+    async fetchHouseWeightChart(payload: any) {
+      // getHouseWeekly
+      this.loading = true
+      try {
+        const res = await getHouseWeightChart(payload)
+
+        this.houseWeightChart = res.data
+
+        return res
+      } catch (err: any) {
+        this.error = err.message
+      } finally {
+        this.loading = false
+      }
+    },
+
     async fetchHouseCVHistory(payload: any) {
-      getHouseCVHistory
+      // getHouseCVHistory
       this.loading = true
       try {
         const res = await getHouseCVHistory(payload)
