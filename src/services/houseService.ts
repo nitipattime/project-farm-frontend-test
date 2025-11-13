@@ -159,6 +159,23 @@ export const getMachineSilos = async () => {
   }
 }
 
+export const getChickenBreed = async () => {
+  const accessToken = localStorage.getItem('accessToken')
+  try {
+    const response = await axios.get(`${API_URL}/chicken/breed`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+
+    if (response.status === 200 || response.status === 201) return response.data
+    else return null
+  } catch (error: any) {
+    console.log(error)
+    throw error
+  }
+}
+
 export const markHouseFinish = async (data: any) => {
   const accessToken = localStorage.getItem('accessToken')
   try {

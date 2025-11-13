@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 
 import {
   createHouse,
+  getChickenBreed,
   getHouse,
   getHouseCVHistory,
   getHouseSummary,
@@ -34,6 +35,7 @@ export const useHouseStore = defineStore('house', {
     houseCVHistory: [] as any[],
     machines: [] as { id: number; mac: string; sn: string }[],
     silos: [] as { id: number; name: string }[],
+    breed: [] as any[],
     loading: false,
     error: null as string | null,
   }),
@@ -161,6 +163,23 @@ export const useHouseStore = defineStore('house', {
         this.loading = false
       }
     },
+
+    async fetchChickenBreed() {
+      getHouseCVHistory
+      this.loading = true
+      try {
+        const res = await getChickenBreed()
+
+        this.breed = res.data
+
+        return res
+      } catch (err: any) {
+        this.error = err.message
+      } finally {
+        this.loading = false
+      }
+    },
+    // 
 
     clearHouseCVHistory() {
       this.houseCVHistory = []

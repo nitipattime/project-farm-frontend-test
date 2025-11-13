@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
+import { useHouseStore } from '@/stores/houseStore';
+import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router'; // 👈 เพิ่มบรรทัดนี้
-import { VBtn, VCol, VDatePicker, VForm, VRow, VSelect, VTextField } from 'vuetify/components'
+import { VBtn, VCol, VDatePicker, VForm, VRow, VSelect, VTextField } from 'vuetify/components';
 
 const router = useRouter()
 const formRef = ref()
@@ -74,6 +75,110 @@ const country = ref('')
 const company = ref('')
 const email = ref('')
 const checkbox = ref(false)
+
+// fetchMachineAvailable
+const houseStore = useHouseStore()
+
+const props = defineProps<{ id: string }>()
+const houseId = Number.parseInt(props.id || '0', 10)
+
+
+async function handleGetMachineAvailable() {
+
+
+    try {
+        await houseStore.fetchMachineAvailable()
+    }
+    catch (err) {
+        console.error(err)
+    }
+}
+
+async function handleGetMachineSilos() {
+
+
+    try {
+        await houseStore.fetchMachineSilos()
+    }
+    catch (err) {
+        console.error(err)
+    }
+}
+
+async function handleGetChickenBreed() {
+
+
+    try {
+        await houseStore.fetchChickenBreed()
+    }
+    catch (err) {
+        console.error(err)
+    }
+}
+
+// ✅ สร้าง API call สำหรับสร้างข้อมูลใหม่
+async function handleCreateHouse() {
+    try {
+        const payload = {
+            house_name: form.house_name,
+            animal_type: form.animal_type,
+            breed: form.breed,
+            sex: form.sex,
+            silo_id: form.silo_id,
+            machine1: form.machine1,
+            machine2: form.machine2,
+            qty: Number(form.qty),
+            weight_target: Number(form.weight_target) || null,
+            food: form.food,
+            start_date: form.start_date,
+            end_date: form.end_date,
+            uniform: Number(form.uniform),
+        }
+
+        const res = await houseStore.createHouse(payload)
+
+        console.log('✅ สร้างโรงเรือนสำเร็จ', res)
+
+        router.push('/house') // 👉 redirect กลับไปหน้า list หลังสร้างสำเร็จ
+    } catch (err: any) {
+        console.error('❌ สร้างโรงเรือนไม่สำเร็จ', err)
+
+        // ถ้ามี message จาก backend
+        if (err.response?.data?.message) {
+            alert(err.response.data.message)
+        }
+    }
+}
+
+// function submitForm() {
+//     handleCreateHouse()
+// }
+
+const initialize = async () => {
+    await handleGetMachineAvailable()
+    await handleGetMachineSilos()
+    await handleGetChickenBreed()
+
+
+
+    // const res =
+    //
+
+    // await handleGetAddress()
+    // await farmStore.fetchProvince()
+    // await farmStore.fetchDistrict()
+    // await farmStore.fetchSubDistrict()
+    // getDistricts
+    // getSubDistricts
+    // getAddress
+    // getProvince
+}
+
+onMounted(async () => {
+    await initialize()
+})
+
+
 </script>
 
 <template>
@@ -142,9 +247,11 @@ const checkbox = ref(false)
           -->
                 </VRow>
 
+
                 <!-- สูตรอาหาร -->
                 <VTextField v-model="form.food" label="สูตรอาหาร *" placeholder="กรอกสูตรอาหารของคุณ" counter="100"
                     :error-messages="errors.food" class="mt-4" @input="countFoodLength" />
+
 
                 <!-- วันที่เริ่ม + สิ้นสุด -->
                 <!--
@@ -159,6 +266,39 @@ const checkbox = ref(false)
         -->
 
                 <VRow class="mt-4">
+                    <!-- วันที่เริ่มเลี้ยง -->
+                    <VCol cols="12" md="6">
+                        <VMenu v-model="startPicker" :close-on-content-click="false" transition="scale-transition"
+                            offset-y min-width="auto">
+                            <template #activator="{ props }">
+                                <VTextField v-bind="props" v-model="form.start_date" label="วันที่เริ่มเลี้ยง *"
+                                    prepend-inner-icon="ri-calendar-line" readonly
+                                    :error-messages="errors.date_range" />
+                            </template>
+
+                            <VDatePicker v-model="form.start_date" @update:model-value="startPicker = false"
+                                title="เลือกวันที่เริ่มเลี้ยง" />
+                        </VMenu>
+                    </VCol>
+
+                    <!-- วันที่คาดว่าจะสิ้นสุด -->
+                    <VCol cols="12" md="6">
+                        <VMenu v-model="endPicker" :close-on-content-click="false" transition="scale-transition"
+                            offset-y min-width="auto">
+                            <template #activator="{ props }">
+                                <VTextField v-bind="props" v-model="form.end_date" label="วันที่คาดว่าจะสิ้นสุด *"
+                                    prepend-inner-icon="ri-calendar-line" readonly
+                                    :error-messages="errors.date_range" />
+                            </template>
+
+                            <VDatePicker v-model="form.end_date" @update:model-value="endPicker = false"
+                                title="เลือกวันที่คาดว่าจะสิ้นสุด" />
+                        </VMenu>
+                    </VCol>
+                </VRow>
+
+
+                <VRow class="">
                     <!-- วันที่เริ่มเลี้ยง -->
                     <VCol cols="12" md="6">
                         <VTextField v-model="form.start_date" label="วันที่เริ่มเลี้ยง *"
@@ -228,6 +368,7 @@ const checkbox = ref(false)
                 <VBtn type="submit">
                     ยืนยัน
                 </VBtn>
+                <!-- @submit.prevent="submitForm" -->
             </VCol>
             <!--
         <div class="d-flex justify-space-between align-center mb-6">
