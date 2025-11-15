@@ -412,7 +412,7 @@ const chartOptions = computed(() => {
             </VCardText>
 
             <!-- Trophy -->
-            <VImg :src="trophy" class="trophy" />
+            <!-- <VImg :src="trophy" class="trophy" /> -->
           </VCard>
         </VCol>
       </VRow>
@@ -457,18 +457,28 @@ const chartOptions = computed(() => {
           <VCol v-for="(house, i) in houseStore.houselist" :key="i" cols="12" sm="6" md="4">
             <VCard elevation="2" class="pa-4 h-100 border border-solid border-gray-800">
               <!-- <VImg :src="course.image" height="180" cover class="rounded mb-4" /> -->
-              <VCardTitle class="text-h6">
-                ชื่อโรงเรือน : {{ house.house_name ? house.house_name : '-' }}
-              </VCardTitle>
-              <VCardTitle class="text-h6">
+
+              <template #prepend>
+                <VCardTitle class="text-h6">
+                  ชื่อโรงเรือน : {{ house.house_name ? house.house_name : '-' }}
+                </VCardTitle>
+              </template>
+              <VCardTitle class="text-h6 px-5">
                 ชื่อผู้ดูแล : {{ house.contact_name ? house.contact_name : '-' }}
               </VCardTitle>
-              <VCardTitle class="text-h6">
+              <VCardTitle class="text-h6 px-5">
                 ระยะเวลาเพาะเลี้ยงรวม : {{ house.duration_days ? house.duration_days : '0' }} วัน
               </VCardTitle>
-              <VCardTitle class="text-h6">
+              <VCardTitle class="text-h6 px-5">
                 สถานะการเพาะเลี้ยง : {{ house.status ? house.status : '-' }}
               </VCardTitle>
+
+              <template #append>
+                <VChip :color="house.status === 'Completed' ? 'success' : 'info'" size="small" label>
+                  Completed
+                </VChip>
+              </template>
+
               <VRow class="mt-2" align="center" justify="space-between">
                 <VCol cols="6">
                   <p>วันที่เริ่มต้น {{ house.start_date ? house.start_date.split("T")[0] : '--/--/--' }}</p>

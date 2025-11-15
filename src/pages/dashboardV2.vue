@@ -545,6 +545,10 @@ async function submitForm() {
 //   alertType.value = 'success'
 //   alertMessage.value = 'บันทึกข้อมูลฟาร์มเรียบร้อยแล้ว'
 // }
+
+const moreList = [
+  { title: 'ลบ', value: 'delete-farm' },
+]
 </script>
 
 <template>
@@ -711,48 +715,69 @@ async function submitForm() {
           </VCol>
           </VRow>
         -->
+        ฺ
         <VRow class="g-6">
           <VCol v-for="(farm, i) in farmStore.farmlist" :key="i" cols="12" sm="6" md="4">
-            <VCard elevation="2" class="pa-4 h-100 border border-solid border-gray-800">
-              <VCardTitle class="text-h6">
-                ชื่อฟาร์ม : {{ farm.farm_name }}
-              </VCardTitle>
-              <VCardTitle class="text-h6">
-                จำนวนโรงเรือน : {{ farm.house_count }}
-              </VCardTitle>
-              <VCardTitle class="text-h6">
-                จังหวัด : {{ farm.province }}
-              </VCardTitle>
-              <VCardTitle class="text-h6">
-                ชื่อผู้ดูแล : {{ farm.contact_name }}
-              </VCardTitle>
-              <!--
-                <VCardSubtitle class="mb-3">
-                จำนวนโรงเรือน : {{ farm.house_count }} โรงเรือน
-                </VCardSubtitle>
+            <VCard elevation="2" class="h-100 border border-solid border-gray-800 relative">
+              <template #subtitle>
+                <VCardTitle class="text-h6">
+                  ชื่อฟาร์ม : {{ farm.farm_name }}
+                </VCardTitle>
+                <VCardTitle class="text-h6">
+                  จำนวนโรงเรือน : {{ farm.house_count }}
+                </VCardTitle>
 
-                <VCardText class="text-body-2 text-truncate mb-5">
-                จังหวัด : {{ farm.province }}
-                </VCardText>
+                <VCardTitle class="text-h6">
+                  จังหวัด : {{ farm.province }}
+                </VCardTitle>
 
-                <VCardText class="text-body-2 text-truncate mb-5">
-                ชื่อผู้ดูแล : {{ farm.contact_name }}
-                </VCardText>
-              -->
+                <VCardTitle class="text-h6">
+                  ชื่อผู้ดูแล : {{ farm.contact_name }}
+                </VCardTitle>
 
-              <VCardActions class="justify-space-between pt-0">
-                <VBtn color="primary" variant="flat" size="small" @click="goToFarmDetail(farm)">
-                  View
-                </VBtn>
-                <!--
-                  <VChip :color="farm.status === 'Completed' ? 'success' : 'info'" size="small" label>
-                  {{ farm.status }}
-                  </VChip>
-                -->
-              </VCardActions>
+                <VCardActions class="justify-space-between pt-3">
+                  <VBtn color="primary" variant="flat" size="small" @click="goToFarmDetail(farm)">
+                    View
+                  </VBtn>
+                </VCardActions>
+              </template>
+              <template #append>
+                <MoreBtn :menu-list="moreList" />
+              </template>
             </VCard>
           </VCol>
         </VRow>
+
+        <!--
+          <VRow class="g-6">
+          <VCol v-for="(farm, i) in farmStore.farmlist" :key="i" cols="12" sm="6" md="4">
+          <VCard elevation="2" class="pa-4 h-100 border border-solid border-gray-800">
+          <div class="flex items-start justify-between flex-nowrap w-full">
+          <VCardTitle class="text-h6 m-0 p-0 whitespace-nowrap">
+          ชื่อฟาร์ม : {{ farm.farm_name }}
+          </VCardTitle>
+          <div class="shrink-0">
+          <MoreBtn :menu-list="moreList" />
+          </div>
+          </div>
+          <VCardTitle class="text-h6">
+          จำนวนโรงเรือน : {{ farm.house_count }}
+          </VCardTitle>
+          <VCardTitle class="text-h6">
+          จังหวัด : {{ farm.province }}
+          </VCardTitle>
+          <VCardTitle class="text-h6">
+          ชื่อผู้ดูแล : {{ farm.contact_name }}
+          </VCardTitle>
+          <VCardActions class="justify-space-between pt-0">
+          <VBtn color="primary" variant="flat" size="small" @click="goToFarmDetail(farm)">
+          View
+          </VBtn>
+          </VCardActions>
+          </VCard>
+          </VCol>
+          </VRow>
+        -->
 
         <!-- No result -->
         <div v-if="farmStore.pagination.totalPages === 0" class="text-center py-10 text-medium-emphasis">

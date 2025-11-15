@@ -1,9 +1,11 @@
 <script lang="ts" setup>
-import { useHouseStore } from '@/stores/houseStore';
-import { reactive, ref } from 'vue';
+import { createHouseDetail } from '@/services/houseService'
+import { useHouseStore } from '@/stores/houseStore'
+import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'; // 👈 เพิ่มบรรทัดนี้
-import { VBtn, VCol, VDatePicker, VForm, VRow, VSelect, VTextField } from 'vuetify/components';
+import { VBtn, VCol, VDatePicker, VForm, VRow, VSelect, VTextField } from 'vuetify/components'
 
+const props = defineProps<{ id: string }>()
 const router = useRouter()
 const formRef = ref()
 
@@ -38,15 +40,15 @@ const errors = reactive({
 })
 
 // Options example
-const siloOptions = [
-    { title: 'Silo 1', value: 1 },
-    { title: 'Silo 2', value: 2 },
-]
+// const siloOptions = [
+//     { title: 'Silo 1', value: 1 },
+//     { title: 'Silo 2', value: 2 },
+// ]
 
-const machineOptions = [
-    { title: 'Machine 1', value: 'M1' },
-    { title: 'Machine 2', value: 'M2' },
-]
+// const machineOptions = [
+//     { title: 'Machine 1', value: 'M1' },
+//     { title: 'Machine 2', value: 'M2' },
+// ]
 
 // Counter
 function countHouseNameLength() { }
@@ -78,38 +80,105 @@ const checkbox = ref(false)
 
 // fetchMachineAvailable
 const houseStore = useHouseStore()
+const siloOptions = ref<{ title: string; value: number }[]>([])
+const machineOptions = ref<{ title: string; value: number }[]>([])
+const breedOptions = ref<{ title: string; value: number }[]>([])
 
-const props = defineProps<{ id: string }>()
 const houseId = Number.parseInt(props.id || '0', 10)
 
-
 async function handleGetMachineAvailable() {
-
-
     try {
-        await houseStore.fetchMachineAvailable()
+        const res = await houseStore.fetchMachineAvailable()
+
+        // const res =
+        // machineOptions.value = res.data.map((item: any) => ({
+        //     title: item.name,
+        //     value: item.id,
+        // }))
+
+        // if (machineOptions.value.length > 0)
+        //     form.machine1 = machineOptions.value[0].value
+        machineOptions.value = res.data.map((item: any) => ({
+            title: item.sn, // หรือ `${item.sn} (${item.mac})` ถ้าอยากเห็น mac ด้วย
+            value: item.id,
+        }))
+
+        // ตั้ง default ให้เครื่องชั่ง 1 เป็นตัวแรก
+        if (machineOptions.value.length > 0)
+            form.machine1 = machineOptions.value[0].value
     }
     catch (err) {
         console.error(err)
     }
 }
+
+const machine2Options = computed(() => {
+    return machineOptions.value.filter(
+        m => m.value !== form.value.machine1,
+    )
+})
 
 async function handleGetMachineSilos() {
-
-
     try {
-        await houseStore.fetchMachineSilos()
+        const res = await houseStore.fetchMachineSilos()
+
+        //
+        siloOptions.value = res.data.map((item: any) => ({
+            title: item.name,
+            value: item.id,
+        }))
+
+        if (siloOptions.value.length > 0)
+            form.silo_id = siloOptions.value[0].value
     }
     catch (err) {
         console.error(err)
     }
 }
 
+// watch(
+//     [() => houseStore.machines, () => form.machine1],
+//     ([machines, machine1]) => {
+//         if (machines.length && machine1)
+//             console.log('Filtered:', machines.filter(m => m.mac !== machine1))
+//     },
+//     { deep: true },
+// )
+
+// const machineOptions2 = computed(() => {
+//     if (!houseStore.machines?.length)
+//         return []
+//     if (!form.machine1)
+//         return houseStore.machines
+
+//     return houseStore.machines.filter(m => m.mac !== form.machine1)
+
+//     //   return houseStore.machines.filter(m => m.mac !== form.machine1)
+// })
+
+// const siloOptions2 = computed(() => {
+//     if (!houseStore.silos?.length)
+//         return []
+//     if (!form.silo_name)
+//         return houseStore.silos
+
+//     return houseStore.silos.filter(m => m.name !== form.silo_name)
+
+//     //   return houseStore.machines.filter(m => m.mac !== form.machine1)
+// })
+
 async function handleGetChickenBreed() {
-
-
     try {
-        await houseStore.fetchChickenBreed()
+        const res = await houseStore.fetchChickenBreed()
+
+        breedOptions.value = res.data.map((item: string, index: number) => ({
+            title: item, // ใช้ตัว string เป็น title
+            value: item, // value เป็น string ก็ได้ (ถ้า DB ต้องการ index ก็ใช้ index)
+            // value: index      // ถ้าต้องการให้ value เป็นตัวเลข
+        }))
+
+        if (breedOptions.value.length > 0)
+            form.breed = breedOptions.value[0].value // เซ็ตค่า default
     }
     catch (err) {
         console.error(err)
@@ -135,18 +204,18 @@ async function handleCreateHouse() {
             uniform: Number(form.uniform),
         }
 
-        const res = await houseStore.createHouse(payload)
+        const res = await createHouseDetail(payload, houseId)
 
         console.log('✅ สร้างโรงเรือนสำเร็จ', res)
 
         router.push('/house') // 👉 redirect กลับไปหน้า list หลังสร้างสำเร็จ
-    } catch (err: any) {
+    }
+    catch (err: any) {
         console.error('❌ สร้างโรงเรือนไม่สำเร็จ', err)
 
         // ถ้ามี message จาก backend
-        if (err.response?.data?.message) {
+        if (err.response?.data?.message)
             alert(err.response.data.message)
-        }
     }
 }
 
@@ -158,8 +227,6 @@ const initialize = async () => {
     await handleGetMachineAvailable()
     await handleGetMachineSilos()
     await handleGetChickenBreed()
-
-
 
     // const res =
     //
@@ -178,11 +245,23 @@ onMounted(async () => {
     await initialize()
 })
 
+// Dialog control
+const confirmDialog = ref(false)
 
+// ฟังก์ชัน submit ของฟอร์ม
+function onSubmitForm() {
+    confirmDialog.value = true // เปิด dialog
+}
+
+// ฟังก์ชันยืนยันการสร้าง
+async function onConfirmCreate() {
+    confirmDialog.value = false
+    await handleCreateHouse()
+}
 </script>
 
 <template>
-    <VForm @submit.prevent="() => { }">
+    <VForm @submit.prevent="onSubmitForm">
         <VRow>
             <!-- 👉 First Name -->
             <!-- คอลัมน์ซ้าย -->
@@ -196,8 +275,12 @@ onMounted(async () => {
                     counter="100" :error-messages="errors.animal_type" class="mt-4" @input="countAnimalTypeLength" />
 
                 <!-- สายพันธุ์ -->
-                <VTextField v-model="form.breed" label="สายพันธุ์ *" placeholder="ระบุสายพันธุ์" counter="100"
-                    :error-messages="errors.breed" class="mt-4" @input="countBreedLength" />
+                <!--
+          <VTextField v-model="form.breed" label="สายพันธุ์ *" placeholder="ระบุสายพันธุ์" counter="100"
+          :error-messages="errors.breed" class="mt-4" @input="countBreedLength" />
+        -->
+                <VSelect v-model="form.breed" :items="siloOptions" label="สายพันธุ์ *" placeholder="เลือก สายพันธุ์"
+                    :error-messages="errors.breed" />
 
                 <!-- เพศ + Silo -->
                 <VRow class="mt-4">
@@ -224,7 +307,7 @@ onMounted(async () => {
                             placeholder="เลือกเครื่องชั่ง" :error-messages="errors.machine1" />
                     </VCol>
                     <VCol cols="6">
-                        <VSelect v-model="form.machine2" :items="machineOptions" label="เครื่องชั่ง 2"
+                        <VSelect v-model="form.machine2" :items="machine2Options" label="เครื่องชั่ง 2"
                             placeholder="เลือกเครื่องชั่ง" />
                     </VCol>
                 </VRow>
@@ -247,11 +330,9 @@ onMounted(async () => {
           -->
                 </VRow>
 
-
                 <!-- สูตรอาหาร -->
                 <VTextField v-model="form.food" label="สูตรอาหาร *" placeholder="กรอกสูตรอาหารของคุณ" counter="100"
                     :error-messages="errors.food" class="mt-4" @input="countFoodLength" />
-
 
                 <!-- วันที่เริ่ม + สิ้นสุด -->
                 <!--
@@ -264,39 +345,6 @@ onMounted(async () => {
           </VCol>
           </VRow>
         -->
-
-                <VRow class="mt-4">
-                    <!-- วันที่เริ่มเลี้ยง -->
-                    <VCol cols="12" md="6">
-                        <VMenu v-model="startPicker" :close-on-content-click="false" transition="scale-transition"
-                            offset-y min-width="auto">
-                            <template #activator="{ props }">
-                                <VTextField v-bind="props" v-model="form.start_date" label="วันที่เริ่มเลี้ยง *"
-                                    prepend-inner-icon="ri-calendar-line" readonly
-                                    :error-messages="errors.date_range" />
-                            </template>
-
-                            <VDatePicker v-model="form.start_date" @update:model-value="startPicker = false"
-                                title="เลือกวันที่เริ่มเลี้ยง" />
-                        </VMenu>
-                    </VCol>
-
-                    <!-- วันที่คาดว่าจะสิ้นสุด -->
-                    <VCol cols="12" md="6">
-                        <VMenu v-model="endPicker" :close-on-content-click="false" transition="scale-transition"
-                            offset-y min-width="auto">
-                            <template #activator="{ props }">
-                                <VTextField v-bind="props" v-model="form.end_date" label="วันที่คาดว่าจะสิ้นสุด *"
-                                    prepend-inner-icon="ri-calendar-line" readonly
-                                    :error-messages="errors.date_range" />
-                            </template>
-
-                            <VDatePicker v-model="form.end_date" @update:model-value="endPicker = false"
-                                title="เลือกวันที่คาดว่าจะสิ้นสุด" />
-                        </VMenu>
-                    </VCol>
-                </VRow>
-
 
                 <VRow class="">
                     <!-- วันที่เริ่มเลี้ยง -->
@@ -384,4 +432,25 @@ onMounted(async () => {
       -->
         </VRow>
     </VForm>
+
+    <!-- Confirm Dialog -->
+    <VDialog v-model="confirmDialog" max-width="400">
+        <VCard>
+            <VCardTitle class="text-h6">
+                ยืนยันการสร้างโรงเรือน
+            </VCardTitle>
+            <VCardText>
+                คุณต้องการสร้างโรงเรือนใช่หรือไม่?
+            </VCardText>
+            <VCardActions>
+                <VSpacer />
+                <VBtn text color="secondary" @click="confirmDialog = false">
+                    ยกเลิก
+                </VBtn>
+                <VBtn text color="primary" @click="onConfirmCreate">
+                    ยืนยันการสร้าง
+                </VBtn>
+            </VCardActions>
+        </VCard>
+    </VDialog>
 </template>
