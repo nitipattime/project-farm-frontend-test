@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { createHouseDetail } from '@/services/houseService'
-import { useHouseStore } from '@/stores/houseStore'
 import { reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'; // 👈 เพิ่มบรรทัดนี้
+import { useRouter } from 'vue-router' // 👈 เพิ่มบรรทัดนี้
 import { VBtn, VCol, VDatePicker, VForm, VRow, VSelect, VTextField } from 'vuetify/components'
+import { useHouseStore } from '@/stores/houseStore'
+import { createHouseDetail } from '@/services/houseService'
 
 const props = defineProps<{ id: string }>()
 const router = useRouter()
@@ -16,7 +16,9 @@ const form = reactive({
     sex: 'male',
     silo_id: '',
     machine1: '',
+    sn_machine1: '',
     machine2: '',
+    sn_machine2: '',
     qty: '',
     weight_target: '',
     food: '',
@@ -185,30 +187,65 @@ async function handleGetChickenBreed() {
     }
 }
 
+function mapMachine(value: number) {
+    const found = machineOptions.value.find(m => m.value === value)
+
+    return found
+        ? { mac: found.title, sn: String(found.value) }
+        : null
+}
+
 // ✅ สร้าง API call สำหรับสร้างข้อมูลใหม่
 async function handleCreateHouse() {
     try {
-        const payload = {
-            house_name: form.house_name,
-            animal_type: form.animal_type,
-            breed: form.breed,
-            sex: form.sex,
-            silo_id: form.silo_id,
-            machine1: form.machine1,
-            machine2: form.machine2,
-            qty: Number(form.qty),
-            weight_target: Number(form.weight_target) || null,
-            food: form.food,
-            start_date: form.start_date,
-            end_date: form.end_date,
-            uniform: Number(form.uniform),
+        console.log(`houseID: ${props.id}`)
+
+        // console.log(houseId)
+
+        const machines: any[] = []
+
+        if (form.machine1) {
+            const m1 = mapMachine(form.machine1)
+            if (m1)
+                machines.push(m1)
         }
 
-        const res = await createHouseDetail(payload, houseId)
+        if (form.machine2) {
+            const m2 = mapMachine(form.machine2)
+            if (m2)
+                machines.push(m2)
+        }
 
-        console.log('✅ สร้างโรงเรือนสำเร็จ', res)
+        console.log(machines)
 
-        router.push('/house') // 👉 redirect กลับไปหน้า list หลังสร้างสำเร็จ
+        const payload = {
+            qty: Number.parseInt(form.qty || '0', 10),
+            weight_target: Number.parseInt(form.weight_target || '0', 10),
+            type: form.animal_type,
+            food: form.food,
+            breed: form.breed,
+            sex: form.sex,
+            machine: machines,
+            start_date: form.start_date,
+            end_date: form.end_date,
+            uniform: form.uniform,
+            silo: form.silo_id,
+        }
+
+        console.log(payload)
+
+        const res = await createHouseDetail(payload, props.id)
+
+        // console.log('✅ สร้างโรงเรือนสำเร็จ', res)
+
+        // router.push('/house') // 👉 redirect กลับไปหน้า list หลังสร้างสำเร็จ
+        if (res) {
+            // showConfirm.value = false
+            // triggerSuccessModal()
+            setTimeout(() => {
+                router.back()
+            }, 2000)
+        }
     }
     catch (err: any) {
         console.error('❌ สร้างโรงเรือนไม่สำเร็จ', err)
@@ -243,6 +280,8 @@ const initialize = async () => {
 
 onMounted(async () => {
     await initialize()
+
+    // console.log(`houseID: ${props.id}`)
 })
 
 // Dialog control

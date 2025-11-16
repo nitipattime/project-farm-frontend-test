@@ -23,7 +23,10 @@ export const routes = [
       {
         path: '/addHouseDetail/:id',
         name: 'add-house-detail',
+
         component: () => import('@/pages/add-house-detail.vue'),
+
+        // component: () => import('@/views/pages/form-layouts/FormAddHouseDetail.vue'),
         props: true,
       },
       {

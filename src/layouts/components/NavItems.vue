@@ -1,244 +1,287 @@
 <script lang="ts" setup>
-import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
+import VerticalNavLink from '@layouts/components/VerticalNavLink.vue'
+
+import { useAuthStore } from '@/stores/auth'
+
+const auth = useAuthStore()
 </script>
 
 <template>
   <!-- 👉 Dashboards -->
-  <VerticalNavLink :item="{
+  <!--
+    <VerticalNavLink :item="{
+    title: 'Dashboard',
+    icon: 'ri-bar-chart-box-line',
+    to: '/dashboardV2',
+    }" />
+  -->
+
+  <!-- 👉 Dashboard -->
+  <VerticalNavLink v-if="auth.user.role === 'user' || auth.user.role === 'admin'" :item="{
     title: 'Dashboard',
     icon: 'ri-bar-chart-box-line',
     to: '/dashboardV2',
   }" />
 
-  <!-- <VerticalNavLink
-    :item="{
-      title: 'Cards',
-      icon: 'ri-bar-chart-box-line',
-      to: '/cards',
-    }"
-  /> -->
+  <!-- 👉 User Manage -->
+  <VerticalNavLink v-if="auth.user.role === 'admin'" :item="{
+    title: 'User Manage',
+    icon: 'ri-user-settings-line',
+  }" />
 
-  <!-- <VerticalNavLink :item="{
+  <!--  to: '/user-manage', -->
+
+  <!-- 👉 Import File -->
+  <VerticalNavLink v-if="auth.user.role === 'admin'" :item="{
+    title: 'Import File',
+    icon: 'ri-file-upload-line',
+
+  }" />
+  <!--     to: '/import-file', -->
+
+  <!--
+    <VerticalNavLink
+    :item="{
+    title: 'Cards',
+    icon: 'ri-bar-chart-box-line',
+    to: '/cards',
+    }"
+    />
+  -->
+
+  <!--
+    <VerticalNavLink :item="{
     title: 'Account Settings',
     icon: 'ri-user-settings-line',
     to: '/account-settings',
-  }" />
+    }" />
 
-  <VerticalNavGroup :item="{
+    <VerticalNavGroup :item="{
     title: 'Dashboards',
     // badgeContent: '5',
     // badgeClass: 'bg-error',
     icon: 'ri-home-smile-line',
-  }">
+    }">
     <VerticalNavLink :item="{
-      title: 'Analytics',
-      to: '/dashboard',
+    title: 'Analytics',
+    to: '/dashboard',
     }" />
 
     <VerticalNavLink
-      :item="{
-        title: 'CRM',
-        href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/dashboards/crm',
-        target: '_blank',
-        badgeContent: 'Pro',
-        badgeClass: 'bg-light-primary text-primary',
-      }"
+    :item="{
+    title: 'CRM',
+    href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/dashboards/crm',
+    target: '_blank',
+    badgeContent: 'Pro',
+    badgeClass: 'bg-light-primary text-primary',
+    }"
     />
     <VerticalNavLink
-      :item="{
-        title: 'ECommerce',
-        href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/dashboards/ecommerce',
-        target: '_blank',
-        badgeContent: 'Pro',
-        badgeClass: 'bg-light-primary text-primary',
-      }"
+    :item="{
+    title: 'ECommerce',
+    href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/dashboards/ecommerce',
+    target: '_blank',
+    badgeContent: 'Pro',
+    badgeClass: 'bg-light-primary text-primary',
+    }"
     />
     <VerticalNavLink
-      :item="{
-        title: 'Academy',
-        href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/dashboards/academy',
-        target: '_blank',
-        badgeContent: 'Pro',
-        badgeClass: 'bg-light-primary text-primary',
-      }"
+    :item="{
+    title: 'Academy',
+    href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/dashboards/academy',
+    target: '_blank',
+    badgeContent: 'Pro',
+    badgeClass: 'bg-light-primary text-primary',
+    }"
     />
     <VerticalNavLink
-      :item="{
-        title: 'Logistics',
-        href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/dashboards/logistics',
-        target: '_blank',
-        badgeContent: 'Pro',
-        badgeClass: 'bg-light-primary text-primary',
-      }"
+    :item="{
+    title: 'Logistics',
+    href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/dashboards/logistics',
+    target: '_blank',
+    badgeContent: 'Pro',
+    badgeClass: 'bg-light-primary text-primary',
+    }"
     />
-  </VerticalNavGroup> -->
+    </VerticalNavGroup>
+  -->
 
   <!-- 👉 Front Pages -->
-  <!-- <VerticalNavGroup :item="{
+  <!--
+    <VerticalNavGroup :item="{
     title: 'Front Pages',
     icon: 'ri-file-copy-line',
     badgeContent: 'Pro',
     badgeClass: 'bg-light-primary text-primary',
-  }">
+    }">
     <VerticalNavLink :item="{
-      title: 'Landing',
-      href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/front-pages/landing-page',
-      target: '_blank',
+    title: 'Landing',
+    href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/front-pages/landing-page',
+    target: '_blank',
     }" />
     <VerticalNavLink :item="{
-      title: 'Pricing',
-      href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/front-pages/pricing',
-      target: '_blank',
+    title: 'Pricing',
+    href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/front-pages/pricing',
+    target: '_blank',
     }" />
     <VerticalNavLink :item="{
-      title: 'Payment',
-      href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/front-pages/payment',
-      target: '_blank',
+    title: 'Payment',
+    href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/front-pages/payment',
+    target: '_blank',
     }" />
     <VerticalNavLink :item="{
-      title: 'Checkout',
-      href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/front-pages/checkout',
-      target: '_blank',
+    title: 'Checkout',
+    href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/front-pages/checkout',
+    target: '_blank',
     }" />
     <VerticalNavLink :item="{
-      title: 'Help Center',
-      href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/front-pages/help-center',
-      target: '_blank',
+    title: 'Help Center',
+    href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/front-pages/help-center',
+    target: '_blank',
     }" />
-  </VerticalNavGroup> -->
+    </VerticalNavGroup>
+  -->
 
   <!-- 👉 Apps & Pages -->
-  <!-- <VerticalNavSectionTitle :item="{
+  <!--
+    <VerticalNavSectionTitle :item="{
     heading: 'Apps & Pages',
-  }" />
-  <VerticalNavLink :item="{
+    }" />
+    <VerticalNavLink :item="{
     title: 'Email',
     icon: 'ri-mail-line',
     href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/apps/email',
     target: '_blank',
     badgeContent: 'Pro',
     badgeClass: 'bg-light-primary text-primary',
-  }" />
-  <VerticalNavLink :item="{
+    }" />
+    <VerticalNavLink :item="{
     title: 'Chat',
     icon: 'ri-wechat-line',
     href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/apps/chat',
     target: '_blank',
     badgeContent: 'Pro',
     badgeClass: 'bg-light-primary text-primary',
-  }" />
-  <VerticalNavLink :item="{
+    }" />
+    <VerticalNavLink :item="{
     title: 'Calendar',
     icon: 'ri-calendar-line',
     href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/apps/calendar',
     target: '_blank',
     badgeContent: 'Pro',
     badgeClass: 'bg-light-primary text-primary',
-  }" />
-  <VerticalNavLink :item="{
+    }" />
+    <VerticalNavLink :item="{
     title: 'Kanban',
     icon: 'ri-drag-drop-line',
     href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/apps/kanban',
     target: '_blank',
     badgeContent: 'Pro',
     badgeClass: 'bg-light-primary text-primary',
-  }" />
+    }" />
 
-  <VerticalNavLink :item="{
+    <VerticalNavLink :item="{
     title: 'Account Settings',
     icon: 'ri-user-settings-line',
     to: '/account-settings',
-  }" />
+    }" />
 
-  <VerticalNavLink :item="{
+    <VerticalNavLink :item="{
     title: 'Login',
     icon: 'ri-login-box-line',
     to: '/login',
-  }" />
-  <VerticalNavLink :item="{
+    }" />
+    <VerticalNavLink :item="{
     title: 'Register',
     icon: 'ri-user-add-line',
     to: '/register',
-  }" />
-  <VerticalNavLink :item="{
+    }" />
+    <VerticalNavLink :item="{
     title: 'Error',
     icon: 'ri-information-line',
     to: '/no-existence',
-  }" /> -->
+    }" />
+  -->
 
   <!-- 👉 User Interface -->
-  <!-- <VerticalNavSectionTitle :item="{
+  <!--
+    <VerticalNavSectionTitle :item="{
     heading: 'User Interface',
-  }" />
-  <VerticalNavLink :item="{
+    }" />
+    <VerticalNavLink :item="{
     title: 'Typography',
     icon: 'ri-text',
     to: '/typography',
-  }" />
-  <VerticalNavLink :item="{
+    }" />
+    <VerticalNavLink :item="{
     title: 'Icons',
     icon: 'ri-remixicon-line',
     to: '/icons',
-  }" />
-  <VerticalNavLink :item="{
+    }" />
+    <VerticalNavLink :item="{
     title: 'Cards',
     icon: 'ri-bar-chart-box-line',
     to: '/cards',
-  }" /> -->
+    }" />
+  -->
 
   <!-- 👉 Forms & Tables -->
-  <!-- <VerticalNavSectionTitle :item="{
+  <!--
+    <VerticalNavSectionTitle :item="{
     heading: 'Forms & Tables',
-  }" />
-  <VerticalNavLink :item="{
+    }" />
+    <VerticalNavLink :item="{
     title: 'Form Layouts',
     icon: 'ri-layout-4-line',
     to: '/form-layouts',
-  }" />
-  <VerticalNavLink :item="{
+    }" />
+    <VerticalNavLink :item="{
     title: 'Form Validation',
     icon: 'ri-checkbox-multiple-line',
     href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/forms/form-validation',
     target: '_blank',
     badgeContent: 'Pro',
     badgeClass: 'bg-light-primary text-primary',
-  }" />
-  <VerticalNavLink :item="{
+    }" />
+    <VerticalNavLink :item="{
     title: 'Form Wizard',
     icon: 'ri-git-commit-line',
     href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/forms/form-wizard-numbered',
     target: '_blank',
     badgeContent: 'Pro',
     badgeClass: 'bg-light-primary text-primary',
-  }" />
-  <VerticalNavLink :item="{
+    }" />
+    <VerticalNavLink :item="{
     title: 'Tables',
     icon: 'ri-table-alt-line',
     to: '/tables',
-  }" /> -->
+    }" />
+  -->
 
   <!-- 👉 Others -->
-  <!-- <VerticalNavSectionTitle :item="{
+  <!--
+    <VerticalNavSectionTitle :item="{
     heading: 'Others',
-  }" />
-  <VerticalNavLink :item="{
+    }" />
+    <VerticalNavLink :item="{
     title: 'Access Control',
     icon: 'ri-shield-line',
     href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/demo-1/access-control',
     target: '_blank',
     badgeContent: 'Pro',
     badgeClass: 'bg-light-primary text-primary',
-  }" />
-  <VerticalNavLink :item="{
+    }" />
+    <VerticalNavLink :item="{
     title: 'Documentation',
     icon: 'ri-article-line',
     href: 'https://demos.themeselection.com/materio-vuetify-vuejs-admin-template/documentation/',
     target: '_blank',
-  }" />
-  <VerticalNavLink :item="{
+    }" />
+    <VerticalNavLink :item="{
     title: 'Raise Support',
     href: 'https://github.com/themeselection/materio-vuetify-vuejs-admin-template-free/issues',
     icon: 'ri-lifebuoy-line',
     target: '_blank',
-  }" /> -->
+    }" />
+  -->
 </template>

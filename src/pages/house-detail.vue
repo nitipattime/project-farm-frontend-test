@@ -6,7 +6,7 @@ import { useRealtime } from '@/composables/useSocket'
 import { useHouseStore } from '@/stores/houseStore'
 import AnalyticsSalesByCountriesV2 from '@/views/dashboard/AnalyticsSalesByCountriesV2.vue'
 import TestV2 from '@/views/dashboard/TestV2.vue'
-
+import { markHouseFinish } from '@/services/houseService'
 
 const props = defineProps<{ id: string }>()
 
@@ -119,7 +119,8 @@ function submitForm() {
 }
 
 function goToAddHouseDetail() {
-  router.push({ name: 'add-house-detail', params: { id: props.id } })
+  console.log(props.id)
+  router.push({ name: 'add-house-detail', query: { id: props.id } })
 }
 
 const statistics = computed(() => [
@@ -216,6 +217,20 @@ async function handleGetHouseCVHistory() {
     chartData.value = dataFromBackend.map((item: any) => Number(Number(item.cv).toFixed(3)))
   }
   catch (err) {
+    console.error(err)
+  }
+}
+const confirmDialog = ref(false)
+
+async function handleConfirmMarkHouseFinish() {
+  try {
+    const result = await markHouseFinish(props.id)
+
+    if (result)
+      confirmDialog.value = false // ปิด dialog หลังบันทึกสำเร็จ
+  }
+  catch (err) {
+    confirmDialog.value = false
     console.error(err)
   }
 }
@@ -395,7 +410,7 @@ onMounted(async () => {
             เพิ่มรายละเอียด
           </VBtn>
 
-          <VBtn color="primary" class="text-white" v-bind="activatorProps" @click="dialog = true">
+          <VBtn color="primary" class="text-white" v-bind="activatorProps" @click="confirmDialog = true">
             สิ้นสุดการเลี้ยง
           </VBtn>
         </div>
@@ -517,6 +532,26 @@ onMounted(async () => {
       <AnalyticsSalesByCountriesV2 :data="houseStore.houseCVHistory" />
     </VCol>
   </VRow>
+
+  <VDialog v-model="confirmDialog" max-width="400">
+    <VCard>
+      <VCardTitle class="text-h6">
+        ยืนยันการสร้างโรงเรือน
+      </VCardTitle>
+      <VCardText>
+        คุณต้องการสร้างโรงเรือนใช่หรือไม่?
+      </VCardText>
+      <VCardActions>
+        <VSpacer />
+        <VBtn text color="secondary" @click="confirmDialog = false">
+          ยกเลิก
+        </VBtn>
+        <VBtn text color="primary" @click="handleConfirmMarkHouseFinish">
+          ยืนยันการสร้าง
+        </VBtn>
+      </VCardActions>
+    </VCard>
+  </VDialog>
 </template>
 
 <style scoped>

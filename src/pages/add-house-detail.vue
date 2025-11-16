@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import FormAddHouseDetail from '@/views/pages/form-layouts/FormAddHouseDetail.vue';
+import FormAddHouseDetail from '@/views/pages/form-layouts/FormAddHouseDetail.vue'
+
+const props = defineProps<{ id: string }>()
 </script>
 
 <template>
@@ -9,7 +11,7 @@ import FormAddHouseDetail from '@/views/pages/form-layouts/FormAddHouseDetail.vu
                 <!-- 👉 Multiple Column -->
                 <VCard title="เพิ่มรายละเอียดการเพาะเลี้ยง">
                     <VCardText>
-                        <FormAddHouseDetail />
+                        <FormAddHouseDetail :id="props.id" />
                     </VCardText>
                 </VCard>
             </VCol>
