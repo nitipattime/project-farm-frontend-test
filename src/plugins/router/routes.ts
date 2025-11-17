@@ -36,6 +36,16 @@ export const routes = [
         props: true,
       },
       {
+        path: '/user-manage',
+        name: 'user-manage',
+        component: () => import('@/pages/admin/user-manage.vue'),
+      },
+      {
+        path: '/import-file',
+        name: 'import-file',
+        component: () => import('@/pages/admin/import-excel.vue'),
+      },
+      {
         path: 'dashboard',
         component: () => import('@/pages/dashboard.vue'),
       },

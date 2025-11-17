@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import VerticalNavLink from '@layouts/components/VerticalNavLink.vue'
+import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
 
-import { useAuthStore } from '@/stores/auth'
+import { useAuthStore } from '@/stores/auth';
 
 const auth = useAuthStore()
 </script>
@@ -27,6 +27,7 @@ const auth = useAuthStore()
   <VerticalNavLink v-if="auth.user.role === 'admin'" :item="{
     title: 'User Manage',
     icon: 'ri-user-settings-line',
+    to: '/user-manage',
   }" />
 
   <!--  to: '/user-manage', -->
@@ -35,6 +36,7 @@ const auth = useAuthStore()
   <VerticalNavLink v-if="auth.user.role === 'admin'" :item="{
     title: 'Import File',
     icon: 'ri-file-upload-line',
+    to: '/import-file',
 
   }" />
   <!--     to: '/import-file', -->

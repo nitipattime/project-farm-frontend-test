@@ -3,6 +3,7 @@ import { useRouter } from 'vue-router'
 
 import { computed, onMounted, ref, shallowRef, watch } from 'vue'
 
+import { deleteFarm } from '@/services/farmService'
 import { useFarmStore } from '@/stores/farmStore'
 
 const router = useRouter()
@@ -493,6 +494,45 @@ const formRef = ref()
 const showAlert = ref(false)
 const alertMessage = ref('')
 const alertType = ref<'success' | 'error'>('success')
+const deleteDialog = ref(false)
+const deletePassword = ref('')
+const selectedFarmId = ref(null)
+
+function onSelectedMenu(farm: any, action: string) {
+  console.log(action)
+
+  if (action === 'delete-farm') {
+    selectedFarmId.value = farm.id // เก็บ id ฟาร์มที่จะลบ
+    deleteDialog.value = true // เปิด dialog
+  }
+}
+
+async function onDeleteDialog() {
+  // if (!deletePassword.value) {
+  //   alert('กรุณากรอกรหัสผ่าน')
+
+  //   return
+  // }
+
+  try {
+    // console.log(selectedFarmId.value)
+    // console.log(deletePassword.value)
+
+    await deleteFarm({
+      farm_id: selectedFarmId.value,
+      password: deletePassword.value,
+    })
+
+    deletePassword.value = ''
+    deleteDialog.value = false
+
+    // reload farm list
+    initialize()
+  }
+  catch (err) {
+    console.error(err)
+  }
+}
 
 async function submitForm() {
   // ตรวจสอบว่ากรอกครบหรือยัง
@@ -742,7 +782,8 @@ const moreList = [
                 </VCardActions>
               </template>
               <template #append>
-                <MoreBtn :menu-list="moreList" />
+                <!-- <MoreBtn :menu-list="moreList" /> -->
+                <MoreBtn :menu-list="moreList" @selected="(value) => onSelectedMenu(farm, value)" />
               </template>
             </VCard>
           </VCol>
@@ -881,6 +922,35 @@ const moreList = [
       </VCard>
     </VDialog>
   </div>
+
+  <VDialog v-model="deleteDialog" max-width="400">
+    <VCard>
+      <VCardTitle class="text-h6">
+        ยืนยันการลบโรงเรือน
+      </VCardTitle>
+
+      <VCardText>
+        <div class="mb-4">
+          คุณต้องการลบโรงเรือนใช่หรือไม่?<br>
+          กรุณากรอกรหัสผ่านเพื่อยืนยัน
+        </div>
+
+        <!-- ช่องกรอกรหัสผ่าน -->
+        <VTextField v-model="deletePassword" label="รหัสผ่าน" type="password" variant="outlined"
+          density="comfortable" />
+      </VCardText>
+
+      <VCardActions>
+        <VSpacer />
+        <VBtn color="secondary" @click="deleteDialog = false">
+          ยกเลิก
+        </VBtn>
+        <VBtn color="primary" @click="onDeleteDialog">
+          ยืนยันการลบ
+        </VBtn>
+      </VCardActions>
+    </VCard>
+  </VDialog>
 
   <!--
     <div v-if="showAlert">

@@ -38,6 +38,27 @@ export const createFarm = async (data: any) => {
   }
 }
 
+export const deleteFarm = async (data: any) => {
+  const accessToken = localStorage.getItem('accessToken')
+
+  try {
+    const response = await axios.delete(`${API_URL}/farms/${data.farm_id}`, {
+      data: {
+        password: data.password, // 👈 ส่ง body ที่นี่
+      },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+
+    if (response.status === 200 || response.status === 201) return response.data
+    else return null
+  } catch (error: any) {
+    console.log(error)
+    throw error
+  }
+}
+
 // get province
 export const getProvince = async () => {
   const accessToken = localStorage.getItem('accessToken')

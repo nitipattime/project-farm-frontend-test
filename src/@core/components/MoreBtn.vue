@@ -1,28 +1,28 @@
 <script lang="ts" setup>
+interface MenuItem {
+  title: string
+  value: string
+}
+
 interface Props {
-  menuList?: unknown[]
-  itemProps?: boolean
+  menuList?: MenuItem[]
   iconSize?: string
 }
 
 const props = defineProps<Props>()
+const emit = defineEmits(['selected'])
 </script>
 
 <template>
   <IconBtn>
-    <VIcon
-      :size="iconSize"
-      icon="ri-more-2-line"
-    />
+    <VIcon :size="props.iconSize" icon="ri-more-2-line" />
 
-    <VMenu
-      v-if="props.menuList"
-      activator="parent"
-    >
-      <VList
-        :items="props.menuList"
-        :item-props="props.itemProps"
-      />
+    <VMenu activator="parent">
+      <VList>
+        <VListItem v-for="item in props.menuList" :key="item.value" @click="emit('selected', item.value)">
+          <VListItemTitle>{{ item.title }}</VListItemTitle>
+        </VListItem>
+      </VList>
     </VMenu>
   </IconBtn>
 </template>
