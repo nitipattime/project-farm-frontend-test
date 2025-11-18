@@ -42,55 +42,64 @@ function submitData() {
 </script>
 
 <template>
-    <div class="p-6 space-y-6">
-        <h2 class="text-2xl font-bold">
-            Import Weight Target Data
-        </h2>
+    <VRow>
+        <VCol cols="12">
+            <VCard title="เพิ่มรายละเอียดการเพาะเลี้ยง" class="pa-4">
+                <div class="p-8 space-y-8">
+                    <h2 class="text-2xl font-bold">
+                        Import Weight Target Data
+                    </h2>
 
-        <div class="space-y-4">
-            <label class="block text-sm font-medium">Select Breed</label>
-            <select v-model="breedId" class="border rounded p-2 w-full">
-                <option disabled value="">
-                    -- Choose Breed --
-                </option>
-                <option value="1">
-                    Breed A
-                </option>
-                <option value="2">
-                    Breed B
-                </option>
-            </select>
-        </div>
+                    <div class="space-y-4">
+                        <label class="block text-sm font-medium">Select Breed</label>
+                        <select v-model="breedId" class="border rounded p-2 w-full">
+                            <option disabled value="">
+                                -- Choose Breed --
+                            </option>
+                            <option value="1">
+                                Breed A
+                            </option>
+                            <option value="2">
+                                Breed B
+                            </option>
+                        </select>
+                    </div>
 
-        <div class="space-y-2">
-            <label class="block text-sm font-medium">Upload Excel File</label>
-            <input type="file" accept=".xlsx,.xls" @change="handleFileUpload">
-        </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium">Upload Excel File</label>
+                        <input type="file" accept=".xlsx,.xls" @change="handleFileUpload">
+                    </div>
 
-        <button class="bg-blue-600 text-white px-4 py-2 rounded" @click="submitData">
-            Submit
-        </button>
+                    <VBtn color="primary" class="text-white" @click="submitData">
+                        Submit
+                    </VBtn>
 
-        <div v-if="tableData.length" class="mt-6">
-            <h3 class="text-lg font-semibold mb-2">
-                Preview Data
-            </h3>
-            <table class="min-w-full border text-sm">
-                <thead>
-                    <tr>
-                        <th v-for="(v, key) in tableData[0]" :key="key" class="border px-2 py-1 bg-gray-100">
-                            {{ key }}
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(row, i) in tableData" :key="i">
-                        <td v-for="(v, key) in row" :key="key" class="border px-2 py-1">
-                            {{ v }}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+                    <div v-if="tableData.length" class="mt-6">
+                        <h3 class="text-lg font-semibold mb-2">
+                            Preview Data
+                        </h3>
+
+                        <table class="min-w-full border text-sm">
+                            <thead>
+                                <tr>
+                                    <th v-for="(v, key) in tableData[0]" :key="key"
+                                        class="border px-2 py-1 bg-gray-100">
+                                        {{ key }}
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr v-for="(row, i) in tableData" :key="i">
+                                    <td v-for="(v, key) in row" :key="key" class="border px-2 py-1">
+                                        {{ v }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </VCard>
+        </VCol>
+    </VRow>
 </template>
