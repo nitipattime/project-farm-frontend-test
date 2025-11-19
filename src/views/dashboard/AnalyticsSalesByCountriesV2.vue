@@ -1,40 +1,71 @@
 <script setup lang="ts">
+// import { computed } from 'vue';
+
+// // ✅ กำหนด props ที่ component นี้รับได้
+// const props = defineProps<{
+//     data: {
+//         year: string
+//         month: string
+//         cv: number
+//     }[]
+// }>()
+
+// // ✅ ฟังก์ชันแปลงเลขเดือนเป็นชื่อเดือน (ถ้าต้องการให้ดูอ่านง่าย)
+// const monthNames = [
+//     'มกราคม',
+//     'กุมภาพันธ์',
+//     'มีนาคม',
+//     'เมษายน',
+//     'พฤษภาคม',
+//     'มิถุนายน',
+//     'กรกฎาคม',
+//     'สิงหาคม',
+//     'กันยายน',
+//     'ตุลาคม',
+//     'พฤศจิกายน',
+//     'ธันวาคม',
+// ]
+
+// // ✅ แปลงข้อมูลจาก props.data ให้อยู่ในรูปที่พร้อมแสดงผล
+// const formattedData = computed(() =>
+//     props.data.map(item => ({
+//         title: `${monthNames[Number.parseInt(item.month) - 1]} ${item.year}`,
+//         value: item.cv.toFixed(2),
+//         change: item.cv > 1 ? '+เพิ่มขึ้น' : '-ลดลง',
+//         color: item.cv > 1 ? 'success' : 'error',
+//     })),
+// )
 import { computed } from 'vue';
 
-// ✅ กำหนด props ที่ component นี้รับได้
 const props = defineProps<{
     data: {
-        year: string
-        month: string
-        cv: number
+        week_number: number
+        target_weight: number
+        avg_weight_in_range: number
+        birds_in_range: number
+        percent_in_range: number
+        deviation_filter: number
+        target_range: [number, number]
     }[]
 }>()
 
-// ✅ ฟังก์ชันแปลงเลขเดือนเป็นชื่อเดือน (ถ้าต้องการให้ดูอ่านง่าย)
-const monthNames = [
-    'มกราคม',
-    'กุมภาพันธ์',
-    'มีนาคม',
-    'เมษายน',
-    'พฤษภาคม',
-    'มิถุนายน',
-    'กรกฎาคม',
-    'สิงหาคม',
-    'กันยายน',
-    'ตุลาคม',
-    'พฤศจิกายน',
-    'ธันวาคม',
-]
-
-// ✅ แปลงข้อมูลจาก props.data ให้อยู่ในรูปที่พร้อมแสดงผล
 const formattedData = computed(() =>
     props.data.map(item => ({
-        title: `${monthNames[Number.parseInt(item.month) - 1]} ${item.year}`,
-        value: item.cv.toFixed(2),
-        change: item.cv > 1 ? '+เพิ่มขึ้น' : '-ลดลง',
-        color: item.cv > 1 ? 'success' : 'error',
+        title: `สัปดาห์ที่ ${item.week_number}`,
+        value: item.avg_weight_in_range.toFixed(2),
+        change: item.avg_weight_in_range > item.target_weight ? '+เพิ่มขึ้น' : '-ลดลง',
+        color: item.avg_weight_in_range > item.target_weight ? 'success' : 'error',
     })),
 )
+
+// ✅ คำนวณค่าเฉลี่ย avg_weight_in_range
+const averageWeight = computed(() => {
+    if (!props.data.length)
+        return 0
+    const total = props.data.reduce((sum, item) => sum + item.avg_weight_in_range, 0)
+
+    return (total / props.data.length).toFixed(2)
+})
 </script>
 
 <template>
@@ -79,6 +110,13 @@ const formattedData = computed(() =>
                     </template>
                 </VListItem>
             </VList>
+
+            <!-- แสดงค่าเฉลี่ยด้านล่าง -->
+            <div class="mt-4 text-end">
+                <h6 class="text-h6 mb-1">
+                    ค่าเฉลี่ยน้ำหนัก: {{ averageWeight }}
+                </h6>
+            </div>
         </VCardText>
     </VCard>
 </template>

@@ -46,7 +46,47 @@ export const useHouseStore = defineStore('house', {
       try {
         const res = await getHouse(payload)
 
-        this.houselist = res.data.list
+        // this.houselist = res.data.list
+        // this.pagination = {
+        //   page: res.data.page,
+        //   limit: res.data.limit,
+        //   total: res.data.total,
+        //   totalPages: res.data.totalPages,
+        // }
+        // this.summary = res.data.summary
+        // 🟩 ใหม่: map ใส่ chartSeries + chartCategories เข้าไปในแต่ละ house
+        this.houselist = res.data.list.map((house: any) => {
+          const chartData = house.chartData ?? []
+
+          const categories = chartData.map((item: any) => item.date ?? `Day ${item.day_no}`)
+
+          const series = [
+            {
+              name: 'Weight Target',
+              data: chartData.map((item: any) => item.weight_target),
+            },
+            {
+              name: 'Target +20%',
+              data: chartData.map((item: any) => item.weight_target_plus_20),
+            },
+            {
+              name: 'Target -20%',
+              data: chartData.map((item: any) => item.weight_target_minus_20),
+            },
+            {
+              name: 'Average Weight',
+              data: chartData.map((item: any) => item.avg_weight ?? null),
+            },
+          ]
+
+          return {
+            ...house,
+            chartCategories: categories,
+            chartSeries: series,
+          }
+        })
+
+        // pagination + summary เหมือนเดิม
         this.pagination = {
           page: res.data.page,
           limit: res.data.limit,
@@ -179,7 +219,8 @@ export const useHouseStore = defineStore('house', {
         this.loading = false
       }
     },
-    // 
+
+    //
 
     clearHouseCVHistory() {
       this.houseCVHistory = []

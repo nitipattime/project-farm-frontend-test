@@ -5,6 +5,9 @@ import { computed, onMounted, ref, shallowRef, watch } from 'vue'
 
 import { deleteFarm } from '@/services/farmService'
 import { useFarmStore } from '@/stores/farmStore'
+import imgChicken from '@images/pages/Chicken.png'
+import imgFarm from '@images/pages/Farm.png'
+import imgHouse from '@images/pages/House.png'
 
 const router = useRouter()
 const farmStore = useFarmStore()
@@ -597,7 +600,7 @@ const moreList = [
   </VSnackbar>
   <VRow>
     <VCol cols="12">
-      <VRow>
+      <VRow class="g-6">
         <VCol cols="12" md="4">
           <VCard class="position-relative" md="4">
             <VCardText>
@@ -625,7 +628,7 @@ const moreList = [
             </VCardText>
 
             <!-- Trophy -->
-            <VImg :src="trophy" class="trophy" />
+            <VImg :src="imgFarm" class="trophy" />
           </VCard>
         </VCol>
         <VCol cols="12" md="4">
@@ -655,7 +658,7 @@ const moreList = [
             </VCardText>
 
             <!-- Trophy -->
-            <VImg :src="trophy" class="trophy" />
+            <VImg :src="imgHouse" class="trophy" />
           </VCard>
         </VCol>
         <VCol cols="12" md="4">
@@ -685,7 +688,7 @@ const moreList = [
             </VCardText>
 
             <!-- Trophy -->
-            <VImg :src="trophy" class="trophy" />
+            <VImg :src="imgChicken" class="trophy" />
           </VCard>
         </VCol>
       </VRow>
@@ -758,29 +761,29 @@ const moreList = [
         ฺ
         <VRow class="g-6">
           <VCol v-for="(farm, i) in farmStore.farmlist" :key="i" cols="12" sm="6" md="4">
-            <VCard elevation="2" class="h-100 border border-solid border-gray-800 relative">
+            <VCard elevation="2" class="pa-4 h-100 border border-solid border-gray-800">
               <template #subtitle>
-                <VCardTitle class="text-h6">
+                <VCardTitle class="text-h5">
                   ชื่อฟาร์ม : {{ farm.farm_name }}
                 </VCardTitle>
-                <VCardTitle class="text-h6">
-                  จำนวนโรงเรือน : {{ farm.house_count }}
-                </VCardTitle>
-
-                <VCardTitle class="text-h6">
-                  จังหวัด : {{ farm.province }}
-                </VCardTitle>
-
-                <VCardTitle class="text-h6">
-                  ชื่อผู้ดูแล : {{ farm.contact_name }}
-                </VCardTitle>
-
-                <VCardActions class="justify-space-between pt-3">
-                  <VBtn color="primary" variant="flat" size="small" @click="goToFarmDetail(farm)">
-                    View
-                  </VBtn>
-                </VCardActions>
               </template>
+              <VCardTitle class="text-h6 px-5">
+                จำนวนโรงเรือน : {{ farm.house_count }}
+              </VCardTitle>
+
+              <VCardTitle class="text-h6 px-5">
+                จังหวัด : {{ farm.province }}
+              </VCardTitle>
+
+              <VCardTitle class="text-h6 px-5">
+                ชื่อผู้ดูแล : {{ farm.contact_name }}
+              </VCardTitle>
+
+              <VCardActions class="justify-space-between pt-3">
+                <VBtn color="primary" variant="flat" size="small" @click="goToFarmDetail(farm)">
+                  View
+                </VBtn>
+              </VCardActions>
               <template #append>
                 <!-- <MoreBtn :menu-list="moreList" /> -->
                 <MoreBtn :menu-list="moreList" @selected="(value) => onSelectedMenu(farm, value)" />
@@ -975,5 +978,12 @@ const moreList = [
 
 .text-black input {
   color: #000 !important;
+}
+
+.v-card .trophy {
+  position: absolute;
+  inline-size: 5.188rem;
+  inset-block-end: 1.25rem;
+  inset-inline-end: 1.25rem;
 }
 </style>

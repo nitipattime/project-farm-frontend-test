@@ -3,10 +3,10 @@ import { computed, onMounted, ref, shallowRef, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { useRealtime } from '@/composables/useSocket'
+import { markHouseFinish } from '@/services/houseService'
 import { useHouseStore } from '@/stores/houseStore'
 import AnalyticsSalesByCountriesV2 from '@/views/dashboard/AnalyticsSalesByCountriesV2.vue'
 import TestV2 from '@/views/dashboard/TestV2.vue'
-import { markHouseFinish } from '@/services/houseService'
 
 const props = defineProps<{ id: string }>()
 
@@ -529,7 +529,7 @@ onMounted(async () => {
       <TestV2 :data="houseStore.houseWeightChart" />
     </VCol>
     <VCol cols="12" md="3">
-      <AnalyticsSalesByCountriesV2 :data="houseStore.houseCVHistory" />
+      <AnalyticsSalesByCountriesV2 :data="houseStore.houseWeekly" />
     </VCol>
   </VRow>
 

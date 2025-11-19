@@ -3,7 +3,9 @@ import { computed, onMounted, ref, shallowRef, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { useHouseStore } from '@/stores/houseStore'
-import { hexToRgb } from '@layouts/utils'
+import imgChicken from '@images/pages/Chicken.png'
+import imgFarm from '@images/pages/Farm.png'
+import imgHouse from '@images/pages/House.png'
 import { useTheme } from 'vuetify'
 
 const props = defineProps<{ id: string }>()
@@ -17,6 +19,7 @@ const loaded = ref(false)
 const loading = ref(false)
 const houseStore = useHouseStore()
 const searchQuery = ref('')
+const currentTheme = computed(() => vuetifyTheme.current.value.colors)
 
 function onClick() {
   loading.value = true
@@ -31,13 +34,6 @@ const selectedFilter = ref('All Courses')
 
 async function handleGetCampaignList() {
   const params = {
-    // offset: offset.value,
-    // limit: limit.value,
-    // search: textSearch.value,
-
-    // sort_by: sortBy.value,
-    // sort_dir: sortDirection.value,
-    // page: tablePage.value,
     search: searchQuery.value,
     page: houseStore.pagination.page,
     farm_id: farmId,
@@ -58,32 +54,6 @@ const initialize = async () => {
 onMounted(async () => {
   await initialize()
 })
-
-// const courses = ref([
-//   {
-//     title: 'Introduction to Vue.js 3',
-//     category: 'Frontend Development',
-//     description: 'Learn Vue.js 3 step by step and build modern web interfaces.',
-//     image: 'https://cdn.vuetifyjs.com/images/cards/sunshine.jpg',
-//     status: 'Ongoing',
-//   },
-//   {
-//     title: 'Advanced TypeScript Patterns',
-//     category: 'Programming',
-//     description: 'Deep dive into generics, decorators, and advanced type inference.',
-//     image: 'https://cdn.vuetifyjs.com/images/cards/house.jpg',
-//     status: 'Completed',
-//   },
-//   {
-//     title: 'Building APIs with Go',
-//     category: 'Backend Development',
-//     description: 'Learn to build high-performance REST APIs using Golang.',
-//     image: 'https://cdn.vuetifyjs.com/images/cards/road.jpg',
-//     status: 'Ongoing',
-//   },
-// ])
-
-// paginate
 
 const page = ref(1)
 const perPage = 6
@@ -132,11 +102,6 @@ const filteredCourses = computed(() => {
 const farmForm = ref({
   name: '',
   contact: '',
-
-  // postcode: '',
-  // province: '',
-  // district: '',
-  // subdistrict: '',
 })
 
 // rules
@@ -173,14 +138,6 @@ watch(() => farmForm.value.district, newVal => {
   farmForm.value.subdistrict = ''
 })
 
-// submitForm
-// function submitForm() {
-//   // ตรวจสอบว่าทุก field ผ่าน validation หรือไม่
-//   // Vuetify v3 จะ validate อัตโนมัติเมื่อกดปุ่ม Save
-//   console.log(farmForm.value)
-//   dialog.value = false
-// }
-
 // go to house deatil
 function goToHouseDetail(items: any) {
   console.log(items)
@@ -197,17 +154,7 @@ function resetForm() {
   farmForm.value = {
     name: '',
     contact: '',
-
-    // zip_code: '',
-
-    // province_id: null,
-    // district_id: null,
-    // subdistrict_id: null,
   }
-
-  // provinces.value = []
-  // districts.value = []
-  // subdistricts.value = []
 }
 
 async function submitForm() {
@@ -274,74 +221,151 @@ const onSearch = async () => {
   }
 }
 
-const series = [
-  {
-    data: [0, 5, 10, 30, 15, 45, 20, 50, 55, 60, 70, 80, 95, 125, 100, 120, 135, 145, 120, 90, 135, 145, 120, 150, 155, 200, 300, 400, 600, 200, 600, 800],
-  },
-  {
-    data: [0, 100, 200, 300, 15, 45, 20, 50, 55, 60, 70, 80, 95, 125, 100, 120, 135, 145, 120, 90, 135, 145, 120, 150, 155, 200, 300, 400, 600, 200, 600, 800],
-  },
-]
+// const series = [
+//   {
+//     data: [0, 5, 10, 30, 15, 45, 20, 50, 55, 60, 70, 80, 95, 125, 100, 120, 135, 145, 120, 90, 135, 145, 120, 150, 155, 200, 300, 400, 600, 200, 600, 800],
+//   },
+//   {
+//     data: [0, 100, 200, 300, 15, 45, 20, 50, 55, 60, 70, 80, 95, 125, 100, 120, 135, 145, 120, 90, 135, 145, 120, 150, 155, 200, 300, 400, 600, 200, 600, 800],
+//   },
+// ]
 
-const chartOptions = computed(() => {
-  const currentTheme = vuetifyTheme.current.value.colors
-  const variableTheme = vuetifyTheme.current.value.variables
+// const chartOptions = computed(() => {
+//   const currentTheme = vuetifyTheme.current.value.colors
+//   const variableTheme = vuetifyTheme.current.value.variables
 
-  return {
-    chart: {
-      parentHeightOffset: 0,
-      toolbar: { show: false },
-    },
-    tooltip: { enabled: false },
-    grid: {
-      borderColor: `rgba(${hexToRgb(String(variableTheme['border-color']))},${variableTheme['border-opacity']})`,
-      strokeDashArray: 6,
-      xaxis: {
-        lines: { show: true },
-      },
-      yaxis: {
-        lines: { show: false },
-      },
-      padding: {
-        top: -10,
-        left: -7,
-        right: 5,
-        bottom: 5,
-      },
-    },
-    stroke: {
-      width: 3,
-      lineCap: 'butt',
-      curve: 'straight',
-    },
-    colors: [currentTheme.primary],
-    markers: {
-      size: 6,
-      offsetY: 4,
-      offsetX: -2,
-      strokeWidth: 3,
-      colors: ['transparent'],
-      strokeColors: 'transparent',
-      discrete: [
-        {
-          size: 5.5,
-          seriesIndex: 0,
-          strokeColor: currentTheme.primary,
-          fillColor: currentTheme.surface,
-          dataPointIndex: series[0].data.length - 1,
-        },
-      ],
-      hover: { size: 7 },
-    },
-    xaxis: {
-      labels: { show: false },
-      axisTicks: { show: false },
-      axisBorder: { show: false },
-    },
-    yaxis: {
-      labels: { show: false },
-    },
-  }
+//   return {
+//     chart: {
+//       parentHeightOffset: 0,
+//       toolbar: { show: false },
+//     },
+//     tooltip: { enabled: false },
+//     grid: {
+//       borderColor: `rgba(${hexToRgb(String(variableTheme['border-color']))},${variableTheme['border-opacity']})`,
+//       strokeDashArray: 6,
+//       xaxis: {
+//         lines: { show: true },
+//       },
+//       yaxis: {
+//         lines: { show: false },
+//       },
+//       padding: {
+//         top: -10,
+//         left: -7,
+//         right: 5,
+//         bottom: 5,
+//       },
+//     },
+//     stroke: {
+//       width: 3,
+//       lineCap: 'butt',
+//       curve: 'straight',
+//     },
+//     colors: [currentTheme.primary],
+//     markers: {
+//       size: 6,
+//       offsetY: 4,
+//       offsetX: -2,
+//       strokeWidth: 3,
+//       colors: ['transparent'],
+//       strokeColors: 'transparent',
+//       discrete: [
+//         {
+//           size: 5.5,
+//           seriesIndex: 0,
+//           strokeColor: currentTheme.primary,
+//           fillColor: currentTheme.surface,
+//           dataPointIndex: series[0].data.length - 1,
+//         },
+//       ],
+//       hover: { size: 7 },
+//     },
+//     xaxis: {
+//       labels: { show: false },
+//       axisTicks: { show: false },
+//       axisBorder: { show: false },
+//     },
+//     yaxis: {
+//       labels: { show: false },
+//     },
+//   }
+// })
+
+// houseStore.houselist.
+// const chartOptions = categories => ({
+//   chart: {
+//     height: 350,
+//     type: 'line',
+//     zoom: { enabled: false },
+//     toolbar: { show: false },
+//   },
+
+//   xaxis: {
+//     categories,
+//   },
+
+//   stroke: {
+//     curve: 'smooth',
+//     width: 3,
+//   },
+
+//   markers: {
+//     size: 4,
+//   },
+
+//   tooltip: {
+//     shared: true,
+//     intersect: false,
+//   },
+
+//   yaxis: {
+//     labels: {
+//       formatter: val => `${val} g`,
+//     },
+//   },
+// })
+const chartOptions = categories => ({
+  chart: {
+    height: 150,
+    type: 'line',
+    zoom: { enabled: false },
+    toolbar: { show: false },
+  },
+
+  xaxis: {
+    categories,
+    labels: { show: false }, // ❌ ซ่อนตัวเลขบนแกน X
+    axisTicks: { show: false }, // ❌ ซ่อนขีดบนแกน X
+    axisBorder: { show: false }, // ❌ ซ่อนเส้นแกน X
+  },
+
+  yaxis: {
+    labels: { show: false }, // ❌ ซ่อนตัวเลขแกน Y
+    axisTicks: { show: false }, // ❌ ซ่อนขีดบนแกน Y
+    axisBorder: { show: false }, // ❌ ซ่อนเส้นแกน Y
+  },
+
+  grid: {
+    show: false, // ❌ ซ่อนเส้น Grid ทั้งหมด
+  },
+
+  stroke: {
+    curve: 'smooth',
+    width: 3,
+  },
+
+  markers: {
+    size: 4,
+  },
+
+  tooltip: {
+    shared: true,
+    intersect: false,
+  },
+  colors: ['#01ccff',
+    currentTheme.value.error,
+    currentTheme.value.error,
+    currentTheme.value.success],
 })
 </script>
 
@@ -368,7 +392,7 @@ const chartOptions = computed(() => {
             </VCardText>
 
             <!-- Trophy -->
-            <VImg :src="trophy" class="trophy" />
+            <VImg :src="imgFarm" class="trophy" />
           </VCard>
         </VCol>
         <VCol cols="12" md="4">
@@ -390,7 +414,7 @@ const chartOptions = computed(() => {
             </VCardText>
 
             <!-- Trophy -->
-            <VImg :src="trophy" class="trophy" />
+            <VImg :src="imgHouse" class="trophy" />
           </VCard>
         </VCol>
         <VCol cols="12" md="4">
@@ -412,7 +436,7 @@ const chartOptions = computed(() => {
             </VCardText>
 
             <!-- Trophy -->
-            <!-- <VImg :src="trophy" class="trophy" /> -->
+            <VImg :src="imgChicken" class="trophy" />
           </VCard>
         </VCol>
       </VRow>
@@ -459,7 +483,7 @@ const chartOptions = computed(() => {
               <!-- <VImg :src="course.image" height="180" cover class="rounded mb-4" /> -->
 
               <template #prepend>
-                <VCardTitle class="text-h6">
+                <VCardTitle class="text-h5">
                   ชื่อโรงเรือน : {{ house.house_name ? house.house_name : '-' }}
                 </VCardTitle>
               </template>
@@ -469,13 +493,15 @@ const chartOptions = computed(() => {
               <VCardTitle class="text-h6 px-5">
                 ระยะเวลาเพาะเลี้ยงรวม : {{ house.duration_days ? house.duration_days : '0' }} วัน
               </VCardTitle>
-              <VCardTitle class="text-h6 px-5">
+              <!--
+                <VCardTitle class="text-h6 px-5">
                 สถานะการเพาะเลี้ยง : {{ house.status ? house.status : '-' }}
-              </VCardTitle>
+                </VCardTitle>
+              -->
 
               <template #append>
-                <VChip :color="house.status === 'Completed' ? 'success' : 'info'" size="small" label>
-                  Completed
+                <VChip :color="house.status === 'อยู่ระหว่างการเพาะเลี้ยง' ? 'info' : 'success'" size="small" label>
+                  {{ house.status ? house.status : '' }}
                 </VChip>
               </template>
 
@@ -489,7 +515,15 @@ const chartOptions = computed(() => {
                 </VCol>
               </VRow>
 
-              <VueApexCharts type="line" :options="chartOptions" :series="series" :height="120" class="my-1" />
+              <!-- <VueApexCharts type="line" :options="chartOptions" :series="series" :height="120" class="my-1" /> -->
+              <!-- <VueApexCharts type="line" :options="chartOptions" :series="house.chartData" :height="120" class="my-1" /> -->
+              <!--
+                <VueApexCharts type="line" :options="chartOptions(house.chartCategories)" :series="house.chartSeries"
+                height="200" />
+              -->
+              <VueApexCharts
+                v-if="house.chartSeries && house.chartSeries.length && house.chartCategories && house.chartCategories.length"
+                type="line" :options="chartOptions(house.chartCategories)" :series="house.chartSeries" height="200" />
 
               <!--
                 <VCardTitle class="text-h6 mb-1">
@@ -593,5 +627,12 @@ const chartOptions = computed(() => {
 
 .text-black input {
   color: #000 !important;
+}
+
+.v-card .trophy {
+  position: absolute;
+  inline-size: 5.188rem;
+  inset-block-end: 1.25rem;
+  inset-inline-end: 1.25rem;
 }
 </style>

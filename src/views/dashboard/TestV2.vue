@@ -64,10 +64,10 @@ const chartOptionsPageStats = ref({
         toolbar: { show: false },
     },
     colors: [
-        currentTheme.value.primary,
-        currentTheme.value.success,
+        '#01ccff',
         currentTheme.value.error,
-        currentTheme.value.warning,
+        currentTheme.value.error,
+        currentTheme.value.success,
     ],
     dataLabels: { enabled: false },
     stroke: {
@@ -134,10 +134,11 @@ const updateChart = () => {
             toolbar: { show: false },
         },
         colors: [
-            currentTheme.value.primary,
-            currentTheme.value.success,
+            // currentTheme.value.primary,
+            '#01ccff',
             currentTheme.value.error,
-            currentTheme.value.warning,
+            currentTheme.value.error,
+            currentTheme.value.success,
         ],
         dataLabels: { enabled: false },
         stroke: {
@@ -163,6 +164,9 @@ const updateChart = () => {
         },
         yaxis: {
             title: { text: 'Weight (kg)' },
+            labels: {
+                formatter: (val: number) => val.toFixed(4),
+            },
         },
         grid: { borderColor: '#f1f1f1' },
         tooltip: {

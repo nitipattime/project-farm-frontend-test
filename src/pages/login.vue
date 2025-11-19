@@ -4,9 +4,9 @@ import { useRouter } from 'vue-router'
 import { useTheme } from 'vuetify'
 
 import { useAuthStore } from '@/stores/auth'
-import logo from '@images/logo.svg?raw'
 import authV1MaskDark from '@images/pages/auth-v1-mask-dark.png'
 import authV1MaskLight from '@images/pages/auth-v1-mask-light.png'
+import logo from '@images/pages/original-logo.png'
 
 const router = useRouter()
 const auth = useAuthStore()
@@ -106,7 +106,8 @@ async function handleLogin() {
     <VCard class="auth-card pa-4 pt-7" max-width="448">
       <VCardItem class="justify-center">
         <RouterLink to="/" class="d-flex align-center gap-3">
-          <div class="d-flex" v-html="logo" />
+          <!-- <div class="d-flex" v-html="logo" /> -->
+          <img :src="logo" alt="logo" width="120">
           <!-- <h2 class="font-weight-medium text-2xl text-uppercase">Materio</h2> -->
         </RouterLink>
       </VCardItem>
