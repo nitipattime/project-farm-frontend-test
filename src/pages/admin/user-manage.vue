@@ -126,114 +126,125 @@ async function deleteUserConfirmed() {
 <template>
     <VRow>
         <VCol cols="12">
-            <VCard title="เพิ่มรายละเอียดการเพาะเลี้ยง" class="pa-4">
-                <div class="p-4">
-                    <!-- Header -->
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-h5">
+            <VCard class="pa-6">
+                <!-- Header -->
+                <div class="d-flex justify-space-between align-center mb-6">
+                    <div>
+                        <h2 class="text-h6 font-weight-bold">
                             User Management
                         </h2>
-                        <VBtn color="primary" @click="openCreate">
-                            Create User
-                        </VBtn>
+                        <p class="text-body-2 text-medium-emphasis">
+                            Manage system users, permissions, and access.
+                        </p>
                     </div>
 
-                    <!-- Table -->
-                    <VTable>
-                        <thead>
-                            <tr>
-                                <th>Email</th>
-                                <th>Username</th>
-                                <th>Role</th>
-                                <th>Status</th>
-                                <th>Created At</th>
-                                <th class="text-center">
-                                    Actions
-                                </th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            <tr v-for="item in usersStore.users" :key="item.id">
-                                <td>{{ item.email }}</td>
-                                <td>{{ item.username }}</td>
-                                <td>{{ item.role }}</td>
-
-                                <td>
-                                    <VChip :color="item.isActive ? 'success' : 'error'" size="small">
-                                        {{ item.isActive ? 'Active' : 'Inactive' }}
-                                    </VChip>
-                                </td>
-
-                                <td>{{ new Date(item.createdAt).toLocaleString() }}</td>
-
-                                <td class="text-center">
-                                    <VBtn icon variant="text" color="info" @click="openEdit(item)">
-                                        <VIcon icon="ri-edit-line" />
-                                    </VBtn>
-
-                                    <VBtn icon variant="text" color="error" @click="confirmDeleteUser(item)">
-                                        <VIcon icon="ri-delete-bin-line" />
-                                    </VBtn>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </VTable>
-
-                    <!-- Dialog -->
-                    <VDialog v-model="dialog" max-width="500">
-                        <VCard>
-                            <VCardTitle>
-                                {{ isEdit ? 'Update User' : 'Create User' }}
-                            </VCardTitle>
-
-                            <VCardText>
-                                <VTextField v-model="form.email" label="Email" required />
-                                <VTextField v-model="form.username" label="Username" required />
-
-                                <VTextField v-if="!isEdit" v-model="form.password" label="Password" type="password"
-                                    required />
-
-                                <VSelect v-model="form.role" label="Role" :items="['admin', 'user']" required />
-
-                                <VSwitch v-model="form.isActive" label="Active" />
-                            </VCardText>
-
-                            <VCardActions>
-                                <VBtn variant="text" @click="dialog = false">
-                                    Cancel
-                                </VBtn>
-                                <VBtn color="primary" @click="saveUser">
-                                    Save
-                                </VBtn>
-                            </VCardActions>
-                        </VCard>
-                    </VDialog>
-
-                    <VDialog v-model="deleteDialog" max-width="420">
-                        <VCard>
-                            <VCardTitle class="text-h6">
-                                Confirm Delete
-                            </VCardTitle>
-
-                            <VCardText>
-                                คุณต้องการลบผู้ใช้นี้ใช่หรือไม่?<br>
-                                <strong>{{ userToDelete?.email }}</strong>
-                            </VCardText>
-
-                            <VCardActions>
-                                <VBtn variant="text" @click="deleteDialog = false">
-                                    Cancel
-                                </VBtn>
-
-                                <VBtn color="error" @click="deleteUserConfirmed">
-                                    Delete
-                                </VBtn>
-                            </VCardActions>
-                        </VCard>
-                    </VDialog>
+                    <VBtn color="primary" prepend-icon="ri-add-line" @click="openCreate">
+                        Create User
+                    </VBtn>
                 </div>
+
+                <!-- Table -->
+                <VTable density="comfortable">
+                    <thead class="bg-grey-lighten-4">
+                        <tr>
+                            <th>Email</th>
+                            <th>Username</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Created At</th>
+                            <th class="text-center">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr v-for="item in usersStore.users" :key="item.id">
+                            <td>{{ item.email }}</td>
+                            <td>{{ item.username }}</td>
+                            <td class="text-capitalize">
+                                {{ item.role }}
+                            </td>
+
+                            <td>
+                                <VChip size="small" :color="item.isActive ? 'success' : 'error'" variant="flat">
+                                    {{ item.isActive ? 'Active' : 'Inactive' }}
+                                </VChip>
+                            </td>
+
+                            <td>{{ new Date(item.createdAt).toLocaleString() }}</td>
+
+                            <td class="text-center">
+                                <VBtn icon variant="text" color="primary" @click="openEdit(item)">
+                                    <VIcon icon="ri-edit-line" />
+                                </VBtn>
+
+                                <VBtn icon variant="text" color="error" @click="confirmDeleteUser(item)">
+                                    <VIcon icon="ri-delete-bin-line" />
+                                </VBtn>
+                            </td>
+                        </tr>
+                    </tbody>
+                </VTable>
             </VCard>
         </VCol>
     </VRow>
+
+    <!-- Create / Update Dialog -->
+    <VDialog v-model="dialog" max-width="480">
+        <VCard class="pa-2">
+            <VCardTitle class="text-h6 font-weight-bold">
+                {{ isEdit ? 'Update User' : 'Create New User' }}
+            </VCardTitle>
+
+            <VCardText class="mt-2">
+                <div class="d-flex flex-column gap-4">
+                    <VTextField v-model="form.email" label="Email" variant="outlined" density="comfortable" />
+                    <VTextField v-model="form.username" label="Username" variant="outlined" density="comfortable" />
+
+                    <VTextField v-if="!isEdit" v-model="form.password" type="password" label="Password"
+                        variant="outlined" density="comfortable" />
+
+                    <VSelect v-model="form.role" :items="['admin', 'user']" label="Role" variant="outlined"
+                        density="comfortable" />
+
+                    <VSwitch v-model="form.isActive" label="Active" />
+                </div>
+            </VCardText>
+
+            <VCardActions class="d-flex justify-end">
+                <VBtn variant="text" @click="dialog = false">
+                    Cancel
+                </VBtn>
+
+                <VBtn color="primary" @click="saveUser">
+                    Save
+                </VBtn>
+            </VCardActions>
+        </VCard>
+    </VDialog>
+
+    <!-- Delete Confirmation Dialog -->
+    <VDialog v-model="deleteDialog" max-width="420">
+        <VCard class="pa-2">
+            <VCardTitle class="text-h6 font-weight-bold">
+                Confirm Delete
+            </VCardTitle>
+
+            <VCardText class="text-body-2 mt-1">
+                คุณต้องการลบผู้ใช้นี้ใช่หรือไม่?<br>
+                <strong>{{ userToDelete?.email }}</strong>
+            </VCardText>
+
+            <VCardActions class="d-flex justify-end">
+                <VBtn variant="text" @click="deleteDialog = false">
+                    Cancel
+                </VBtn>
+
+                <VBtn color="error" @click="deleteUserConfirmed">
+                    Delete
+                </VBtn>
+            </VCardActions>
+        </VCard>
+    </VDialog>
 </template>

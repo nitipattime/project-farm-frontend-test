@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import * as XLSX from 'xlsx'
+
+import { useHouseStore } from '@/stores/houseStore'
 
 const file = ref<File | null>(null)
 const tableData = ref<any[]>([])
 const breedId = ref('')
+const houseStore = useHouseStore()
 
 function handleFileUpload(e: Event) {
     const target = e.target as HTMLInputElement
@@ -39,65 +42,116 @@ function submitData() {
     console.log('Imported Rows:', tableData.value)
     alert('Data ready to submit!')
 }
+
+const selectedItem = ref('')
+const items = ['Programming', 'Design', 'Vue', 'Vuetify']
+const breedOptions = ref<{ title: string; value: number }[]>([])
+
+async function handleGetChickenBreed() {
+    try {
+        const res = await houseStore.fetchChickenBreed()
+
+        breedOptions.value = res.data.map((item: string, index: number) => ({
+            title: item, // ใช้ตัว string เป็น title
+            value: item, // value เป็น string ก็ได้ (ถ้า DB ต้องการ index ก็ใช้ index)
+            // value: index      // ถ้าต้องการให้ value เป็นตัวเลข
+        }))
+
+        if (breedOptions.value.length > 0)
+            selectedItem.value = breedOptions.value[0].value // เซ็ตค่า default
+    }
+    catch (err) {
+        console.error(err)
+    }
+}
+
+const initialize = async () => {
+    await handleGetChickenBreed()
+}
+
+onMounted(async () => {
+    await initialize()
+
+    // console.log(`houseID: ${props.id}`)
+})
 </script>
 
 <template>
     <VRow>
         <VCol cols="12">
-            <VCard title="เพิ่มรายละเอียดการเพาะเลี้ยง" class="pa-4">
-                <div class="p-8 space-y-8">
-                    <h2 class="text-2xl font-bold">
-                        Import Weight Target Data
-                    </h2>
+            <VCard class="pa-6">
+                <!-- Card Title -->
+                <h2 class="text-h6 font-weight-bold mb-6">
+                    เพิ่มรายละเอียดการเพาะเลี้ยง
+                </h2>
 
-                    <div class="space-y-4">
-                        <label class="block text-sm font-medium">Select Breed</label>
-                        <select v-model="breedId" class="border rounded p-2 w-full">
-                            <option disabled value="">
-                                -- Choose Breed --
-                            </option>
-                            <option value="1">
-                                Breed A
-                            </option>
-                            <option value="2">
-                                Breed B
-                            </option>
-                        </select>
-                    </div>
-
-                    <div class="space-y-2">
-                        <label class="block text-sm font-medium">Upload Excel File</label>
-                        <input type="file" accept=".xlsx,.xls" @change="handleFileUpload">
-                    </div>
-
-                    <VBtn color="primary" class="text-white" @click="submitData">
-                        Submit
-                    </VBtn>
-
-                    <div v-if="tableData.length" class="mt-6">
-                        <h3 class="text-lg font-semibold mb-2">
-                            Preview Data
+                <div class="space-y-8">
+                    <!-- Section Title -->
+                    <div>
+                        <h3 class="text-subtitle-1 font-weight-semibold mb-1">
+                            Import Weight Target Data
                         </h3>
-
-                        <table class="min-w-full border text-sm">
-                            <thead>
-                                <tr>
-                                    <th v-for="(v, key) in tableData[0]" :key="key"
-                                        class="border px-2 py-1 bg-gray-100">
-                                        {{ key }}
-                                    </th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                <tr v-for="(row, i) in tableData" :key="i">
-                                    <td v-for="(v, key) in row" :key="key" class="border px-2 py-1">
-                                        {{ v }}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <p class="text-body-2 text-medium-emphasis">
+                            อัปโหลดข้อมูลน้ำหนักเป้าหมาย (Excel)
+                        </p>
                     </div>
+
+                    <!-- Select Breed -->
+                    <div class="space-y-2">
+                        <label class="text-subtitle-2 font-weight-medium">
+                            Select Breed
+                        </label>
+
+                        <VCombobox v-model="selectedItem" :items="breedOptions" placeholder="Select breed"
+                            variant="outlined" density="comfortable" />
+                    </div>
+
+                    <!-- Upload Excel -->
+                    <div class="space-y-2">
+                        <label class="text-subtitle-2 font-weight-medium">
+                            Upload Excel File
+                        </label>
+
+                        <VFileInput label="Choose .xls or .xlsx file" accept=".xlsx,.xls" variant="outlined"
+                            density="comfortable" @change="handleFileUpload" />
+                    </div>
+
+                    <!-- Submit -->
+                    <div class="pt-4">
+                        <VBtn color="primary" class="text-white" size="large" @click="submitData">
+                            Submit
+                        </VBtn>
+                    </div>
+                </div>
+            </VCard>
+        </VCol>
+    </VRow>
+
+    <VRow>
+        <VCol>
+            <VCard>
+                <div v-if="tableData.length" class="mt-6">
+                    <h3 class="text-lg font-semibold mb-2">
+                        Preview Data
+                    </h3>
+
+                    <table class="min-w-full border text-sm">
+                        <thead>
+                            <tr>
+                                <th v-for="(v, key) in tableData[0]" :key="key" class="border px-2 py-1 bg-gray-100">
+                                    {{ key }}
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr v-for="(row, i) in tableData" :key="i">
+                                <td v-for="(v, key) in row" :key="key" class="border px-2 py-1">
+                                    {{ v }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </VCard>
         </VCol>

@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
-import { useRouter } from 'vue-router' // 👈 เพิ่มบรรทัดนี้
-import { VBtn, VCol, VDatePicker, VForm, VRow, VSelect, VTextField } from 'vuetify/components'
-import { useHouseStore } from '@/stores/houseStore'
 import { createHouseDetail } from '@/services/houseService'
+import { useHouseStore } from '@/stores/houseStore'
+import { reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'; // 👈 เพิ่มบรรทัดนี้
+import { VBtn, VCol, VDatePicker, VForm, VRow, VSelect, VTextField } from 'vuetify/components'
 
 const props = defineProps<{ id: string }>()
 const router = useRouter()
@@ -318,7 +318,7 @@ async function onConfirmCreate() {
           <VTextField v-model="form.breed" label="สายพันธุ์ *" placeholder="ระบุสายพันธุ์" counter="100"
           :error-messages="errors.breed" class="mt-4" @input="countBreedLength" />
         -->
-                <VSelect v-model="form.breed" :items="siloOptions" label="สายพันธุ์ *" placeholder="เลือก สายพันธุ์"
+                <VSelect v-model="form.breed" :items="breedOptions" label="สายพันธุ์ *" placeholder="เลือก สายพันธุ์"
                     :error-messages="errors.breed" />
 
                 <!-- เพศ + Silo -->

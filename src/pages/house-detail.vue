@@ -536,18 +536,18 @@ onMounted(async () => {
   <VDialog v-model="confirmDialog" max-width="400">
     <VCard>
       <VCardTitle class="text-h6">
-        ยืนยันการสร้างโรงเรือน
+        ยืนยันสิ้นสุดการเลี้ยง
       </VCardTitle>
       <VCardText>
-        คุณต้องการสร้างโรงเรือนใช่หรือไม่?
+        คุณต้องการสิ้นสุดการเลี้ยงใช่หรือไม่?
       </VCardText>
       <VCardActions>
         <VSpacer />
-        <VBtn text color="secondary" @click="confirmDialog = false">
+        <VBtn color="secondary" @click="confirmDialog = false">
           ยกเลิก
         </VBtn>
-        <VBtn text color="primary" @click="handleConfirmMarkHouseFinish">
-          ยืนยันการสร้าง
+        <VBtn color="primary" @click="handleConfirmMarkHouseFinish">
+          ยืนยันสิ้นสุดการเลี้ยง
         </VBtn>
       </VCardActions>
     </VCard>
