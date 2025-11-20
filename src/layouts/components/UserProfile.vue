@@ -10,6 +10,8 @@ async function handleLogout() {
   await auth.logout()
   router.push('/login')
 }
+
+const user = JSON.parse(localStorage.getItem('user') || '{}')
 </script>
 
 <template>
@@ -33,9 +35,9 @@ async function handleLogout() {
             </template>
 
             <VListItemTitle class="font-weight-semibold">
-              John Doe
+              {{ user.email }}
             </VListItemTitle>
-            <VListItemSubtitle>Admin</VListItemSubtitle>
+            <VListItemSubtitle>{{ user.role }}</VListItemSubtitle>
           </VListItem>
           <VDivider class="my-2" />
 
