@@ -8,6 +8,8 @@ const file = ref<File | null>(null)
 const tableData = ref<any[]>([])
 const breedId = ref('')
 const houseStore = useHouseStore()
+const selectedItem = ref('')
+const breedOptions = ref<{ title: string; value: number }[]>([])
 
 function handleFileUpload(e: Event) {
     const target = e.target as HTMLInputElement
@@ -31,7 +33,10 @@ function handleFileUpload(e: Event) {
 }
 
 function submitData() {
-    if (!breedId.value || tableData.value.length === 0) {
+    console.log('Breed:', breedId.value)
+    console.log('Breed:', selectedItem.value)
+    console.log('Imported Rows:', tableData.value)
+    if (!selectedItem.value || tableData.value.length === 0) {
         alert('Please select breed and import file first.')
 
         return
@@ -43,10 +48,6 @@ function submitData() {
     alert('Data ready to submit!')
 }
 
-const selectedItem = ref('')
-const items = ['Programming', 'Design', 'Vue', 'Vuetify']
-const breedOptions = ref<{ title: string; value: number }[]>([])
-
 async function handleGetChickenBreed() {
     try {
         const res = await houseStore.fetchChickenBreed()
@@ -57,8 +58,10 @@ async function handleGetChickenBreed() {
             // value: index      // ถ้าต้องการให้ value เป็นตัวเลข
         }))
 
-        if (breedOptions.value.length > 0)
+        if (breedOptions.value.length > 0) {
             selectedItem.value = breedOptions.value[0].value // เซ็ตค่า default
+            breedId.value = breedOptions.value[0].value
+        }
     }
     catch (err) {
         console.error(err)

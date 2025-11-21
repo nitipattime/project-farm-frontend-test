@@ -11,6 +11,7 @@ export interface HouseSummary {
   duration_days: string
   start_date: string
   end_date: string
+  actual_end_date: string
   food: string
   weight_target: string
   machines: machines[]
@@ -44,6 +45,7 @@ export const defaultHouseSummary: HouseSummary = {
   duration_days: '',
   start_date: '',
   end_date: '',
+  actual_end_date: '',
   food: '',
   weight_target: '',
   machines: [],

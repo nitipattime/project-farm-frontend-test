@@ -3,6 +3,7 @@ import { computed, onMounted, ref, shallowRef, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { useRealtime } from '@/composables/useSocket'
+import { getExport } from '@/services/exportService'
 import { markHouseFinish } from '@/services/houseService'
 import { useHouseStore } from '@/stores/houseStore'
 import AnalyticsSalesByCountriesV2 from '@/views/dashboard/AnalyticsSalesByCountriesV2.vue'
@@ -204,6 +205,64 @@ async function handleGetHouseWeightChart() {
   }
 }
 
+async function handleGetExport() {
+  // const params = { houseID: houseId }
+  try {
+    const response = await getExport({ houseID: houseId })
+
+    // console.log('Headers:', response.headers)
+    // console.log('CD:', response.headers['content-disposition'])
+
+    // สร้าง Blob จาก response
+    const blob = new Blob([response.data], {
+      type: response.headers['content-type'],
+    })
+
+    const url = window.URL.createObjectURL(blob)
+
+    // --- ดึงชื่อไฟล์จาก content-disposition ---
+    let fileName = 'report.xlsx'
+    const cd = response.headers['content-disposition']
+
+    if (cd) {
+      const match = cd.match(/filename="?([^"]+)"?/)
+      if (match && match[1])
+        fileName = match[1]
+    }
+
+    // --- สร้างลิงก์ดาวน์โหลด ---
+    const link = document.createElement('a')
+
+    link.href = url
+    link.download = fileName
+    document.body.appendChild(link)
+    link.click()
+
+    // cleanup
+    link.remove()
+    window.URL.revokeObjectURL(url)
+
+    // const response = await getExport(params)
+
+    // const blob = new Blob([response.data], {
+    //   type: response.headers['content-type'],
+    // })
+
+    // const url = window.URL.createObjectURL(blob)
+
+    // const link = document.createElement('a')
+
+    // link.href = url
+    // link.download = `report_${houseId}.xlsx` // 👈 ตั้งชื่อไฟล์ที่ต้องการ
+    // link.click()
+
+    // window.URL.revokeObjectURL(url)
+  }
+  catch (err) {
+    console.error(err)
+  }
+}
+
 const labels = ref<string[]>([])
 const chartData = ref<number[]>([])
 async function handleGetHouseCVHistory() {
@@ -268,6 +327,12 @@ onMounted(async () => {
             <span class="font-weight-medium text-high-emphasis">เพศ: </span>
             <span class="text-grey-600">{{ houseStore.houseSummary.sex || '-' }}</span>
           </div>
+        </template>
+
+        <template #append>
+          <VBtn color="primary" class="text-white" v-bind="activatorProps" @click="handleGetExport">
+            Export
+          </VBtn>
         </template>
 
         <VCardText class="pt-1">
@@ -376,7 +441,8 @@ onMounted(async () => {
                 </h5>
               </div>
               <h4 class="text-h5 text-primary">
-                {{ houseStore.houseSummary.end_date ? houseStore.houseSummary.end_date.split('T')[0] : '-' }}
+                {{ houseStore.houseSummary.actual_end_date ? houseStore.houseSummary.actual_end_date.split('T')[0] : '-'
+                }}
               </h4>
             </VCardText>
             <!-- <VImg :src="trophy" class="trophy" /> -->

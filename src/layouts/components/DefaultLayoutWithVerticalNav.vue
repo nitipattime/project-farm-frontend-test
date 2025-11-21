@@ -59,7 +59,7 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
     </template>
 
     <template #vertical-nav-header="{ toggleIsOverlayNavActive }">
-      <RouterLink to="/" class="app-logo app-title-wrapper">
+      <RouterLink class="app-logo app-title-wrapper">
         <!-- eslint-disable vue/no-v-html -->
         <!--
           <div

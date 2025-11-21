@@ -6,6 +6,7 @@ export const routes = [
     children: [
       {
         path: 'dashboardV2',
+        name: 'dashboardV2',
         component: () => import('@/pages/dashboardV2.vue'),
       },
       {

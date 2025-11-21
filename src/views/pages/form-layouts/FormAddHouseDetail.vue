@@ -115,9 +115,21 @@ async function handleGetMachineAvailable() {
 }
 
 const machine2Options = computed(() => {
-    return machineOptions.value.filter(
-        m => m.value !== form.value.machine1,
-    )
+    // if (!houseStore.machines?.length)
+    //     return []
+    // if (!form.machine1)
+    //     return houseStore.machines
+
+    if (!machineOptions.value.length)
+        return []
+
+    return machineOptions.value.filter(m => m.value !== form.machine1)
+
+    // return houseStore.machines.filter(m => m.mac !== form.machine1)
+
+    // return machineOptions.value.filter(
+    //     m => m.value !== form.value.machine1,
+    // )
 })
 
 async function handleGetMachineSilos() {
@@ -260,7 +272,59 @@ async function handleCreateHouse() {
 //     handleCreateHouse()
 // }
 
+async function handleGetHouseSummary() {
+    const params = {
+        houseID: props.id,
+    }
+
+    try {
+        const res = await houseStore.fetchHouseSummary(params)
+        const data = res?.data
+
+        if (data && Object.keys(data).length > 0) {
+            const formatDate = (dateStr: string | null | undefined) => {
+                if (!dateStr)
+                    return ''
+                const d = new Date(dateStr)
+
+                return d.toISOString().split('T')[0]
+            }
+
+            form.house_name = data.house_name || ''
+            form.animal_type = data.type || ''
+            form.breed = data.breed || ''
+            form.sex = data.sex || ''
+            form.qty = data.total_qty?.toString() || ''
+            form.weight_target = data.weight_target?.toString() || ''
+            form.food = data.food || ''
+            form.start_date = formatDate(data.start_date) || ''
+            form.end_date = formatDate(data.end_date) || ''
+            form.uniform = data.uniform_field || ''
+            form.silo_id = data.silo?.id || ''
+
+            // 🟢 Map เครื่องชั่งกลับเป็น id
+            if (data.machines?.length > 0) {
+                const m1 = data.machines[0]
+                const found1 = machineOptions.value.find(m => m.title === m1.sn)
+
+                form.machine1 = found1 ? found1.value : ''
+
+                if (data.machines[1]) {
+                    const m2 = data.machines[1]
+                    const found2 = machineOptions.value.find(m => m.title === m2.sn)
+
+                    form.machine2 = found2 ? found2.value : ''
+                }
+            }
+        }
+    }
+    catch (err) {
+        console.error(err)
+    }
+}
+
 const initialize = async () => {
+    await handleGetHouseSummary()
     await handleGetMachineAvailable()
     await handleGetMachineSilos()
     await handleGetChickenBreed()
