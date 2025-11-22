@@ -3,7 +3,6 @@ import NavItems from '@/layouts/components/NavItems.vue'
 // import logo from '@images/pages/original-logo.png'
 // import logo from '@/assets/images/original-logo.png'
 // import logo from '@images/pages/original-logo.png'
-import logo from '@images/pages/original-logo.png'
 import VerticalNavLayout from '@layouts/components/VerticalNavLayout.vue'
 
 // Components
@@ -72,7 +71,7 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
           />
         -->
         <div class="logo-wrapper">
-          <img :src="logo" alt="logo" width="120">
+          <img :src="`/images/original-logo.png`" alt="logo" width="120">
         </div>
         <!-- eslint-enable -->
 
