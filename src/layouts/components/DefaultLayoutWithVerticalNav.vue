@@ -1,5 +1,8 @@
 <script lang="ts" setup>
 import NavItems from '@/layouts/components/NavItems.vue'
+// import logo from '@images/pages/original-logo.png'
+// import logo from '@/assets/images/original-logo.png'
+// import logo from '@images/pages/original-logo.png'
 import logo from '@images/pages/original-logo.png'
 import VerticalNavLayout from '@layouts/components/VerticalNavLayout.vue'
 
@@ -68,7 +71,9 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
           width="120"
           />
         -->
-        <img :src="logo" alt="logo" width="120">
+        <div>
+          <img :src="logo" alt="logo" width="120">
+        </div>
         <!-- eslint-enable -->
 
         <!--
