@@ -71,7 +71,7 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
           width="120"
           />
         -->
-        <div>
+        <div class="logo-wrapper">
           <img :src="logo" alt="logo" width="120">
         </div>
         <!-- eslint-enable -->
@@ -123,5 +123,10 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
     line-height: 1.75rem;
     text-transform: uppercase;
   }
+}
+
+.logo-wrapper {
+  display: flex;
+  align-items: center;
 }
 </style>
