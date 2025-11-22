@@ -1,4 +1,21 @@
 <script setup lang="ts">
+import { useNumberFormat } from '@/composables/useNumberFormat';
+import { computed } from 'vue';
+
+const props = defineProps<{
+    data: {
+        week_number: number
+        target_weight: number
+        avg_weight_in_range: number
+        birds_in_range: number
+        percent_in_range: number
+        deviation_filter: number
+        target_range: [number, number]
+    }[]
+}>()
+
+const { formatNumber } = useNumberFormat()
+
 // import { computed } from 'vue';
 
 // // ✅ กำหนด props ที่ component นี้รับได้
@@ -35,19 +52,6 @@
 //         color: item.cv > 1 ? 'success' : 'error',
 //     })),
 // )
-import { computed } from 'vue';
-
-const props = defineProps<{
-    data: {
-        week_number: number
-        target_weight: number
-        avg_weight_in_range: number
-        birds_in_range: number
-        percent_in_range: number
-        deviation_filter: number
-        target_range: [number, number]
-    }[]
-}>()
 
 const formattedData = computed(() =>
     props.data.map(item => ({
@@ -82,7 +86,7 @@ const averageWeight = computed(() => {
                 <VListItem v-for="(item, index) in formattedData" :key="index">
                     <VListItemTitle class="mb-1 d-flex align-center">
                         <h6 class="text-h6">
-                            {{ item.value }}
+                            {{ formatNumber(item.value) }}
                         </h6>
 
                         <VIcon size="24" :color="item.color" class="mx-1">
@@ -101,7 +105,7 @@ const averageWeight = computed(() => {
                     <template #append>
                         <div class="text-end">
                             <h6 class="text-h6 mb-1">
-                                {{ item.value }}
+                                {{ formatNumber(item.value) }}
                             </h6>
                             <div class="text-body-2 text-disabled">
                                 CV
@@ -114,7 +118,7 @@ const averageWeight = computed(() => {
             <!-- แสดงค่าเฉลี่ยด้านล่าง -->
             <div class="mt-4 text-end">
                 <h6 class="text-h6 mb-1">
-                    ค่าเฉลี่ยน้ำหนัก: {{ averageWeight }}
+                    ค่าเฉลี่ยน้ำหนัก: {{ formatNumber(averageWeight) }}
                 </h6>
             </div>
         </VCardText>

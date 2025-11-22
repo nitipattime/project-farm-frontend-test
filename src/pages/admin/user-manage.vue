@@ -8,6 +8,14 @@ const usersStore = useAdminStore()
 const dialog = ref(false)
 const isEdit = ref(false)
 
+const formRef = ref(null)
+
+const rules = {
+    required: (v: any) => !!v || 'กรุณากรอกข้อมูลให้ครบถ้วน',
+    email: (v: any) =>
+        !!v && /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/.test(v) || 'อีเมลไม่ถูกต้อง',
+}
+
 const form = ref({
     id: null,
     email: '',
@@ -52,10 +60,13 @@ function openEdit(item: any) {
 
 // 👉 Save (Create / Update)
 async function saveUser() {
+    const { valid } = await formRef.value.validate()
+
+    if (!valid)
+        return // ❌ หยุดทันทีถ้า validate ไม่ผ่าน
+
     try {
         if (isEdit.value) {
-            console.log(form.value.id)
-
             // Update API
             await usersStore.updateUser({
                 id: form.value.id,
@@ -66,6 +77,7 @@ async function saveUser() {
                     isActive: form.value.isActive,
                 },
             })
+            showAlert('success', 'แก้ไขข้อมูลผู้ใช้เรียบร้อยแล้ว')
         }
         else {
             // Create API
@@ -76,14 +88,68 @@ async function saveUser() {
                 role: form.value.role,
                 isActive: form.value.isActive,
             })
+            showAlert('success', 'สร้างผู้ใช้สำเร็จ')
         }
 
         dialog.value = false
     }
     catch (e) {
         console.error(e)
+        showAlert('error', 'เกิดข้อผิดพลาด กรุณาลองใหม่')
     }
 }
+
+const alert = ref({
+    show: false,
+    type: 'success', // success, error, info, warning
+    message: '',
+})
+
+function showAlert(type: string, message: string) {
+    alert.value = {
+        show: true,
+        type,
+        message,
+    }
+
+    setTimeout(() => {
+        alert.value.show = false
+    }, 2500) // 2.5 sec
+}
+
+// async function saveUser() {
+//     try {
+//         if (isEdit.value) {
+//             console.log(form.value.id)
+
+//             // Update API
+//             await usersStore.updateUser({
+//                 id: form.value.id,
+//                 data: {
+//                     email: form.value.email,
+//                     username: form.value.username,
+//                     role: form.value.role,
+//                     isActive: form.value.isActive,
+//                 },
+//             })
+//         }
+//         else {
+//             // Create API
+//             await usersStore.createNewUser({
+//                 email: form.value.email,
+//                 username: form.value.username,
+//                 password: form.value.password,
+//                 role: form.value.role,
+//                 isActive: form.value.isActive,
+//             })
+//         }
+
+//         dialog.value = false
+//     }
+//     catch (e) {
+//         console.error(e)
+//     }
+// }
 
 // 👉 Delete user
 async function deleteUser(item: any) {
@@ -116,14 +182,22 @@ async function deleteUserConfirmed() {
 
         deleteDialog.value = false
         userToDelete.value = null
+        showAlert('success', 'ลบผู้ใช้สำเร็จ')
     }
     catch (e) {
         console.error(e)
+        showAlert('error', 'เกิดข้อผิดพลาด กรุณาลองใหม่')
     }
 }
 </script>
 
 <template>
+    <VOverlay v-model="alert.show" class="d-flex align-center justify-center" scrim>
+        <VAlert :type="alert.type" border="start" elevation="2" class="mb-4">
+            <strong>{{ alert.message }}</strong>
+        </VAlert>
+        <!-- <VAlert v-if="alert.show" :type="alert.type" class="mb-4" border="start" elevation="2" /> -->
+    </VOverlay>
     <VRow>
         <VCol cols="12">
             <VCard class="pa-6">
@@ -197,20 +271,24 @@ async function deleteUserConfirmed() {
                 {{ isEdit ? 'Update User' : 'Create New User' }}
             </VCardTitle>
 
-            <VCardText class="mt-2">
-                <div class="d-flex flex-column gap-4">
-                    <VTextField v-model="form.email" label="Email" variant="outlined" density="comfortable" />
-                    <VTextField v-model="form.username" label="Username" variant="outlined" density="comfortable" />
+            <VForm ref="formRef">
+                <VCardText class="mt-2">
+                    <div class="d-flex flex-column gap-4">
+                        <VTextField v-model="form.email" label="Email" variant="outlined" density="comfortable"
+                            :rules="[rules.required, rules.email]" />
+                        <VTextField v-model="form.username" label="Username" variant="outlined" density="comfortable"
+                            :rules="[rules.required]" />
 
-                    <VTextField v-if="!isEdit" v-model="form.password" type="password" label="Password"
-                        variant="outlined" density="comfortable" />
+                        <VTextField v-if="!isEdit" v-model="form.password" type="password" label="Password"
+                            variant="outlined" density="comfortable" :rules="[rules.required]" />
 
-                    <VSelect v-model="form.role" :items="['admin', 'user']" label="Role" variant="outlined"
-                        density="comfortable" />
+                        <VSelect v-model="form.role" :items="['admin', 'user']" label="Role" variant="outlined"
+                            density="comfortable" :rules="[rules.required]" />
 
-                    <VSwitch v-model="form.isActive" label="Active" />
-                </div>
-            </VCardText>
+                        <VSwitch v-model="form.isActive" label="Active" />
+                    </div>
+                </VCardText>
+            </VForm>
 
             <VCardActions class="d-flex justify-end">
                 <VBtn variant="text" @click="dialog = false">

@@ -3,84 +3,44 @@ import { useRouter } from 'vue-router'
 
 import { computed, onMounted, ref, shallowRef, watch } from 'vue'
 
+import { useNumberFormat } from '@/composables/useNumberFormat'
 import { deleteFarm } from '@/services/farmService'
 import { useFarmStore } from '@/stores/farmStore'
 import imgChicken from '@images/pages/Chicken.png'
 import imgFarm from '@images/pages/Farm.png'
 import imgHouse from '@images/pages/House.png'
 
+const { formatNumber } = useNumberFormat()
+
 const router = useRouter()
 const farmStore = useFarmStore()
 const dialog = shallowRef(false)
-
-const loaded = ref(false)
 const loading = ref(false)
 
-function onClick() {
-  loading.value = true
-  setTimeout(() => {
-    loading.value = false
-    loaded.value = true
-  }, 2000)
-}
-
-const filters = ['All Courses', 'Ongoing', 'Completed']
 const selectedFilter = ref('All Courses')
-
-// const courses = ref([
-//   {
-//     title: 'Introduction to Vue.js 3',
-//     category: 'Frontend Development',
-//     description: 'Learn Vue.js 3 step by step and build modern web interfaces.',
-//     image: 'https://cdn.vuetifyjs.com/images/cards/sunshine.jpg',
-//     status: 'Ongoing',
-//   },
-//   {
-//     title: 'Advanced TypeScript Patterns',
-//     category: 'Programming',
-//     description: 'Deep dive into generics, decorators, and advanced type inference.',
-//     image: 'https://cdn.vuetifyjs.com/images/cards/house.jpg',
-//     status: 'Completed',
-//   },
-//   {
-//     title: 'Building APIs with Go',
-//     category: 'Backend Development',
-//     description: 'Learn to build high-performance REST APIs using Golang.',
-//     image: 'https://cdn.vuetifyjs.com/images/cards/road.jpg',
-//     status: 'Ongoing',
-//   },
-// ])
-
-// paginate
 
 const searchQuery = ref('')
 const page = ref(1)
-const perPage = 6
 
-const courses = ref([
-  { id: 1, title: 'Vue Basics', category: 'Frontend', status: 'Ongoing' },
-  { id: 2, title: 'Golang Clean Architecture', category: 'Backend', status: 'Completed' },
-  { id: 3, title: 'Docker for Developers', category: 'DevOps' },
-  { id: 4, title: 'Advanced Vuetify', category: 'Frontend' },
-  { id: 5, title: 'REST & gRPC APIs', category: 'Backend' },
-  { id: 6, title: 'SQL Performance Tuning', category: 'Database' },
-  { id: 7, title: 'CI/CD with GitLab', category: 'DevOps' },
-  { id: 8, title: 'Tailwind UI Design', category: 'Frontend' },
-  { id: 9, title: 'Intro to Physics', category: 'Science' },
-])
-
-const pageCount = computed(() => Math.ceil(farmStore.pagination.total / farmStore.pagination.limit))
-
-const paginatedCourses = computed(() => {
-  const start = (page.value - 1) * perPage
-  const end = start + perPage
-
-  return courses.value.slice(start, end)
+const alert = ref({
+  show: false,
+  type: 'success', // success, error, info, warning
+  message: '',
 })
 
-const fetchCourses = () => {
-  console.log('Searching:', searchQuery.value)
+function showAlert(type: string, message: string) {
+  alert.value = {
+    show: true,
+    type,
+    message,
+  }
+
+  setTimeout(() => {
+    alert.value.show = false
+  }, 2500) // 2.5 sec
 }
+
+const pageCount = computed(() => Math.ceil(farmStore.pagination.total / farmStore.pagination.limit))
 
 const onPageChange = async (newPage: number) => {
   console.log('Page changed:', newPage)
@@ -89,13 +49,6 @@ const onPageChange = async (newPage: number) => {
   // farmStore.pagination.page = newPage
   await handleGetCampaignList()
 }
-
-const filteredCourses = computed(() => {
-  if (selectedFilter.value === 'All Courses')
-    return courses.value
-
-  return courses.value.filter(course => course.status === selectedFilter.value)
-})
 
 // ข้อมูลฟอร์ม
 const farmForm = ref({
@@ -107,10 +60,15 @@ const farmForm = ref({
   subdistrict_id: null,
 })
 
-// rules
-const requiredRule = value => !!value || 'กรุณากรอกข้อมูล'
-const postcodeRule = value => /^\d{5}$/.test(value) || 'รหัสไปรษณีย์ต้องมี 5 หลัก'
+const formRef = ref(null)
 
+const requiredRule = (v: any) => !!v || 'กรุณากรอกข้อมูล'
+// const postcodeRule = (v: any) =>
+//     (v && v.length === 5) || 'รหัสไปรษณีย์ต้องเป็น 5 หลัก'
+
+const postcodeRule = (v: any) => {
+  return (v && String(v).length == 5) || 'รหัสไปรษณีย์ต้องเป็น 5 หลัก'
+}
 // ข้อมูล dropdown
 // const provinces = ['กรุงเทพมหานคร', 'เชียงใหม่', 'ชลบุรี'] // ตัวอย่าง
 
@@ -383,45 +341,6 @@ const fetchAddressByZip = async (zipCode: any) => {
   }
 }
 
-// const fetchAddressByZip = async (zipCode: any) => {
-//   // const id = String(zipCode)
-//   const params = {
-//     zip: zipCode,
-//   }
-
-//   const res = await farmStore.fetchAddress(params)
-
-//   const location = res[0]
-
-//   farmForm.value.province_id = location.province_id
-//   farmForm.value.district_id = location.district_id
-//   farmForm.value.subdistrict_id = location.subdistrict_id
-//   farmForm.value.zip_code = zipCode
-
-//   // โหลด districts
-//   const resProvince = await farmStore.fetchProvince()
-
-//   provinces.value = resProvince
-
-//   // โหลด districts
-//   const paramsDistricts = {
-//     provinceId: location.province_id,
-//   }
-
-//   const resDistricts = await farmStore.fetchDistrict(paramsDistricts)
-
-//   districts.value = resDistricts
-
-//   // โหลด subdistricts
-//   const paramsSubDistricts = {
-//     districtId: location.district_id,
-//   }
-
-//   const resSubDistricts = await farmStore.fetchSubDistrict(paramsSubDistricts)
-
-//   subdistricts.value = resSubDistricts
-// }
-
 function clearAddressFields() {
   farmForm.value.province_id = null
   farmForm.value.district_id = null
@@ -475,26 +394,12 @@ const initialize = async () => {
   const res = await farmStore.fetchProvince()
 
   provinces.value = res
-
-  // const res =
-  //
-
-  // await handleGetAddress()
-  // await farmStore.fetchProvince()
-  // await farmStore.fetchDistrict()
-  // await farmStore.fetchSubDistrict()
-  // getDistricts
-  // getSubDistricts
-  // getAddress
-  // getProvince
 }
 
 onMounted(async () => {
   await initialize()
 })
 
-const formRef = ref()
-const showAlert = ref(false)
 const alertMessage = ref('')
 const alertType = ref<'success' | 'error'>('success')
 const deleteDialog = ref(false)
@@ -518,9 +423,6 @@ async function onDeleteDialog() {
   // }
 
   try {
-    // console.log(selectedFarmId.value)
-    // console.log(deletePassword.value)
-
     await deleteFarm({
       farm_id: selectedFarmId.value,
       password: deletePassword.value,
@@ -530,6 +432,7 @@ async function onDeleteDialog() {
     deleteDialog.value = false
 
     // reload farm list
+    showAlert('success', 'ลบข้อมูลฟาร์มเรียบร้อยแล้ว')
     initialize()
   }
   catch (err) {
@@ -548,6 +451,11 @@ async function submitForm() {
 
   //   return
   // }
+  const { valid } = await formRef.value.validate()
+  if (!valid) {
+    // showAlert('error', 'กรุณากรอกข้อมูลให้ครบถ้วนและถูกต้อง')
+    return
+  }
 
   try {
     const payload = {
@@ -567,19 +475,12 @@ async function submitForm() {
     dialog.value = false
     resetForm()
 
-    // showAlert.value = true
-    alertType.value = 'success'
-    alertMessage.value = 'บันทึกข้อมูลฟาร์มเรียบร้อยแล้ว'
-
-    setTimeout(() => {
-      showAlert.value = true
-    }, 250)
+    showAlert('success', 'บันทึกข้อมูลฟาร์มเรียบร้อยแล้ว')
+    await initialize()
   }
   catch (error) {
-    showAlert.value = true
-    alertType.value = 'error'
-    alertMessage.value = 'เกิดข้อผิดพลาดในการบันทึกข้อมูล'
     console.error(error)
+    showAlert('error', 'เกิดข้อผิดพลาด กรุณาลองใหม่')
   }
 }
 
@@ -595,9 +496,11 @@ const moreList = [
 </script>
 
 <template>
-  <VSnackbar v-model="showAlert" :color="alertType" timeout="2000">
-    {{ alertMessage }}
-  </VSnackbar>
+  <VOverlay v-model="alert.show" class="d-flex align-center justify-center" scrim>
+    <VAlert :type="alert.type" border="start" elevation="2" class="mb-4">
+      <strong>{{ alert.message }}</strong>
+    </VAlert>
+  </VOverlay>
   <VRow>
     <VCol cols="12">
       <VRow class="g-6">
@@ -615,7 +518,7 @@ const moreList = [
                 -->
               </div>
               <h4 class="text-h4 text-primary">
-                {{ farmStore.summary.totalFarms }}
+                {{ formatNumber(farmStore.summary.totalFarms) }}
               </h4>
               <div class="text-body-1 mb-2">
                 ฟาร์ม
@@ -645,7 +548,7 @@ const moreList = [
                 -->
               </div>
               <h4 class="text-h4 text-primary">
-                {{ farmStore.summary.totalHouses }}
+                {{ formatNumber(farmStore.summary.totalHouses) }}
               </h4>
               <div class="text-body-1 mb-2">
                 โรงเรือน
@@ -675,7 +578,7 @@ const moreList = [
                 -->
               </div>
               <h4 class="text-h4 text-primary">
-                {{ farmStore.summary.totalChicken }}
+                {{ formatNumber(farmStore.summary.totalChicken) }}
               </h4>
               <div class="text-body-1 mb-2">
                 ตัว
@@ -837,16 +740,17 @@ const moreList = [
     </VCol>
   </VRow>
 
-  <div class="pa-4 text-center">
-    <VDialog v-model="dialog" max-width="600" @after-leave="showSnackbar">
-      <VCard>
-        <VCardTitle class="text-h6 text-md-h5 text-lg-h4 mt-2">
-          ข้อมูลฟาร์ม
-        </VCardTitle>
-        <VCardText>กรอกข้อมูลฟาร์มให้ครบถ้วน</VCardText>
+  <VDialog v-model="dialog" max-width="600">
+    <VCard>
+      <VCardTitle class="text-h6 text-md-h5 text-lg-h4 mt-2">
+        ข้อมูลฟาร์ม
+      </VCardTitle>
+      <VCardText>กรอกข้อมูลฟาร์มให้ครบถ้วน</VCardText>
 
-        <VDivider />
+      <VDivider />
 
+      <!-- Form start -->
+      <VForm ref="formRef">
         <VCardText class="mt-6">
           <VRow dense>
             <VCol cols="12" md="12" sm="6">
@@ -867,29 +771,15 @@ const moreList = [
         <VCardText>
           <VRow dense>
             <VCol cols="12" md="6" sm="6">
-              <!--
-                <VTextField v-model="farmForm.zip_code" label="รหัสไปรษณีย์" counter="5"
-                :rules="[requiredRule, postcodeRule]" required @update:model-value="fetchAddressByZip" />
-              -->
               <VTextField v-model="farmForm.zip_code" label="รหัสไปรษณีย์" counter="5"
-                :rules="[requiredRule, postcodeRule]" required @blur="fetchAddressByZip(farmForm.zip_code)" />
+                :rules="[postcodeRule, requiredRule]" required @blur="fetchAddressByZip(farmForm.zip_code)" />
             </VCol>
+
             <VCol cols="12" md="6">
-              <!--
-                <VSelect v-model="farmForm.province_id" item-title="label" item-value="value" label="จังหวัด"
-                :items="provinces" :rules="[requiredRule]" placeholder="เลือกจังหวัด" required
-                @update:model-value="onProvinceChange" />
-              -->
               <VSelect v-model="farmForm.province_id" item-title="label" item-value="value" label="จังหวัด"
                 :items="provinces" :rules="[requiredRule]" placeholder="เลือกจังหวัด" required
                 @update:model-value="onProvinceChange" />
             </VCol>
-            <!--  -->
-            <!--
-              <v-col cols="12" md="6" sm="6">
-              <v-text-field label="จังหวัด" v-model="farmForm.province" :rules="[requiredRule]" required></v-text-field>
-              </v-col>
-            -->
           </VRow>
         </VCardText>
 
@@ -899,32 +789,25 @@ const moreList = [
               <VSelect v-model="farmForm.district_id" item-title="label" item-value="value" label="อำเภอ/เขต"
                 :items="districts" :rules="[requiredRule]" required @update:model-value="onDistrictChange" />
             </VCol>
+
             <VCol cols="12" md="6">
               <VSelect v-model="farmForm.subdistrict_id" item-title="label" item-value="value" label="ตำบล/แขวง"
                 :items="subdistricts" :rules="[requiredRule]" required @update:model-value="onSubdistrictChange" />
             </VCol>
           </VRow>
         </VCardText>
+      </VForm>
+      <!-- Form end -->
 
-        <VDivider />
+      <VDivider />
+      <VCardActions class="my-1 justify-center">
+        <VBtn text="Close" variant="plain" @click="closeDialog" />
+        <VBtn color="primary" text="Save" variant="tonal" @click="submitForm" />
+      </VCardActions>
+    </VCard>
+  </VDialog>
 
-        <VCardText class="mt-3">
-          * กรุณาตรวจสอบความถูกต้องของข้อมูลก่อนทำการบันทึก
-        </VCardText>
 
-        <!--
-          <VCardActions class="my-1 justify-center">
-          <VBtn text="Close" variant="plain" @click="closeDialog" />
-          <VBtn color="primary" text="Save" variant="tonal" @click="submitForm" />
-          </VCardActions>
-        -->
-        <VCardActions class="my-1 justify-center">
-          <VBtn text="Close" variant="plain" @click="closeDialog" />
-          <VBtn color="primary" text="Save" variant="tonal" @click="submitForm" />
-        </VCardActions>
-      </VCard>
-    </VDialog>
-  </div>
 
   <VDialog v-model="deleteDialog" max-width="400">
     <VCard>

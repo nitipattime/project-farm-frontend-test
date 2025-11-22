@@ -46,7 +46,7 @@ export const useAuthStore = defineStore('auth', {
         const userData = resUserInfo.data.data
 
         // เก็บข้อมูลผู้ใช้
-        // this.user = userData
+        this.user = userData
         localStorage.setItem('user', JSON.stringify(userData))
 
         return true
@@ -67,6 +67,7 @@ export const useAuthStore = defineStore('auth', {
       } finally {
         this.accessToken = null
         this.refreshToken = null
+        this.user = null
 
         localStorage.removeItem('accessToken')
         localStorage.removeItem('refreshToken')
@@ -83,10 +84,10 @@ export const useAuthStore = defineStore('auth', {
           this.refreshToken = data.refreshToken
 
           // this.user = data.user
-          console.log('accessToken:')
-          console.log(data.accessToken)
-          console.log('refreshToken:')
-          console.log(data.refreshToken)
+          // console.log('accessToken:')
+          // console.log(data.accessToken)
+          // console.log('refreshToken:')
+          // console.log(data.refreshToken)
 
           localStorage.setItem('accessToken', data.accessToken)
           localStorage.setItem('refreshToken', data.refreshToken)
@@ -100,36 +101,12 @@ export const useAuthStore = defineStore('auth', {
       } finally {
         this.accessToken = null
         this.refreshToken = null
+        this.user = null
 
         localStorage.removeItem('accessToken')
         localStorage.removeItem('refreshToken')
+        localStorage.removeItem('user')
       }
     },
   },
 })
-
-// export const useAuthStore = defineStore('auth', {
-//   state: () => ({
-//     token: localStorage.getItem('token') || null,
-//     user: null,
-//   }),
-//   actions: {
-//     async login(username: string, password: string) {
-//       // mock API
-//       if (username === 'admin' && password === '1234') {
-//         const token = 'fake-jwt-token'
-
-//         this.token = token
-//         localStorage.setItem('token', token)
-
-//         return true
-//       }
-
-//       return false
-//     },
-//     logout() {
-//       this.token = null
-//       localStorage.removeItem('token')
-//     },
-//   },
-// })

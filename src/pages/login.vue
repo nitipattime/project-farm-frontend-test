@@ -1,16 +1,12 @@
 <script setup lang="ts">
-import { computed, nextTick, ref } from 'vue'
+import { nextTick, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useTheme } from 'vuetify'
 
 import { useAuthStore } from '@/stores/auth'
-import authV1MaskDark from '@images/pages/auth-v1-mask-dark.png'
-import authV1MaskLight from '@images/pages/auth-v1-mask-light.png'
 import logo from '@images/pages/original-logo.png'
 
 const router = useRouter()
 const auth = useAuthStore()
-const vuetifyTheme = useTheme()
 
 // form state
 const username = ref('')
@@ -19,45 +15,31 @@ const error = ref('')
 const isPasswordVisible = ref(false)
 const formRef = ref()
 
-// theme mask
-const authThemeMask = computed(() => {
-  return vuetifyTheme.global.name.value === 'light'
-    ? authV1MaskLight
-    : authV1MaskDark
-})
-
 // ✅ Validation Rules
 const rules = {
   required: (v: string) => !!v || 'This field is required',
-  email: (v: string) => /.[^\n\r@\u2028\u2029]*@.+\..+/.test(v) || 'Invalid email format',
+
+  // อนุญาตให้กรอกได้ทั้ง email และ username
+  usernameOrEmail: (v: string) => {
+    if (!v)
+      return 'This field is required'
+
+    const emailRegex = /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/
+    const usernameRegex = /^[\w.-]{3,}$/ // ปรับตามต้องการ
+
+    if (emailRegex.test(v) || usernameRegex.test(v))
+      return true
+
+    return 'Must be a valid username or email'
+  },
+
   min: (v: string) => v.length >= 6 || 'Password must be at least 6 characters',
 }
 
-// async function handleLogin() {
-//   const isValid = await formRef.value?.validate()
-//   if (!isValid)
-//     return
-
-//   const success = await auth.login({
-//     email: username.value,
-//     password: password.value,
-//   })
-
-//   if (success)
-//     router.push('/dashboardV2')
-//   else
-//     error.value = 'Invalid credentials'
-
-//   // // ตรวจสอบว่าฟอร์มผ่าน validation มั้ย
-//   // const isValid = await formRef.value?.validate()
-//   // if (!isValid)
-//   //   return
-
-//   // const success = await auth.login(username.value, password.value)
-//   // if (success)
-//   //   router.push('/dashboardV2')
-//   // else
-//   //   error.value = 'Invalid credentials'
+// const rules = {
+//   required: (v: string) => !!v || 'This field is required',
+//   email: (v: string) => /.[^\n\r@\u2028\u2029]*@.+\..+/.test(v) || 'Invalid email format',
+//   min: (v: string) => v.length >= 6 || 'Password must be at least 6 characters',
 // }
 
 async function handleLogin() {
@@ -73,27 +55,7 @@ async function handleLogin() {
   if (success) {
     await nextTick() // ✅ รอให้ state ของ Pinia อัปเดตเสร็จก่อน
 
-    // const auth = useAuthStore()
-    // if (auth.user?.role === 'admin')
-    //   router.push('/admin')
-    // else
-    //   router.push('/dashboardV2')
-
-    // !!!!!!!
-    // const userStr = localStorage.getItem('user')
-    // if (userStr) {
-    //   const user = JSON.parse(userStr) // ✅ แปลง JSON string กลับเป็น object
-
-    //   if (user.role === 'admin')
-    //     router.push('/admin')
-    //   else
-    //     router.push('/dashboardV2')
-    // }
-    // else {
-    // ถ้าไม่มี user ใน localStorage
     router.push('/dashboardV2')
-
-    // }
   }
   else {
     error.value = 'Invalid credentials'
@@ -103,12 +65,10 @@ async function handleLogin() {
 
 <template>
   <div class="auth-wrapper d-flex align-center justify-center pa-4">
-    <VCard class="auth-card pa-4 pt-7" max-width="448">
+    <VCard class="auth-card pa-4 pt-7 login-card">
       <VCardItem class="justify-center">
         <RouterLink to="/" class="d-flex align-center gap-3">
-          <!-- <div class="d-flex" v-html="logo" /> -->
           <img :src="logo" alt="logo" width="120">
-          <!-- <h2 class="font-weight-medium text-2xl text-uppercase">Materio</h2> -->
         </RouterLink>
       </VCardItem>
 
@@ -126,7 +86,8 @@ async function handleLogin() {
           <VRow>
             <!-- email -->
             <VCol cols="12">
-              <VTextField v-model="username" label="Username" type="email" :rules="[rules.required, rules.email]" />
+              <VTextField v-model="username" label="Username or Email"
+                :rules="[rules.required, rules.usernameOrEmail]" />
             </VCol>
 
             <!-- password -->
@@ -158,15 +119,22 @@ async function handleLogin() {
         </VForm>
       </VCardText>
     </VCard>
-
-    <!--
-      <VImg class="auth-footer-start-tree d-none d-md-block" :src="authV1Tree" :width="250" />
-      <VImg :src="authV1Tree2" class="auth-footer-end-tree d-none d-md-block" :width="350" />
-      <VImg class="auth-footer-mask d-none d-md-block" :src="authThemeMask" />
-    -->
   </div>
 </template>
 
 <style lang="scss">
 @use "@core/scss/template/pages/page-auth";
+
+.login-card {
+  width: 100%;
+  max-width: 600px; // ปรับได้เลย เช่น 550, 580, 620
+
+  @media (min-width: 768px) {
+    max-width: 650px;
+  }
+
+  @media (min-width: 1024px) {
+    max-width: 700px;
+  }
+}
 </style>

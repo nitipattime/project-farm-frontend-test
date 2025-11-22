@@ -2,6 +2,7 @@
 import { computed, onMounted, ref, shallowRef, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
+import { useNumberFormat } from '@/composables/useNumberFormat'
 import { useRealtime } from '@/composables/useSocket'
 import { getExport } from '@/services/exportService'
 import { markHouseFinish } from '@/services/houseService'
@@ -10,6 +11,8 @@ import AnalyticsSalesByCountriesV2 from '@/views/dashboard/AnalyticsSalesByCount
 import TestV2 from '@/views/dashboard/TestV2.vue'
 
 const props = defineProps<{ id: string }>()
+
+const { formatNumber } = useNumberFormat()
 
 const houseStore = useHouseStore()
 const router = useRouter()
@@ -127,45 +130,45 @@ function goToAddHouseDetail() {
 const statistics = computed(() => [
   {
     title: 'Uniform',
-    stats: houseStore.houseSummary.uniform ?? '-',
+    stats: formatNumber(houseStore.houseSummary.uniform) ?? '-',
     unit: 'กรัม',
     icon: 'ri-pie-chart-2-line',
     color: 'primary',
   },
   {
     title: 'SD',
-    stats: houseStore.houseSummary.sd ?? '-',
+    stats: formatNumber(houseStore.houseSummary.sd) ?? '-',
     unit: 'กรัม',
     icon: 'ri-pie-chart-2-line',
     color: 'success',
   },
   {
     title: 'CV',
-    stats: houseStore.houseSummary.cv ?? '-',
+    stats: formatNumber(houseStore.houseSummary.cv) ?? '-',
     unit: 'กรัม',
     icon: 'ri-pie-chart-2-line',
     color: 'warning',
   },
   {
     title: 'น้ำหนักโดยเฉลี่ย',
-    stats: houseStore.houseSummary.avg_weight ?? '-',
+    stats: formatNumber(houseStore.houseSummary.avg_weight) ?? '-',
     unit: 'กรัม',
     icon: 'ri-weight-line',
     color: 'info',
   },
   {
     title: 'ปริมาณอาหาร',
-    stats: houseStore.houseSummary.weight_target ?? '-',
+    stats: formatNumber(houseStore.houseSummary.weight_target) ?? '-',
     unit: 'กรัม',
     icon: 'ri-restaurant-2-line',
-    color: 'info',
+    color: 'success',
   },
   {
     title: 'อายุเพาะเลี้ยง',
     stats: houseStore.houseSummary.duration_days ?? '-',
     unit: 'วัน',
     icon: 'ri-time-line',
-    color: 'info',
+    color: 'warning',
   },
 ])
 
@@ -307,6 +310,13 @@ onMounted(async () => {
 </script>
 
 <template>
+  <!--
+    <VOverlay v-model="alert.show" class="d-flex align-center justify-center" scrim>
+    <VAlert :type="alert.type" border="start" elevation="2" class="mb-4">
+    <strong>{{ alert.message }}</strong>
+    </VAlert>
+    </VOverlay>
+  -->
   <VRow>
     <VCol cols="12">
       <VCard title="">

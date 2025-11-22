@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, shallowRef, watch } from 'vue'
+import { computed, onMounted, ref, shallowRef } from 'vue'
 import { useRouter } from 'vue-router'
 
+import { useNumberFormat } from '@/composables/useNumberFormat'
 import { useHouseStore } from '@/stores/houseStore'
 import imgChicken from '@images/pages/Chicken.png'
 import imgFarm from '@images/pages/Farm.png'
@@ -10,6 +11,8 @@ import { useTheme } from 'vuetify'
 
 const props = defineProps<{ id: string }>()
 
+const { formatNumber } = useNumberFormat()
+
 const vuetifyTheme = useTheme()
 
 const farmId = Number.parseInt(props.id || '0', 10)
@@ -17,30 +20,46 @@ const router = useRouter()
 const dialog = shallowRef(false)
 const loaded = ref(false)
 const loading = ref(false)
+const currentTheme = computed(() => vuetifyTheme.current.value.colors)
 const houseStore = useHouseStore()
 const searchQuery = ref('')
-const currentTheme = computed(() => vuetifyTheme.current.value.colors)
+const page = ref(1)
+const pageCount = computed(() => Math.ceil(houseStore.pagination.total / houseStore.pagination.limit))
 
-function onClick() {
-  loading.value = true
-  setTimeout(() => {
-    loading.value = false
-    loaded.value = true
-  }, 2000)
+// const perPage = 6
+
+async function resetPage() {
+  page.value = 1
 }
 
-const filters = ['All Courses', 'Ongoing', 'Completed']
-const selectedFilter = ref('All Courses')
+const alert = ref({
+  show: false,
+  type: 'success', // success, error, info, warning
+  message: '',
+})
+
+function showAlert(type: string, message: string) {
+  alert.value = {
+    show: true,
+    type,
+    message,
+  }
+
+  setTimeout(() => {
+    alert.value.show = false
+  }, 2500) // 2.5 sec
+}
 
 async function handleGetCampaignList() {
   const params = {
     search: searchQuery.value,
-    page: houseStore.pagination.page,
+    page: page.value,
     farm_id: farmId,
   }
 
   try {
     await houseStore.fetchHouse(params)
+    page.value = houseStore.pagination.page
   }
   catch (err) {
     console.error(err)
@@ -48,40 +67,13 @@ async function handleGetCampaignList() {
 }
 
 const initialize = async () => {
+  resetPage()
   await handleGetCampaignList()
 }
 
 onMounted(async () => {
   await initialize()
 })
-
-const page = ref(1)
-const perPage = 6
-
-const courses = ref([
-  { id: 1, title: 'Vue Basics', category: 'Frontend', status: 'Ongoing' },
-  { id: 2, title: 'Golang Clean Architecture', category: 'Backend', status: 'Completed' },
-  { id: 3, title: 'Docker for Developers', category: 'DevOps' },
-  { id: 4, title: 'Advanced Vuetify', category: 'Frontend' },
-  { id: 5, title: 'REST & gRPC APIs', category: 'Backend' },
-  { id: 6, title: 'SQL Performance Tuning', category: 'Database' },
-  { id: 7, title: 'CI/CD with GitLab', category: 'DevOps' },
-  { id: 8, title: 'Tailwind UI Design', category: 'Frontend' },
-  { id: 9, title: 'Intro to Physics', category: 'Science' },
-])
-
-const pageCount = computed(() => Math.ceil(houseStore.pagination.total / houseStore.pagination.limit))
-
-const paginatedCourses = computed(() => {
-  const start = (page.value - 1) * perPage
-  const end = start + perPage
-
-  return courses.value.slice(start, end)
-})
-
-const fetchCourses = () => {
-  console.log('Searching:', searchQuery.value)
-}
 
 const onPageChange = async (newPage: number) => {
   console.log('Page changed:', newPage)
@@ -91,13 +83,6 @@ const onPageChange = async (newPage: number) => {
   await handleGetCampaignList()
 }
 
-const filteredCourses = computed(() => {
-  if (selectedFilter.value === 'All Courses')
-    return courses.value
-
-  return courses.value.filter(course => course.status === selectedFilter.value)
-})
-
 // ข้อมูลฟอร์ม
 const farmForm = ref({
   name: '',
@@ -106,37 +91,6 @@ const farmForm = ref({
 
 // rules
 const requiredRule = value => !!value || 'กรุณากรอกข้อมูล'
-const postcodeRule = value => /^\d{5}$/.test(value) || 'รหัสไปรษณีย์ต้องมี 5 หลัก'
-
-// ข้อมูล dropdown
-const provinces = ['กรุงเทพมหานคร', 'เชียงใหม่', 'ชลบุรี'] // ตัวอย่าง
-
-const districts = {
-  กรุงเทพมหานคร: ['เขตพระนคร', 'เขตดุสิต'],
-  เชียงใหม่: ['อำเภอเมืองเชียงใหม่', 'อำเภอสันกำแพง'],
-  ชลบุรี: ['อำเภอเมืองชลบุรี', 'อำเภอบางละมุง'],
-}
-
-const subdistricts = {
-  เขตพระนคร: ['พระบรมมหาราชวัง', 'วังบูรพา'],
-  เขตดุสิต: ['ดุสิต', 'วชิรพยาบาล'],
-}
-
-// watch province/district เพื่อ update dropdown
-const selectedDistricts = ref([])
-const selectedSubdistricts = ref([])
-
-watch(() => farmForm.value.province, newVal => {
-  selectedDistricts.value = districts[newVal] || []
-  farmForm.value.district = ''
-  selectedSubdistricts.value = []
-  farmForm.value.subdistrict = ''
-})
-
-watch(() => farmForm.value.district, newVal => {
-  selectedSubdistricts.value = subdistricts[newVal] || []
-  farmForm.value.subdistrict = ''
-})
 
 // go to house deatil
 function goToHouseDetail(items: any) {
@@ -146,9 +100,7 @@ function goToHouseDetail(items: any) {
   router.push({ name: 'house-detail', params: { id: items.id } }) // หรือใช้ชื่อ route: router.push({ name: 'about' })
 }
 
-const showAlert = ref(false)
-const alertMessage = ref('')
-const alertType = ref<'success' | 'error'>('success')
+const formRefFarm = ref(null)
 
 function resetForm() {
   farmForm.value = {
@@ -158,46 +110,32 @@ function resetForm() {
 }
 
 async function submitForm() {
-  // ตรวจสอบว่ากรอกครบหรือยัง
-  // const { valid } = await formRef.value.validate()
+  const { valid } = await formRefFarm.value.validate()
 
-  // if (!valid) {
-  //   showAlert.value = true
-  //   alertType.value = 'error'
-  //   alertMessage.value = 'กรุณากรอกข้อมูลให้ครบถ้วน'
+  if (!valid) {
+    // ❌ ถ้าไม่ผ่าน validation → ไม่บันทึก
+    return
+  }
 
-  //   return
-  // }
-
+  // ✅ ผ่าน validation → ทำงานต่อ
   try {
     const payload = {
       house_name: farmForm.value.name,
       contact_name: farmForm.value.contact,
       farm_id: farmId,
-
-      // zip_code: farmForm.value.zip_code,
     }
-
-    console.log(payload)
 
     await houseStore.addHouse(payload)
 
     dialog.value = false
     resetForm()
 
-    // showAlert.value = true
-    alertType.value = 'success'
-    alertMessage.value = 'บันทึกข้อมูลฟาร์มเรียบร้อยแล้ว'
-
-    setTimeout(() => {
-      showAlert.value = true
-    }, 250)
+    showAlert('success', 'บันทึกข้อมูลโรงเรือนเรียบร้อยแล้ว')
+    await initialize()
   }
   catch (error) {
-    showAlert.value = true
-    alertType.value = 'error'
-    alertMessage.value = 'เกิดข้อผิดพลาดในการบันทึกข้อมูล'
     console.error(error)
+    showAlert('error', 'เกิดข้อผิดพลาด กรุณาลองใหม่')
   }
 }
 
@@ -221,109 +159,6 @@ const onSearch = async () => {
   }
 }
 
-// const series = [
-//   {
-//     data: [0, 5, 10, 30, 15, 45, 20, 50, 55, 60, 70, 80, 95, 125, 100, 120, 135, 145, 120, 90, 135, 145, 120, 150, 155, 200, 300, 400, 600, 200, 600, 800],
-//   },
-//   {
-//     data: [0, 100, 200, 300, 15, 45, 20, 50, 55, 60, 70, 80, 95, 125, 100, 120, 135, 145, 120, 90, 135, 145, 120, 150, 155, 200, 300, 400, 600, 200, 600, 800],
-//   },
-// ]
-
-// const chartOptions = computed(() => {
-//   const currentTheme = vuetifyTheme.current.value.colors
-//   const variableTheme = vuetifyTheme.current.value.variables
-
-//   return {
-//     chart: {
-//       parentHeightOffset: 0,
-//       toolbar: { show: false },
-//     },
-//     tooltip: { enabled: false },
-//     grid: {
-//       borderColor: `rgba(${hexToRgb(String(variableTheme['border-color']))},${variableTheme['border-opacity']})`,
-//       strokeDashArray: 6,
-//       xaxis: {
-//         lines: { show: true },
-//       },
-//       yaxis: {
-//         lines: { show: false },
-//       },
-//       padding: {
-//         top: -10,
-//         left: -7,
-//         right: 5,
-//         bottom: 5,
-//       },
-//     },
-//     stroke: {
-//       width: 3,
-//       lineCap: 'butt',
-//       curve: 'straight',
-//     },
-//     colors: [currentTheme.primary],
-//     markers: {
-//       size: 6,
-//       offsetY: 4,
-//       offsetX: -2,
-//       strokeWidth: 3,
-//       colors: ['transparent'],
-//       strokeColors: 'transparent',
-//       discrete: [
-//         {
-//           size: 5.5,
-//           seriesIndex: 0,
-//           strokeColor: currentTheme.primary,
-//           fillColor: currentTheme.surface,
-//           dataPointIndex: series[0].data.length - 1,
-//         },
-//       ],
-//       hover: { size: 7 },
-//     },
-//     xaxis: {
-//       labels: { show: false },
-//       axisTicks: { show: false },
-//       axisBorder: { show: false },
-//     },
-//     yaxis: {
-//       labels: { show: false },
-//     },
-//   }
-// })
-
-// houseStore.houselist.
-// const chartOptions = categories => ({
-//   chart: {
-//     height: 350,
-//     type: 'line',
-//     zoom: { enabled: false },
-//     toolbar: { show: false },
-//   },
-
-//   xaxis: {
-//     categories,
-//   },
-
-//   stroke: {
-//     curve: 'smooth',
-//     width: 3,
-//   },
-
-//   markers: {
-//     size: 4,
-//   },
-
-//   tooltip: {
-//     shared: true,
-//     intersect: false,
-//   },
-
-//   yaxis: {
-//     labels: {
-//       formatter: val => `${val} g`,
-//     },
-//   },
-// })
 const chartOptions = categories => ({
   chart: {
     height: 150,
@@ -370,6 +205,12 @@ const chartOptions = categories => ({
 </script>
 
 <template>
+  <VOverlay v-model="alert.show" class="d-flex align-center justify-center" scrim>
+    <VAlert :type="alert.type" border="start" elevation="2" class="mb-4">
+      <strong>{{ alert.message }}</strong>
+    </VAlert>
+    <!-- <VAlert v-if="alert.show" :type="alert.type" class="mb-4" border="start" elevation="2" /> -->
+  </VOverlay>
   <VRow>
     <VCol cols="12">
       <VRow>
@@ -380,11 +221,6 @@ const chartOptions = categories => ({
                 <h5 class="text-h5">
                   ชื่อฟาร์ม
                 </h5>
-                <!--
-                  <div class="text-body-1">
-                  Best seller of the month
-                  </div>
-                -->
               </div>
               <h4 class="text-h4 text-primary">
                 {{ houseStore.summary.farmName }}
@@ -402,14 +238,9 @@ const chartOptions = categories => ({
                 <h5 class="text-h5">
                   จำนวนโรงเรือน
                 </h5>
-                <!--
-                  <div class="text-body-1">
-                  Best seller of the month
-                  </div>
-                -->
               </div>
               <h4 class="text-h4 text-primary">
-                {{ houseStore.summary.totalHouses }}
+                {{ formatNumber(houseStore.summary.totalHouses) }}
               </h4>
             </VCardText>
 
@@ -424,14 +255,9 @@ const chartOptions = categories => ({
                 <h5 class="text-h5">
                   จำนวนไก่ทั้งหมด
                 </h5>
-                <!--
-                  <div class="text-body-1">
-                  Best seller of the month
-                  </div>
-                -->
               </div>
               <h4 class="text-h4 text-primary">
-                {{ houseStore.summary.totalChicken }}
+                {{ formatNumber(houseStore.summary.totalChicken) }}
               </h4>
             </VCardText>
 
@@ -446,24 +272,6 @@ const chartOptions = categories => ({
   <VRow>
     <VCol cols="12">
       <VCard class="pa-6">
-        <!-- Title -->
-        <!--
-          <VCardTitle class="text-h5 font-weight-bold mb-2">
-          My Courses
-          </VCardTitle>
-          <VCardSubtitle class="mb-6">
-          Here’s a list of your enrolled courses
-          </VCardSubtitle>
-        -->
-
-        <!-- Search Field -->
-        <!--
-          <div class="d-flex justify-space-between align-center mb-6">
-          <VTextField v-model="searchQuery" placeholder="Search courses" persistent-placeholder :loading="loading"
-          append-inner-icon="mdi-magnify" @click:append-inner="onSearch" clearable hide-details variant="outlined"
-          density="comfortable" style="max-width: 300px" />
-          </div>
-        -->
         <div class="d-flex justify-space-between align-center mb-6">
           <!-- Search Field -->
           <VTextField v-model="searchQuery" placeholder="ค้นหา" persistent-placeholder :loading="loading"
@@ -480,8 +288,6 @@ const chartOptions = categories => ({
         <VRow class="g-6">
           <VCol v-for="(house, i) in houseStore.houselist" :key="i" cols="12" sm="6" md="4">
             <VCard elevation="2" class="pa-4 h-100 border border-solid border-gray-800">
-              <!-- <VImg :src="course.image" height="180" cover class="rounded mb-4" /> -->
-
               <template #prepend>
                 <VCardTitle class="text-h5">
                   ชื่อโรงเรือน : {{ house.house_name ? house.house_name : '-' }}
@@ -493,15 +299,16 @@ const chartOptions = categories => ({
               <VCardTitle class="text-h6 px-5">
                 ระยะเวลาเพาะเลี้ยงรวม : {{ house.duration_days ? house.duration_days : '0' }} วัน
               </VCardTitle>
-              <!--
-                <VCardTitle class="text-h6 px-5">
-                สถานะการเพาะเลี้ยง : {{ house.status ? house.status : '-' }}
-                </VCardTitle>
-              -->
 
               <template #append>
-                <VChip :color="house.status === 'อยู่ระหว่างการเพาะเลี้ยง' ? 'info' : 'success'" size="small" label>
+                <!--
+                  <VChip :color="house.status === 'อยู่ระหว่างการเพาะเลี้ยง' ? 'info' : 'success'" size="small" label>
                   {{ house.status ? house.status : '' }}
+                  </VChip>
+                -->
+                <VChip v-if="house.status === 'สิ้นสุดการเพาะเลี้ยง' || house.status === 'อยู่ระหว่างการเพาะเลี้ยง'"
+                  :color="house.status === 'สิ้นสุดการเพาะเลี้ยง' ? 'success' : 'info'" size="small" label>
+                  {{ house.status }}
                 </VChip>
               </template>
 
@@ -515,28 +322,9 @@ const chartOptions = categories => ({
                 </VCol>
               </VRow>
 
-              <!-- <VueApexCharts type="line" :options="chartOptions" :series="series" :height="120" class="my-1" /> -->
-              <!-- <VueApexCharts type="line" :options="chartOptions" :series="house.chartData" :height="120" class="my-1" /> -->
-              <!--
-                <VueApexCharts type="line" :options="chartOptions(house.chartCategories)" :series="house.chartSeries"
-                height="200" />
-              -->
               <VueApexCharts
                 v-if="house.chartSeries && house.chartSeries.length && house.chartCategories && house.chartCategories.length"
                 type="line" :options="chartOptions(house.chartCategories)" :series="house.chartSeries" height="200" />
-
-              <!--
-                <VCardTitle class="text-h6 mb-1">
-                {{ course.title }}
-                </VCardTitle>
-                <VCardSubtitle class="mb-3">
-                {{ course.category }}
-                </VCardSubtitle>
-
-                <VCardText class="text-body-2 text-truncate mb-5">
-                {{ course.description }}
-                </VCardText>
-              -->
 
               <VCardActions class="justify-space-between pt-0">
                 <VBtn color="primary" variant="flat" size="small" @click="goToHouseDetail(house)">
@@ -574,23 +362,26 @@ const chartOptions = categories => ({
         </VCardTitle>
         <VCardText>กรอกข้อมูลโรงเรือนให้ครบถ้วน</VCardText>
 
-        <VDivider />
+        <VForm ref="formRefFarm">
+          <!-- ✅ เริ่มต้น VForm -->
+          <VDivider />
 
-        <VCardText class="mt-6">
-          <VRow dense>
-            <VCol cols="12" md="12" sm="6">
-              <VTextField v-model="farmForm.name" label="ชื่อโรงเรือน" :rules="[requiredRule]" required />
-            </VCol>
-          </VRow>
-        </VCardText>
+          <VCardText class="mt-6">
+            <VRow dense>
+              <VCol cols="12" md="12" sm="6">
+                <VTextField v-model="farmForm.name" label="ชื่อโรงเรือน" :rules="[requiredRule]" required />
+              </VCol>
+            </VRow>
+          </VCardText>
 
-        <VCardText>
-          <VRow dense>
-            <VCol cols="12" md="12" sm="6">
-              <VTextField v-model="farmForm.contact" label="ชื่อผู้ติดต่อ" :rules="[requiredRule]" required />
-            </VCol>
-          </VRow>
-        </VCardText>
+          <VCardText>
+            <VRow dense>
+              <VCol cols="12" md="12" sm="6">
+                <VTextField v-model="farmForm.contact" label="ชื่อผู้ติดต่อ" :rules="[requiredRule]" required />
+              </VCol>
+            </VRow>
+          </VCardText>
+        </VForm> <!-- ✅ ปิด VForm -->
 
         <VDivider />
 
@@ -606,9 +397,11 @@ const chartOptions = categories => ({
     </VDialog>
   </div>
 
-  <VSnackbar v-model="showAlert" :color="alertType" timeout="2000">
+  <!--
+    <VSnackbar v-model="showAlert" :color="alertType" timeout="2000">
     {{ alertMessage }}
-  </VSnackbar>
+    </VSnackbar>
+  -->
 </template>
 
 <style scoped>

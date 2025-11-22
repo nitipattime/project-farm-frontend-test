@@ -1,13 +1,31 @@
 <script lang="ts" setup>
-import { createHouseDetail } from '@/services/houseService'
-import { useHouseStore } from '@/stores/houseStore'
-import { reactive, ref } from 'vue'
+import { createHouseDetail } from '@/services/houseService';
+import { useHouseStore } from '@/stores/houseStore';
+import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router'; // 👈 เพิ่มบรรทัดนี้
-import { VBtn, VCol, VDatePicker, VForm, VRow, VSelect, VTextField } from 'vuetify/components'
+import { VBtn, VCol, VDatePicker, VForm, VRow, VSelect, VTextField } from 'vuetify/components';
 
 const props = defineProps<{ id: string }>()
 const router = useRouter()
 const formRef = ref()
+
+const alert = ref({
+    show: false,
+    type: 'success', // success, error, info, warning
+    message: '',
+})
+
+function showAlert(type: string, message: string) {
+    alert.value = {
+        show: true,
+        type,
+        message,
+    }
+
+    setTimeout(() => {
+        alert.value.show = false
+    }, 2500) // 2.5 sec
+}
 
 const form = reactive({
     house_name: '',
@@ -212,8 +230,6 @@ async function handleCreateHouse() {
     try {
         console.log(`houseID: ${props.id}`)
 
-        // console.log(houseId)
-
         const machines: any[] = []
 
         if (form.machine1) {
@@ -254,17 +270,19 @@ async function handleCreateHouse() {
         if (res) {
             // showConfirm.value = false
             // triggerSuccessModal()
+            showAlert('success', 'บันทึกข้อมูลโรงเรือนเรียบร้อยแล้ว')
             setTimeout(() => {
                 router.back()
-            }, 2000)
+            }, 2500)
         }
     }
     catch (err: any) {
         console.error('❌ สร้างโรงเรือนไม่สำเร็จ', err)
+        showAlert('error', 'เกิดข้อผิดพลาด กรุณาลองใหม่')
 
         // ถ้ามี message จาก backend
-        if (err.response?.data?.message)
-            alert(err.response.data.message)
+        // if (err.response?.data?.message)
+        //     alert(err.response.data.message)
     }
 }
 
@@ -297,8 +315,8 @@ async function handleGetHouseSummary() {
             form.qty = data.total_qty?.toString() || ''
             form.weight_target = data.weight_target?.toString() || ''
             form.food = data.food || ''
-            form.start_date = formatDate(data.start_date) || ''
-            form.end_date = formatDate(data.end_date) || ''
+            // form.start_date = data.start_date || ''
+            // form.end_date = data.end_date || ''
             form.uniform = data.uniform_field || ''
             form.silo_id = data.silo?.id || ''
 
@@ -320,6 +338,7 @@ async function handleGetHouseSummary() {
     }
     catch (err) {
         console.error(err)
+        showAlert('error', 'เกิดข้อผิดพลาด กรุณาลองใหม่')
     }
 }
 
@@ -364,6 +383,12 @@ async function onConfirmCreate() {
 </script>
 
 <template>
+    <VOverlay v-model="alert.show" class="d-flex align-center justify-center" scrim>
+        <VAlert :type="alert.type" border="start" elevation="2" class="mb-4">
+            <strong>{{ alert.message }}</strong>
+        </VAlert>
+        <!-- <VAlert v-if="alert.show" :type="alert.type" class="mb-4" border="start" elevation="2" /> -->
+    </VOverlay>
     <VForm @submit.prevent="onSubmitForm">
         <VRow>
             <!-- 👉 First Name -->
@@ -452,6 +477,69 @@ async function onConfirmCreate() {
                 <VRow class="">
                     <!-- วันที่เริ่มเลี้ยง -->
                     <VCol cols="12" md="6">
+                        <VTextField label="วันที่เริ่มเลี้ยง *" prepend-inner-icon="ri-calendar-line" readonly
+                            :value="form.start_date" @click="startPicker = true" />
+
+                        <VDialog v-model="startPicker" width="320">
+                            <VCard>
+                                <VDatePicker v-model="form.start_date" :max="form.end_date || undefined"
+                                    @update:model-value="startPicker = false" />
+                                <VCardActions>
+                                    <VSpacer />
+                                    <VBtn text @click="startPicker = false">
+                                        ยกเลิก
+                                    </VBtn>
+                                    <VBtn text color="primary" @click="startPicker = false">
+                                        ตกลง
+                                    </VBtn>
+                                </VCardActions>
+                            </VCard>
+                        </VDialog>
+                    </VCol>
+
+                    <VCol cols="12" md="6">
+                        <VTextField label="วันที่คาดว่าจะสิ้นสุด *" prepend-inner-icon="ri-calendar-line" readonly
+                            :value="form.end_date" @click="endPicker = true" />
+
+                        <VDialog v-model="endPicker" width="320">
+                            <VCard>
+                                <VDatePicker v-model="form.end_date" :min="form.start_date || undefined"
+                                    @update:model-value="endPicker = false" />
+                                <VCardActions>
+                                    <VSpacer />
+                                    <VBtn text @click="endPicker = false">
+                                        ยกเลิก
+                                    </VBtn>
+                                    <VBtn text color="primary" @click="endPicker = false">
+                                        ตกลง
+                                    </VBtn>
+                                </VCardActions>
+                            </VCard>
+                        </VDialog>
+                    </VCol>
+                    <VCol cols="12" md="6">
+                        <VTextField v-model="form.start_date" label="วันที่เริ่มเลี้ยง *"
+                            prepend-inner-icon="ri-calendar-line" readonly
+                            :value="form.start_date ? new Date(form.start_date).toISOString().split('T')[0] : ''"
+                            @click="startPicker = true" />
+
+                        <VDialog v-model="startPicker" width="390">
+                            <VCard>
+                                <VCardText>
+                                    <VDatePicker v-model="form.start_date" />
+                                </VCardText>
+                                <VCardActions>
+                                    <VSpacer />
+                                    <VBtn text @click="startPicker = false">
+                                        ยกเลิก
+                                    </VBtn>
+                                    <VBtn text color="primary" @click="startPicker = false">
+                                        ตกลง
+                                    </VBtn>
+                                </VCardActions>
+                            </VCard>
+                        </VDialog>
+
                         <VTextField v-model="form.start_date" label="วันที่เริ่มเลี้ยง *"
                             prepend-inner-icon="ri-calendar-line" readonly @click="startPicker = true" />
 
@@ -472,7 +560,7 @@ async function onConfirmCreate() {
                         <VDialog v-model="startPicker" width="390px">
                             <VCard>
                                 <VCardText>
-                                    <VDatePicker v-if="startPicker" v-model="form.start_date" />
+                                    <VDatePicker v-model="form.start_date" />
                                 </VCardText>
                                 <VCardActions>
                                     <VSpacer />

@@ -11,6 +11,24 @@ const houseStore = useHouseStore()
 const selectedItem = ref('')
 const breedOptions = ref<{ title: string; value: number }[]>([])
 
+const alert = ref({
+    show: false,
+    type: 'success', // success, error, info, warning
+    message: '',
+})
+
+function showAlert(type: string, message: string) {
+    alert.value = {
+        show: true,
+        type,
+        message,
+    }
+
+    setTimeout(() => {
+        alert.value.show = false
+    }, 2500) // 2.5 sec
+}
+
 function handleFileUpload(e: Event) {
     const target = e.target as HTMLInputElement
     if (!target.files?.length)
@@ -33,19 +51,21 @@ function handleFileUpload(e: Event) {
 }
 
 function submitData() {
-    console.log('Breed:', breedId.value)
-    console.log('Breed:', selectedItem.value)
-    console.log('Imported Rows:', tableData.value)
+    // ตรวจสอบว่าเลือก breed และมีข้อมูล Excel
     if (!selectedItem.value || tableData.value.length === 0) {
-        alert('Please select breed and import file first.')
-
+        showAlert('warning', 'Please select breed and import file first.')
         return
     }
 
-    // TODO: Replace with API call
-    console.log('Breed:', breedId.value)
+    // ใช้ selectedItem.value เป็น breed
+    const breed = selectedItem.value
+
+    console.log('Breed:', breed)
     console.log('Imported Rows:', tableData.value)
-    alert('Data ready to submit!')
+
+    // TODO: ทำ API call ส่งข้อมูลไป backend
+
+    showAlert('success', 'Upload สำเร็จ')
 }
 
 async function handleGetChickenBreed() {
@@ -80,6 +100,12 @@ onMounted(async () => {
 </script>
 
 <template>
+    <VOverlay v-model="alert.show" class="d-flex align-center justify-center" scrim>
+        <VAlert :type="alert.type" border="start" elevation="2" class="mb-4">
+            <strong>{{ alert.message }}</strong>
+        </VAlert>
+        <!-- <VAlert v-if="alert.show" :type="alert.type" class="mb-4" border="start" elevation="2" /> -->
+    </VOverlay>
     <VRow>
         <VCol cols="12">
             <VCard class="pa-6">
