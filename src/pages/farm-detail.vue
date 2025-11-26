@@ -29,7 +29,8 @@ const pageCount = computed(() => Math.ceil(houseStore.pagination.total / houseSt
 // const perPage = 6
 
 async function resetPage() {
-  page.value = 1
+  page.value = 1 // ✅ reset local page
+  houseStore.pagination.page = 1
 }
 
 const alert = ref({
@@ -140,15 +141,11 @@ async function submitForm() {
 }
 
 const onSearch = async () => {
-  console.log(searchQuery.value)
-
-  // ถ้าไม่มีคำค้นหา ก็ไม่ต้องยิง API
-  // if (!searchQuery.value.trim())
-  //   return
-
   loading.value = true
 
   try {
+    resetPage()
+
     await handleGetCampaignList()
   }
   catch (error) {

@@ -17,8 +17,6 @@ const farmStore = useFarmStore()
 const dialog = shallowRef(false)
 const loading = ref(false)
 
-const selectedFilter = ref('All Courses')
-
 const searchQuery = ref('')
 const page = ref(1)
 
@@ -63,27 +61,11 @@ const farmForm = ref({
 const formRef = ref(null)
 
 const requiredRule = (v: any) => !!v || 'กรุณากรอกข้อมูล'
-// const postcodeRule = (v: any) =>
-//     (v && v.length === 5) || 'รหัสไปรษณีย์ต้องเป็น 5 หลัก'
 
 const postcodeRule = (v: any) => {
   return (v && String(v).length == 5) || 'รหัสไปรษณีย์ต้องเป็น 5 หลัก'
 }
-// ข้อมูล dropdown
-// const provinces = ['กรุงเทพมหานคร', 'เชียงใหม่', 'ชลบุรี'] // ตัวอย่าง
 
-// const districts = {
-//   กรุงเทพมหานคร: ['เขตพระนคร', 'เขตดุสิต'],
-//   เชียงใหม่: ['อำเภอเมืองเชียงใหม่', 'อำเภอสันกำแพง'],
-//   ชลบุรี: ['อำเภอเมืองชลบุรี', 'อำเภอบางละมุง'],
-// }
-
-// const subdistricts = {
-//   เขตพระนคร: ['พระบรมมหาราชวัง', 'วังบูรพา'],
-//   เขตดุสิต: ['ดุสิต', 'วชิรพยาบาล'],
-// }
-
-// watch province/district เพื่อ update dropdown
 const selectedDistricts = ref([])
 const selectedSubdistricts = ref([])
 
@@ -99,18 +81,8 @@ watch(() => farmForm.value.district, newVal => {
   farmForm.value.subdistrict = ''
 })
 
-// submitForm
-// function submitForm() {
-//   // ตรวจสอบว่าทุก field ผ่าน validation หรือไม่
-//   // Vuetify v3 จะ validate อัตโนมัติเมื่อกดปุ่ม Save
-//   console.log(farmForm.value)
-//   dialog.value = false
-// }
-
 // go to farm deatil
 function goToFarmDetail(items: any) {
-  console.log(items)
-
   // router.push('/farmDetail') // หรือใช้ชื่อ route: router.push({ name: 'about' })
   router.push({ name: 'farm-detail', params: { id: items.id } }) // หรือใช้ชื่อ route: router.push({ name: 'about' })
 }
@@ -140,15 +112,12 @@ async function handleGetCampaignList() {
 }
 
 const onSearch = async () => {
-  console.log(searchQuery.value)
-
-  // ถ้าไม่มีคำค้นหา ก็ไม่ต้องยิง API
-  // if (!searchQuery.value.trim())
-  //   return
-
   loading.value = true
 
   try {
+    page.value = 1 // ✅ reset local page
+    farmStore.pagination.page = 1
+
     await handleGetCampaignList()
   }
   catch (error) {
@@ -175,12 +144,6 @@ interface Subdistrict {
   zip_code: string
 }
 
-// interface SubdistrictOption {
-//   value: number
-//   label: string
-
-// }
-
 const provinces = ref<Province[]>([])
 const districts = ref<District[]>([])
 const subdistricts = ref<Subdistrict[]>([])
@@ -200,39 +163,6 @@ const onProvinceChange = async (provinceId: number) => {
   districts.value = res
 }
 
-// const onProvinceChange = async (e: any) => {
-//   // farmForm.value.province_id = e.id
-//   // farmForm.value.district_id = 0
-//   // farmForm.value.subdistrict_id = 0
-//   // farmForm.value.zip_code = ''
-
-//   const params = { provinceId: e.id }
-
-//   console.log(e.id)
-//   console.log(params)
-
-//   const res = await farmStore.fetchDistrict(params)
-
-//   districts.value = res
-
-//   // console.log('@change="onDistrictChange"')
-
-//   // const id = Number(e.target.value)
-
-//   // farmForm.value.province_id = id
-//   // farmForm.value.district_id = 0
-//   // farmForm.value.subdistrict_id = 0
-//   // farmForm.value.zip_code = ''
-
-//   // const params = {
-//   //   provinceId: id,
-//   // }
-
-//   // const res = await farmStore.fetchDistrict(params)
-
-//   // districts.value = res
-// }
-
 const onDistrictChange = async (districtId: number) => {
   console.log('เลือกอำเภอ:', districtId)
 
@@ -246,24 +176,6 @@ const onDistrictChange = async (districtId: number) => {
   subdistricts.value = res
 }
 
-// const onDistrictChange = async (e: any) => {
-//   const id = Number(e.target.value)
-
-//   farmForm.value.district_id = id
-//   farmForm.value.subdistrict_id = 0
-//   farmForm.value.zip_code = ''
-
-//   const params = {
-//     districtId: id,
-//   }
-
-//   const res = await farmStore.fetchSubDistrict(params)
-
-//   subdistricts.value = res
-//   console.log('subdistrict2222')
-//   console.log(res)
-// }
-
 const onSubdistrictChange = (subdistrictId: number) => {
   console.log('เลือกตำบล:', subdistrictId)
 
@@ -273,23 +185,6 @@ const onSubdistrictChange = (subdistrictId: number) => {
 
   farmForm.value.zip_code = subdistrict?.zip_code || ''
 }
-
-// const onSubdistrictChange = async (e: any) => {
-//   const id = Number(e.target.value)
-
-//   farmForm.value.subdistrict_id = id // ถ้าใน DB ต้องการ number
-
-//   const subdistrict = subdistricts.value.find(s => s.value === id)
-
-//   farmForm.value.zip_code = subdistrict?.zip_code || ''
-
-//   // const id = Number(e.target.value)
-//   // formV2.subdistrict_id = id
-
-//   // const subdistrict = subdistricts.value.find((s) => s.value === id)
-
-//   // formV2.zip_code = subdistrict?.zip_code || ''
-// }
 
 const fetchAddressByZip = async (zipCode: any) => {
   if (!zipCode || zipCode.length < 5) {
@@ -361,20 +256,13 @@ function resetForm() {
     contact: '',
     zip_code: '',
 
-    // province_id: null,
     district_id: null,
     subdistrict_id: null,
   }
 
-  // provinces.value = []
   districts.value = []
   subdistricts.value = []
 }
-
-// watch(dialog, (newVal: any) => {
-//   if (newVal === true)
-//     resetForm()
-// })
 
 watch(() => farmForm.value.zip_code, (newVal: any) => {
   if (newVal && newVal.length === 5)
@@ -389,6 +277,9 @@ watch(dialog, (val: any) => {
 })
 
 const initialize = async () => {
+  page.value = 1
+  farmStore.pagination.page = 1 // ✅ บังคับ reset store ด้วย
+
   await handleGetCampaignList()
 
   const res = await farmStore.fetchProvince()
@@ -400,8 +291,6 @@ onMounted(async () => {
   await initialize()
 })
 
-const alertMessage = ref('')
-const alertType = ref<'success' | 'error'>('success')
 const deleteDialog = ref(false)
 const deletePassword = ref('')
 const selectedFarmId = ref(null)
@@ -416,12 +305,6 @@ function onSelectedMenu(farm: any, action: string) {
 }
 
 async function onDeleteDialog() {
-  // if (!deletePassword.value) {
-  //   alert('กรุณากรอกรหัสผ่าน')
-
-  //   return
-  // }
-
   try {
     await deleteFarm({
       farm_id: selectedFarmId.value,
@@ -433,7 +316,7 @@ async function onDeleteDialog() {
 
     // reload farm list
     showAlert('success', 'ลบข้อมูลฟาร์มเรียบร้อยแล้ว')
-    initialize()
+    await handleGetCampaignList()
   }
   catch (err) {
     console.error(err)
@@ -441,16 +324,6 @@ async function onDeleteDialog() {
 }
 
 async function submitForm() {
-  // ตรวจสอบว่ากรอกครบหรือยัง
-  // const { valid } = await formRef.value.validate()
-
-  // if (!valid) {
-  //   showAlert.value = true
-  //   alertType.value = 'error'
-  //   alertMessage.value = 'กรุณากรอกข้อมูลให้ครบถ้วน'
-
-  //   return
-  // }
   const { valid } = await formRef.value.validate()
   if (!valid) {
     // showAlert('error', 'กรุณากรอกข้อมูลให้ครบถ้วนและถูกต้อง')
@@ -601,24 +474,6 @@ const moreList = [
   <VRow>
     <VCol cols="12">
       <VCard class="pa-6">
-        <!-- Title -->
-        <!--
-          <VCardTitle class="text-h5 font-weight-bold mb-2">
-          My Courses
-          </VCardTitle>
-          <VCardSubtitle class="mb-6">
-          Here’s a list of your enrolled courses
-          </VCardSubtitle>
-        -->
-
-        <!-- Search Field -->
-        <!--
-          <div class="d-flex justify-space-between align-center mb-6">
-          <VTextField v-model="searchQuery" placeholder="Search courses" persistent-placeholder :loading="loading"
-          append-inner-icon="mdi-magnify" @click:append-inner="onSearch" clearable hide-details variant="outlined"
-          density="comfortable" style="max-width: 300px" />
-          </div>
-        -->
         <div class="d-flex justify-space-between align-center mb-6">
           <!-- Search Field -->
           <VTextField v-model="searchQuery" placeholder="ค้นหา" persistent-placeholder :loading="loading"
@@ -632,35 +487,6 @@ const moreList = [
           </VBtn>
         </div>
 
-        <!-- Course Cards -->
-        <!--
-          <VRow class="g-6">
-          <VCol v-for="(course, i) in paginatedCourses" :key="i" cols="12" sm="6" md="4">
-          <VCard elevation="2" class="pa-4 h-100 border border-solid border-gray-800">
-
-          <VCardTitle class="text-h6 mb-1">
-          {{ course.title }}
-          </VCardTitle>
-          <VCardSubtitle class="mb-3">
-          {{ course.category }}
-          </VCardSubtitle>
-
-          <VCardText class="text-body-2 text-truncate mb-5">
-          {{ course.description }}
-          </VCardText>
-
-          <VCardActions class="justify-space-between pt-0">
-          <VBtn color="primary" variant="flat" size="small" @click="goToFarmDetail(course)">
-          View
-          </VBtn>
-          <VChip :color="course.status === 'Completed' ? 'success' : 'info'" size="small" label>
-          {{ course.status }}
-          </VChip>
-          </VCardActions>
-          </VCard>
-          </VCol>
-          </VRow>
-        -->
         ฺ
         <VRow class="g-6">
           <VCol v-for="(farm, i) in farmStore.farmlist" :key="i" cols="12" sm="6" md="4">
@@ -694,37 +520,6 @@ const moreList = [
             </VCard>
           </VCol>
         </VRow>
-
-        <!--
-          <VRow class="g-6">
-          <VCol v-for="(farm, i) in farmStore.farmlist" :key="i" cols="12" sm="6" md="4">
-          <VCard elevation="2" class="pa-4 h-100 border border-solid border-gray-800">
-          <div class="flex items-start justify-between flex-nowrap w-full">
-          <VCardTitle class="text-h6 m-0 p-0 whitespace-nowrap">
-          ชื่อฟาร์ม : {{ farm.farm_name }}
-          </VCardTitle>
-          <div class="shrink-0">
-          <MoreBtn :menu-list="moreList" />
-          </div>
-          </div>
-          <VCardTitle class="text-h6">
-          จำนวนโรงเรือน : {{ farm.house_count }}
-          </VCardTitle>
-          <VCardTitle class="text-h6">
-          จังหวัด : {{ farm.province }}
-          </VCardTitle>
-          <VCardTitle class="text-h6">
-          ชื่อผู้ดูแล : {{ farm.contact_name }}
-          </VCardTitle>
-          <VCardActions class="justify-space-between pt-0">
-          <VBtn color="primary" variant="flat" size="small" @click="goToFarmDetail(farm)">
-          View
-          </VBtn>
-          </VCardActions>
-          </VCard>
-          </VCol>
-          </VRow>
-        -->
 
         <!-- No result -->
         <div v-if="farmStore.pagination.totalPages === 0" class="text-center py-10 text-medium-emphasis">
@@ -806,8 +601,6 @@ const moreList = [
       </VCardActions>
     </VCard>
   </VDialog>
-
-
 
   <VDialog v-model="deleteDialog" max-width="400">
     <VCard>

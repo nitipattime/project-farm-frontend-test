@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { createHouseDetail } from '@/services/houseService';
-import { useHouseStore } from '@/stores/houseStore';
-import { reactive, ref } from 'vue';
+import { createHouseDetail } from '@/services/houseService'
+import { useHouseStore } from '@/stores/houseStore'
+import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'; // 👈 เพิ่มบรรทัดนี้
-import { VBtn, VCol, VDatePicker, VForm, VRow, VSelect, VTextField } from 'vuetify/components';
+import { VBtn, VCol, VDatePicker, VForm, VRow, VSelect, VTextField } from 'vuetify/components'
 
 const props = defineProps<{ id: string }>()
 const router = useRouter()
@@ -308,6 +308,9 @@ async function handleGetHouseSummary() {
                 return d.toISOString().split('T')[0]
             }
 
+            console.log('data')
+            console.log(data)
+
             form.house_name = data.house_name || ''
             form.animal_type = data.type || ''
             form.breed = data.breed || ''
@@ -315,21 +318,42 @@ async function handleGetHouseSummary() {
             form.qty = data.total_qty?.toString() || ''
             form.weight_target = data.weight_target?.toString() || ''
             form.food = data.food || ''
+
             // form.start_date = data.start_date || ''
             // form.end_date = data.end_date || ''
             form.uniform = data.uniform_field || ''
             form.silo_id = data.silo?.id || ''
 
             // 🟢 Map เครื่องชั่งกลับเป็น id
+            // if (data.machines?.length > 0) {
+            //     const m1 = data.machines[0]
+            //     const found1 = machineOptions.value.find(m => m.title === m1.sn)
+
+            //     form.machine1 = found1 ? found1.value : ''
+
+            //     if (data.machines[1]) {
+            //         const m2 = data.machines[1]
+            //         const found2 = machineOptions.value.find(m => m.title === m2.sn)
+
+            //         form.machine2 = found2 ? found2.value : ''
+            //     }
+            // }
+            // map เครื่องชั่ง
             if (data.machines?.length > 0) {
                 const m1 = data.machines[0]
-                const found1 = machineOptions.value.find(m => m.title === m1.sn)
+
+                const found1 = machineOptions.value.find(
+                    m => m.title === m1.mac || m.title === m1.sn,
+                )
 
                 form.machine1 = found1 ? found1.value : ''
 
                 if (data.machines[1]) {
                     const m2 = data.machines[1]
-                    const found2 = machineOptions.value.find(m => m.title === m2.sn)
+
+                    const found2 = machineOptions.value.find(
+                        m => m.title === m2.mac || m.title === m2.sn,
+                    )
 
                     form.machine2 = found2 ? found2.value : ''
                 }
@@ -343,22 +367,10 @@ async function handleGetHouseSummary() {
 }
 
 const initialize = async () => {
-    await handleGetHouseSummary()
     await handleGetMachineAvailable()
     await handleGetMachineSilos()
     await handleGetChickenBreed()
-
-    // const res =
-    //
-
-    // await handleGetAddress()
-    // await farmStore.fetchProvince()
-    // await farmStore.fetchDistrict()
-    // await farmStore.fetchSubDistrict()
-    // getDistricts
-    // getSubDistricts
-    // getAddress
-    // getProvince
+    await handleGetHouseSummary()
 }
 
 onMounted(async () => {
@@ -449,74 +461,13 @@ async function onConfirmCreate() {
                         <VTextField v-model="form.qty" label="จำนวนสัตว์ที่เลี้ยงในฟาร์ม *" placeholder="ระบุจำนวนสัตว์"
                             counter="13" type="number" :error-messages="errors.qty" @input="countQTYLength" />
                     </VCol>
-                    <!--
-            <VCol cols="6">
-            <VTextField v-model="form.weight_target" label="เป้าหมายน้ำหนัก *"
-            placeholder="ระบุน้ำหนัก (กรัม)" counter="13" type="number"
-            :error-messages="errors.weight_target" @input="countWeightTargetLength" />
-            </VCol>
-          -->
                 </VRow>
 
                 <!-- สูตรอาหาร -->
                 <VTextField v-model="form.food" label="สูตรอาหาร *" placeholder="กรอกสูตรอาหารของคุณ" counter="100"
                     :error-messages="errors.food" class="mt-4" @input="countFoodLength" />
 
-                <!-- วันที่เริ่ม + สิ้นสุด -->
-                <!--
-          <VRow class="mt-4">
-          <VCol cols="6">
-          <VTextField v-model="form.start_date" label="วันที่เริ่มเลี้ยง *" type="date" />
-          </VCol>
-          <VCol cols="6">
-          <VTextField v-model="form.end_date" label="วันที่คาดว่าจะสิ้นสุด *" type="date" />
-          </VCol>
-          </VRow>
-        -->
-
                 <VRow class="">
-                    <!-- วันที่เริ่มเลี้ยง -->
-                    <VCol cols="12" md="6">
-                        <VTextField label="วันที่เริ่มเลี้ยง *" prepend-inner-icon="ri-calendar-line" readonly
-                            :value="form.start_date" @click="startPicker = true" />
-
-                        <VDialog v-model="startPicker" width="320">
-                            <VCard>
-                                <VDatePicker v-model="form.start_date" :max="form.end_date || undefined"
-                                    @update:model-value="startPicker = false" />
-                                <VCardActions>
-                                    <VSpacer />
-                                    <VBtn text @click="startPicker = false">
-                                        ยกเลิก
-                                    </VBtn>
-                                    <VBtn text color="primary" @click="startPicker = false">
-                                        ตกลง
-                                    </VBtn>
-                                </VCardActions>
-                            </VCard>
-                        </VDialog>
-                    </VCol>
-
-                    <VCol cols="12" md="6">
-                        <VTextField label="วันที่คาดว่าจะสิ้นสุด *" prepend-inner-icon="ri-calendar-line" readonly
-                            :value="form.end_date" @click="endPicker = true" />
-
-                        <VDialog v-model="endPicker" width="320">
-                            <VCard>
-                                <VDatePicker v-model="form.end_date" :min="form.start_date || undefined"
-                                    @update:model-value="endPicker = false" />
-                                <VCardActions>
-                                    <VSpacer />
-                                    <VBtn text @click="endPicker = false">
-                                        ยกเลิก
-                                    </VBtn>
-                                    <VBtn text color="primary" @click="endPicker = false">
-                                        ตกลง
-                                    </VBtn>
-                                </VCardActions>
-                            </VCard>
-                        </VDialog>
-                    </VCol>
                     <VCol cols="12" md="6">
                         <VTextField v-model="form.start_date" label="วันที่เริ่มเลี้ยง *"
                             prepend-inner-icon="ri-calendar-line" readonly
@@ -536,36 +487,6 @@ async function onConfirmCreate() {
                                     <VBtn text color="primary" @click="startPicker = false">
                                         ตกลง
                                     </VBtn>
-                                </VCardActions>
-                            </VCard>
-                        </VDialog>
-
-                        <VTextField v-model="form.start_date" label="วันที่เริ่มเลี้ยง *"
-                            prepend-inner-icon="ri-calendar-line" readonly @click="startPicker = true" />
-
-                        <!--
-              <VDialog v-model="startPicker" width="290px">
-              <VCard>
-              <VCardText>
-              <VDatePicker v-model="form.start_date" />
-              </VCardText>
-              <VCardActions>
-              <VSpacer />
-              <VBtn text="ยกเลิก" @click="startPicker = false" />
-              <VBtn text="ตกลง" color="primary" @click="startPicker = false" />
-              </VCardActions>
-              </VCard>
-              </VDialog>
-            -->
-                        <VDialog v-model="startPicker" width="390px">
-                            <VCard>
-                                <VCardText>
-                                    <VDatePicker v-model="form.start_date" />
-                                </VCardText>
-                                <VCardActions>
-                                    <VSpacer />
-                                    <VBtn text="ยกเลิก" @click="startPicker = false" />
-                                    <VBtn text="ตกลง" color="primary" @click="startPicker = false" />
                                 </VCardActions>
                             </VCard>
                         </VDialog>
