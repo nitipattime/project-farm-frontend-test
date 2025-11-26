@@ -2,13 +2,16 @@
 import { onMounted, ref } from 'vue'
 import * as XLSX from 'xlsx'
 
+import { importFile } from '@/services/fileService'
 import { useHouseStore } from '@/stores/houseStore'
 
 const file = ref<File | null>(null)
 const tableData = ref<any[]>([])
 const breedId = ref('')
 const houseStore = useHouseStore()
-const selectedItem = ref('')
+
+// const selectedItem = ref('')
+const selectedItem = ref<number | string | null>(null)
 const breedOptions = ref<{ title: string; value: number }[]>([])
 
 const alert = ref({
@@ -50,22 +53,43 @@ function handleFileUpload(e: Event) {
     reader.readAsBinaryString(file.value)
 }
 
-function submitData() {
-    // ตรวจสอบว่าเลือก breed และมีข้อมูล Excel
-    if (!selectedItem.value || tableData.value.length === 0) {
-        showAlert('warning', 'Please select breed and import file first.')
-        return
+async function submitData() {
+    try {
+        if (!selectedItem.value || tableData.value.length === 0) {
+            showAlert('warning', 'Please select breed and import file first.')
+
+            return
+        }
+
+        let breedValue: string | number
+
+        const selected = selectedItem.value
+
+        // ✅ กรณีเป็น object (Proxy/Object)
+        if (typeof selected === 'object' && selected !== null && 'value' in selected)
+            breedValue = (selected as any).value
+
+        // ✅ กรณีเป็น string / number
+        else
+            breedValue = selected as string | number
+
+        // console.log('Breed Value:', breedValue)
+        // console.log('Imported Rows:', tableData.value)
+
+        const formData = new FormData()
+
+        formData.append('breed', String(breedValue)) // ส่ง breed
+        formData.append('file', file.value)
+
+        // console.log('File:', file.value)
+
+        await importFile(formData)
+        showAlert('success', 'Upload สำเร็จ')
     }
-
-    // ใช้ selectedItem.value เป็น breed
-    const breed = selectedItem.value
-
-    console.log('Breed:', breed)
-    console.log('Imported Rows:', tableData.value)
-
-    // TODO: ทำ API call ส่งข้อมูลไป backend
-
-    showAlert('success', 'Upload สำเร็จ')
+    catch (e) {
+        console.error(e)
+        showAlert('error', 'เกิดข้อผิดพลาด กรุณาลองใหม่')
+    }
 }
 
 async function handleGetChickenBreed() {
@@ -131,8 +155,12 @@ onMounted(async () => {
                             Select Breed
                         </label>
 
-                        <VCombobox v-model="selectedItem" :items="breedOptions" placeholder="Select breed"
-                            variant="outlined" density="comfortable" />
+                        <!--
+              <VCombobox v-model="selectedItem" :items="breedOptions" placeholder="Select breed"
+              variant="outlined" density="comfortable" />
+            -->
+                        <VCombobox v-model="selectedItem" :items="breedOptions" item-title="title" item-value="value"
+                            placeholder="Select breed" variant="outlined" density="comfortable" />
                     </div>
 
                     <!-- Upload Excel -->

@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import NavItems from '@/layouts/components/NavItems.vue'
+
 // import logo from '@images/pages/original-logo.png'
-// import logo from '@/assets/images/original-logo.png'
+// import logo from '@images/original-logo.png'
 // import logo from '@images/pages/original-logo.png'
 import VerticalNavLayout from '@layouts/components/VerticalNavLayout.vue'
 
@@ -71,7 +72,7 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
           />
         -->
         <div class="logo-wrapper">
-          <img :src="`/images/original-logo.png`" alt="logo" width="120">
+          <img src="/images/original-logo.png" alt="logo" width="120">
         </div>
         <!-- eslint-enable -->
 
@@ -111,21 +112,21 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
   padding-inline: 0.25rem;
 }
 
-.app-logo {
-  display: flex;
-  align-items: center;
-  column-gap: 0.75rem;
+// .app-logo {
+//   display: flex;
+//   align-items: center;
+//   column-gap: 0.75rem;
 
-  .app-logo-title {
-    font-size: 1.25rem;
-    font-weight: 500;
-    line-height: 1.75rem;
-    text-transform: uppercase;
-  }
-}
+//   .app-logo-title {
+//     font-size: 1.25rem;
+//     font-weight: 500;
+//     line-height: 1.75rem;
+//     text-transform: uppercase;
+//   }
+// }
 
-.logo-wrapper {
-  display: flex;
-  align-items: center;
-}
+// .logo-wrapper {
+//   display: flex;
+//   align-items: center;
+// }
 </style>
