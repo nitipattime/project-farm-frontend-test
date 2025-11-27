@@ -40,19 +40,19 @@ const weightData = [
 const seriesPageStats = ref([
     {
         name: 'น้ำหนักเป้าหมาย (Target)',
-        data: weightData.map(item => item.weight_target),
+        data: props.data.map(item => item.weight_target),
     },
     {
         name: '+20%',
-        data: weightData.map(item => item.weight_target_plus_20),
+        data: props.data.map(item => item.weight_target_plus_20),
     },
     {
         name: '-20%',
-        data: weightData.map(item => item.weight_target_minus_20),
+        data: props.data.map(item => item.weight_target_minus_20),
     },
     {
         name: 'ค่าเฉลี่ยจริง (Avg Weight)',
-        data: weightData.map(item => item.avg_weight ?? null),
+        data: props.data.map(item => item.avg_weight ?? null),
     },
 ])
 
@@ -88,7 +88,7 @@ const chartOptionsPageStats = ref({
         hover: { sizeOffset: 6 },
     },
     xaxis: {
-        categories: weightData.map(item => `Day ${item.day_no}`),
+        categories: props.data.map(item => `Day ${item.day_no}`),
         title: { text: 'Day No' },
     },
     yaxis: {
@@ -159,7 +159,7 @@ const updateChart = () => {
             hover: { sizeOffset: 6 },
         },
         xaxis: {
-            categories: weightData.map(item => `Day ${item.day_no}`),
+            categories: props.data.map(item => `Day ${item.day_no}`),
             title: { text: 'Day No' },
         },
         yaxis: {
@@ -175,56 +175,6 @@ const updateChart = () => {
             y: { formatter: (val: number) => (val ? `${val.toFixed(2)} kg` : '-') },
         },
     }
-
-    // chartOptionsPageStats.value = {
-    //     chart: {
-    //         height: 350,
-    //         type: 'line',
-    //         zoom: { enabled: false },
-    //         toolbar: { show: false },
-    //     },
-    //     colors: [
-    //         currentTheme.value.primary,
-    //         currentTheme.value.success,
-    //         currentTheme.value.error,
-    //         currentTheme.value.warning,
-    //     ],
-    //     dataLabels: { enabled: false },
-    //     stroke: {
-    //         width: [3, 2, 2, 4],
-    //         curve: 'smooth',
-    //         dashArray: [0, 5, 5, 0],
-    //     },
-    //     title: {
-    //         text: 'น้ำหนักเป้าหมายเทียบกับค่าเฉลี่ย',
-    //         align: 'left',
-    //     },
-    //     legend: {
-    //         position: 'top',
-    //         horizontalAlign: 'right',
-    //     },
-    //     markers: {
-    //         size: 3,
-    //         hover: { sizeOffset: 6 },
-    //     },
-    //     xaxis: {
-    //         categories: props.data.map(item =>
-    //             item.date ? item.date : `Day ${item.day_no}`,
-    //         ),
-    //         title: { text: 'Day' },
-    //     },
-    //     yaxis: {
-    //         title: { text: 'Weight (kg)' },
-    //     },
-    //     grid: { borderColor: '#f1f1f1' },
-    //     tooltip: {
-    //         shared: true,
-    //         intersect: false,
-    //         y: {
-    //             formatter: (val: number) => (val ? `${val.toFixed(2)} kg` : '-'),
-    //         },
-    //     },
-    // }
 }
 
 // เรียกเมื่อเริ่มต้น และเมื่อ prop เปลี่ยน

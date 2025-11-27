@@ -392,6 +392,12 @@ async function onConfirmCreate() {
     confirmDialog.value = false
     await handleCreateHouse()
 }
+
+// const startDate = ref(form.start_date ? new Date(form.start_date) : null)
+// const endDate = ref(form.end_date ? new Date(form.end_date) : null)
+
+// watch(startDate, val => form.start_date = val ? val.toISOString() : null)
+// watch(endDate, val => form.end_date = val ? val.toISOString() : null)
 </script>
 
 <template>
@@ -511,6 +517,96 @@ async function onConfirmCreate() {
                         </VDialog>
                     </VCol>
                 </VRow>
+
+                <!--
+          <VTextField v-model="startDate" label="วันที่เริ่มเลี้ยง *" prepend-inner-icon="ri-calendar-line"
+          readonly @click="startPicker = true" />
+
+          <VDialog v-model="startPicker" width="390">
+          <VCard>
+          <VCardText>
+          <VDatePicker v-model="startDate" />
+          </VCardText>
+          <VCardActions>
+          <VSpacer />
+          <VBtn text @click="startPicker = false">
+          ยกเลิก
+          </VBtn>
+          <VBtn text color="primary" @click="startPicker = false">
+          ตกลง
+          </VBtn>
+          </VCardActions>
+          </VCard>
+          </VDialog>
+
+          <VTextField v-model="endDate" label="วันที่คาดว่าจะสิ้นสุด *" prepend-inner-icon="ri-calendar-line"
+          readonly @click="endPicker = true" />
+
+          <VDialog v-model="endPicker" width="390">
+          <VCard>
+          <VCardText>
+          <VDatePicker v-model="endDate" />
+          </VCardText>
+          <VCardActions>
+          <VSpacer />
+          <VBtn text @click="endPicker = false">
+          ยกเลิก
+          </VBtn>
+          <VBtn text color="primary" @click="endPicker = false">
+          ตกลง
+          </VBtn>
+          </VCardActions>
+          </VCard>
+          </VDialog>
+        -->
+                <!-- !!!!!!!!!!!!!!!! -->
+                <!--
+          <VCol cols="12" md="6">
+          <VTextField v-model="formattedStartDate" label="วันที่เริ่มเลี้ยง *"
+          prepend-inner-icon="ri-calendar-line" readonly @click="startPicker = true" />
+
+          <VDialog v-model="startPicker" width="390">
+          <VCard>
+          <VCardText>
+          <VDatePicker v-model="startPickerDate"
+          @update:model-value="val => form.start_date = val ? new Date(val).toISOString() : null" />
+          </VCardText>
+          <VCardActions>
+          <VSpacer />
+          <VBtn text @click="startPicker = false">
+          ยกเลิก
+          </VBtn>
+          <VBtn text color="primary" @click="startPicker = false">
+          ตกลง
+          </VBtn>
+          </VCardActions>
+          </VCard>
+          </VDialog>
+          </VCol>
+
+          <VCol cols="12" md="6">
+          <VTextField v-model="formattedEndDate" label="วันที่คาดว่าจะสิ้นสุด *"
+          prepend-inner-icon="ri-calendar-line" readonly @click="endPicker = true" />
+
+          <VDialog v-model="endPicker" width="390">
+          <VCard>
+          <VCardText>
+          <VDatePicker v-model="endPickerDate"
+          @update:model-value="val => form.end_date = val ? new Date(val).toISOString() : null" />
+          </VCardText>
+          <VCardActions>
+          <VSpacer />
+          <VBtn text @click="endPicker = false">
+          ยกเลิก
+          </VBtn>
+          <VBtn text color="primary" @click="endPicker = false">
+          ตกลง
+          </VBtn>
+          </VCardActions>
+          </VCard>
+          </VDialog>
+          </VCol>
+        -->
 
                 <!-- Uniform -->
                 <VTextField v-model="form.uniform" label="สัดส่วนของไก่ (Uniform%) *" placeholder="ระบุสัดส่วนของไก่"
