@@ -88,7 +88,7 @@ const chartOptionsPageStats = ref({
         hover: { sizeOffset: 6 },
     },
     xaxis: {
-        categories: props.data.map(item => `Day ${item.day_no}`),
+        categories: props.data.map(item => `${item.day_no}`),
         title: { text: 'Day No' },
     },
     yaxis: {
@@ -159,7 +159,7 @@ const updateChart = () => {
             hover: { sizeOffset: 6 },
         },
         xaxis: {
-            categories: props.data.map(item => `Day ${item.day_no}`),
+            categories: props.data.map(item => `${item.day_no}`),
             title: { text: 'Day No' },
         },
         yaxis: {
