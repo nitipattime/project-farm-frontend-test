@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { createHouseDetail } from '@/services/houseService'
-import { useHouseStore } from '@/stores/houseStore'
-import { reactive, ref } from 'vue'
+import { createHouseDetail } from '@/services/houseService';
+import { useHouseStore } from '@/stores/houseStore';
+import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router'; // 👈 เพิ่มบรรทัดนี้
-import { VBtn, VCol, VDatePicker, VForm, VRow, VSelect, VTextField } from 'vuetify/components'
+import { VBtn, VCol, VDatePicker, VForm, VRow, VSelect, VTextField } from 'vuetify/components';
 
 const props = defineProps<{ id: string }>()
 const router = useRouter()
@@ -119,7 +119,7 @@ async function handleGetMachineAvailable() {
         // if (machineOptions.value.length > 0)
         //     form.machine1 = machineOptions.value[0].value
         machineOptions.value = res.data.map((item: any) => ({
-            title: item.sn, // หรือ `${item.sn} (${item.mac})` ถ้าอยากเห็น mac ด้วย
+            title: item.mac, // หรือ `${item.sn} (${item.mac})` ถ้าอยากเห็น mac ด้วย
             value: item.id,
         }))
 
@@ -343,7 +343,8 @@ async function handleGetHouseSummary() {
                 const m1 = data.machines[0]
 
                 const found1 = machineOptions.value.find(
-                    m => m.title === m1.mac || m.title === m1.sn,
+                    m => m.title === m1.mac,
+                    // || m.title === m1.sn
                 )
 
                 form.machine1 = found1 ? found1.value : ''
@@ -352,7 +353,8 @@ async function handleGetHouseSummary() {
                     const m2 = data.machines[1]
 
                     const found2 = machineOptions.value.find(
-                        m => m.title === m2.mac || m.title === m2.sn,
+                        m => m.title === m2.mac,
+                        // || m.title === m2.sn
                     )
 
                     form.machine2 = found2 ? found2.value : ''
