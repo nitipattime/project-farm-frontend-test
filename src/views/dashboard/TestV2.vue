@@ -17,6 +17,7 @@ const props = defineProps<{
 // theme
 const vuetifyTheme = useTheme()
 const currentTheme = computed(() => vuetifyTheme.current.value.colors)
+const isDark = computed(() => vuetifyTheme.global.name.value === 'dark')
 
 // ───────────────────────────────
 // ข้อมูลจาก API / JSON ที่คุณให้มา
@@ -132,6 +133,7 @@ const updateChart = () => {
             type: 'line',
             zoom: { enabled: false },
             toolbar: { show: false },
+            foreColor: isDark.value ? '#ffffff' : '#000000', // ✅ สีข้อความหลัก
         },
         colors: [
             // currentTheme.value.primary,
@@ -149,10 +151,16 @@ const updateChart = () => {
         title: {
             text: 'น้ำหนักเป้าหมายเทียบกับค่าเฉลี่ย',
             align: 'left',
+            style: {
+                color: isDark.value ? '#ffffff' : '#000000', // ✅ title สีขาวใน dark
+            },
         },
         legend: {
             position: 'top',
             horizontalAlign: 'right',
+            labels: {
+                colors: isDark.value ? '#ffffff' : '#000000', // ✅ legend สีขาว
+            },
         },
         markers: {
             size: 3,
@@ -160,27 +168,73 @@ const updateChart = () => {
         },
         xaxis: {
             categories: props.data.map(item => `${item.day_no}`),
-            title: { text: 'Day No' },
-        },
-        yaxis: {
-            title: { text: 'Weight (kg)' },
+            title: {
+                text: 'Day No',
+                style: {
+                    color: isDark.value ? '#ffffff' : '#000000', // ✅ แกน X
+                },
+            },
             labels: {
-                formatter: (val: number) => val.toFixed(4),
+                style: {
+                    colors: isDark.value ? '#ffffff' : '#000000',
+                },
             },
         },
-        grid: { borderColor: '#f1f1f1' },
+
+        yaxis: {
+            title: {
+                text: 'Weight (kg)',
+                style: {
+                    color: isDark.value ? '#ffffff' : '#000000', // ✅ แกน Y
+                },
+            },
+            labels: {
+                formatter: (val: number) => val.toFixed(4),
+                style: {
+                    colors: isDark.value ? '#ffffff' : '#000000',
+                },
+            },
+        },
+        grid: {
+            borderColor: isDark.value ? '#444' : '#f1f1f1', // ✅ เส้นตารางเข้ากับ dark
+        },
         tooltip: {
             shared: true,
             intersect: false,
-            y: { formatter: (val: number) => (val ? `${val.toFixed(2)} kg` : '-') },
+            theme: isDark.value ? 'dark' : 'light', // ✅ tooltip auto
+            y: {
+                formatter: (val: number) => (val ? `${val.toFixed(2)} kg` : '-'),
+            },
         },
     }
 }
 
 // เรียกเมื่อเริ่มต้น และเมื่อ prop เปลี่ยน
+// watch(
+//     () => props.data,
+//     updateChart,
+//     { immediate: true },
+// )
+
+watch(
+    isDark,
+    () => {
+        updateChart() // ✅ รีเฟรชสีกราฟทันทีเมื่อสลับธีม
+    },
+    { immediate: true },
+)
+
 watch(
     () => props.data,
     updateChart,
+    { immediate: true },
+)
+
+watch(
+    isDark,
+    () => {
+        updateChart()
+    },
     { immediate: true },
 )
 </script>

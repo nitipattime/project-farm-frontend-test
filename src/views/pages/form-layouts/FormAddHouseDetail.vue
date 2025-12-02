@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { createHouseDetail } from '@/services/houseService';
-import { useHouseStore } from '@/stores/houseStore';
-import { reactive, ref } from 'vue';
+import { createHouseDetail } from '@/services/houseService'
+import { useHouseStore } from '@/stores/houseStore'
+import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'; // 👈 เพิ่มบรรทัดนี้
-import { VBtn, VCol, VDatePicker, VForm, VRow, VSelect, VTextField } from 'vuetify/components';
+import { VBtn, VCol, VDatePicker, VForm, VRow, VSelect, VTextField } from 'vuetify/components'
 
 const props = defineProps<{ id: string }>()
 const router = useRouter()
@@ -344,6 +344,7 @@ async function handleGetHouseSummary() {
 
                 const found1 = machineOptions.value.find(
                     m => m.title === m1.mac,
+
                     // || m.title === m1.sn
                 )
 
@@ -354,6 +355,7 @@ async function handleGetHouseSummary() {
 
                     const found2 = machineOptions.value.find(
                         m => m.title === m2.mac,
+
                         // || m.title === m2.sn
                     )
 
@@ -456,6 +458,18 @@ async function onConfirmCreate() {
                     </VCol>
                     <VCol cols="6">
                         <VSelect v-model="form.machine2" :items="machine2Options" label="เครื่องชั่ง 2"
+                            placeholder="เลือกเครื่องชั่ง" />
+                    </VCol>
+                </VRow>
+
+                <!-- เครื่องชั่ง 3 + 4 -->
+                <VRow class="mt-4">
+                    <VCol cols="6">
+                        <VSelect v-model="form.machine1" :items="machineOptions" label="เครื่องชั่ง 3"
+                            placeholder="เลือกเครื่องชั่ง" :error-messages="errors.machine1" />
+                    </VCol>
+                    <VCol cols="6">
+                        <VSelect v-model="form.machine2" :items="machine2Options" label="เครื่องชั่ง 4"
                             placeholder="เลือกเครื่องชั่ง" />
                     </VCol>
                 </VRow>

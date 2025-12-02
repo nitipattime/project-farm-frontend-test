@@ -340,8 +340,11 @@ onMounted(async () => {
         </template>
 
         <template #append>
-          <VBtn color="primary" class="text-white" v-bind="activatorProps" @click="handleGetExport">
+          <VBtn color="primary" class="text-white mr-2" v-bind="activatorProps" @click="handleGetExport">
             Export
+          </VBtn>
+          <VBtn color="primary" class="text-white" v-bind="activatorProps" @click="handleGetExport">
+            Export Log
           </VBtn>
         </template>
 
