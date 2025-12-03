@@ -157,18 +157,20 @@ const statistics = computed(() => [
     color: 'info',
   },
   {
-    title: 'ปริมาณอาหาร',
+    title: 'ปริมาณอาหาร 1',
     stats: formatNumber(houseStore.houseSummary.weight_target) ?? '-',
     unit: 'กรัม',
     icon: 'ri-restaurant-2-line',
     color: 'success',
   },
+
+  // houseStore.houseSummary.duration_days
   {
-    title: 'อายุเพาะเลี้ยง',
-    stats: houseStore.houseSummary.duration_days ?? '-',
-    unit: 'วัน',
-    icon: 'ri-time-line',
-    color: 'warning',
+    title: 'ปริมาณอาหาร 2',
+    stats: formatNumber(houseStore.houseSummary.weight_target) ?? '-',
+    unit: 'กรัม',
+    icon: 'ri-restaurant-2-line',
+    color: 'success',
   },
 ])
 
