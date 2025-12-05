@@ -33,10 +33,19 @@ const form = reactive({
     breed: '',
     sex: 'male',
     silo_id: '',
-    machine1: '',
+
+    // machine1: '',
+    // sn_machine1: '',
+    // machine2: '',
+    // sn_machine2: '',
+    machine1: null,
+    machine2: null,
+    machine3: null,
+    machine4: null,
     sn_machine1: '',
-    machine2: '',
     sn_machine2: '',
+    sn_machine3: '',
+    sn_machine4: '',
     qty: '',
     weight_target: '',
     food: '',
@@ -132,23 +141,23 @@ async function handleGetMachineAvailable() {
     }
 }
 
-const machine2Options = computed(() => {
-    // if (!houseStore.machines?.length)
-    //     return []
-    // if (!form.machine1)
-    //     return houseStore.machines
+// const machine2Options = computed(() => {
+//     // if (!houseStore.machines?.length)
+//     //     return []
+//     // if (!form.machine1)
+//     //     return houseStore.machines
 
-    if (!machineOptions.value.length)
-        return []
+//     if (!machineOptions.value.length)
+//         return []
 
-    return machineOptions.value.filter(m => m.value !== form.machine1)
+//     return machineOptions.value.filter(m => m.value !== form.machine1)
 
-    // return houseStore.machines.filter(m => m.mac !== form.machine1)
+//     // return houseStore.machines.filter(m => m.mac !== form.machine1)
 
-    // return machineOptions.value.filter(
-    //     m => m.value !== form.value.machine1,
-    // )
-})
+//     // return machineOptions.value.filter(
+//     //     m => m.value !== form.value.machine1,
+//     // )
+// })
 
 async function handleGetMachineSilos() {
     try {
@@ -397,6 +406,39 @@ async function onConfirmCreate() {
     await handleCreateHouse()
 }
 
+const machine2Options = computed(() =>
+    machineOptions.value.filter(m => m.value !== form.machine1),
+)
+
+const machine3Options = computed(() =>
+    machineOptions.value.filter(
+        m => ![form.machine1, form.machine2].includes(m.value),
+    ),
+)
+
+const machine4Options = computed(() =>
+    machineOptions.value.filter(
+        m => ![form.machine1, form.machine2, form.machine3].includes(m.value),
+    ),
+)
+
+const machines: any[] = []
+
+const mList = [
+    form.machine1,
+    form.machine2,
+    form.machine3,
+    form.machine4,
+]
+
+mList.forEach(m => {
+    if (m) {
+        const found = mapMachine(m)
+        if (found)
+            machines.push(found)
+    }
+})
+
 // const startDate = ref(form.start_date ? new Date(form.start_date) : null)
 // const endDate = ref(form.end_date ? new Date(form.end_date) : null)
 
@@ -465,11 +507,12 @@ async function onConfirmCreate() {
                 <!-- เครื่องชั่ง 3 + 4 -->
                 <VRow class="mt-4">
                     <VCol cols="6">
-                        <VSelect v-model="form.machine1" :items="machineOptions" label="เครื่องชั่ง 3"
-                            placeholder="เลือกเครื่องชั่ง" :error-messages="errors.machine1" />
+                        <VSelect v-model="form.machine3" :items="machine3Options" label="เครื่องชั่ง 3"
+                            placeholder="เลือกเครื่องชั่ง" />
                     </VCol>
+
                     <VCol cols="6">
-                        <VSelect v-model="form.machine2" :items="machine2Options" label="เครื่องชั่ง 4"
+                        <VSelect v-model="form.machine4" :items="machine4Options" label="เครื่องชั่ง 4"
                             placeholder="เลือกเครื่องชั่ง" />
                     </VCol>
                 </VRow>

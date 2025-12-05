@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 
 import { useNumberFormat } from '@/composables/useNumberFormat'
 import { useRealtime } from '@/composables/useSocket'
-import { getExport } from '@/services/exportService'
+import { getExport, getExportRaw } from '@/services/exportService'
 import { markHouseFinish } from '@/services/houseService'
 import { useHouseStore } from '@/stores/houseStore'
 import AnalyticsSalesByCountriesV2 from '@/views/dashboard/AnalyticsSalesByCountriesV2.vue'
@@ -267,6 +267,44 @@ async function handleGetExport() {
     console.error(err)
   }
 }
+async function handleGetExportRaw() {
+  // const params = { houseID: houseId }
+  try {
+    const response = await getExportRaw({ houseID: houseId })
+
+    // สร้าง Blob จาก response
+    const blob = new Blob([response.data], {
+      type: response.headers['content-type'],
+    })
+
+    const url = window.URL.createObjectURL(blob)
+
+    // --- ดึงชื่อไฟล์จาก content-disposition ---
+    let fileName = 'report.xlsx'
+    const cd = response.headers['content-disposition']
+
+    if (cd) {
+      const match = cd.match(/filename="?([^"]+)"?/)
+      if (match && match[1])
+        fileName = match[1]
+    }
+
+    // --- สร้างลิงก์ดาวน์โหลด ---
+    const link = document.createElement('a')
+
+    link.href = url
+    link.download = fileName
+    document.body.appendChild(link)
+    link.click()
+
+    // cleanup
+    link.remove()
+    window.URL.revokeObjectURL(url)
+  }
+  catch (err) {
+    console.error(err)
+  }
+}
 
 const labels = ref<string[]>([])
 const chartData = ref<number[]>([])
@@ -345,7 +383,7 @@ onMounted(async () => {
           <VBtn color="primary" class="text-white mr-2" v-bind="activatorProps" @click="handleGetExport">
             Export
           </VBtn>
-          <VBtn color="primary" class="text-white" v-bind="activatorProps" @click="handleGetExport">
+          <VBtn color="primary" class="text-white" v-bind="activatorProps" @click="handleGetExportRaw">
             Export Log
           </VBtn>
         </template>
