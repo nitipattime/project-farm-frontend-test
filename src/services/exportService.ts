@@ -23,6 +23,12 @@ export const getExport = async (data?: any) => {
 export const getExportRaw = async (data?: any) => {
   const accessToken = localStorage.getItem('accessToken')
   try {
+    // const response = await axios.get(`${API_URL}/houses/${data.houseID}/report-raw`, {
+    //   headers: {
+    //     Authorization: `Bearer ${accessToken}`,
+    //   },
+    //   responseType: 'blob',
+    // })
     const response = await axios.get(`${API_URL}/houses/${data.houseID}/report-raw`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
