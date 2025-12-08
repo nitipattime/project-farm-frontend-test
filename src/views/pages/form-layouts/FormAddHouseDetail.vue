@@ -2,11 +2,20 @@
 import { createHouseDetail } from '@/services/houseService'
 import { useHouseStore } from '@/stores/houseStore'
 import { reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'; // 👈 เพิ่มบรรทัดนี้
+import { useRoute, useRouter } from 'vue-router'; // 👈 เพิ่มบรรทัดนี้
 import { VBtn, VCol, VDatePicker, VForm, VRow, VSelect, VTextField } from 'vuetify/components'
 
-const props = defineProps<{ id: string }>()
+const props = defineProps<{
+    id: string
+    houseName: string
+}>()
+
 const router = useRouter()
+const route = useRoute()
+
+// const houseId = computed(() => router.query.id as string)
+const houseId = Number.parseInt(props.id || '0', 10)
+const houseName = computed(() => router.query.houseName as string)
 const formRef = ref()
 
 const alert = ref({
@@ -112,8 +121,6 @@ const houseStore = useHouseStore()
 const siloOptions = ref<{ title: string; value: number }[]>([])
 const machineOptions = ref<{ title: string; value: number }[]>([])
 const breedOptions = ref<{ title: string; value: number }[]>([])
-
-const houseId = Number.parseInt(props.id || '0', 10)
 
 async function handleGetMachineAvailable() {
     try {
@@ -253,6 +260,18 @@ async function handleCreateHouse() {
                 machines.push(m2)
         }
 
+        if (form.machine3) {
+            const m3 = mapMachine(form.machine3)
+            if (m3)
+                machines.push(m3)
+        }
+
+        if (form.machine4) {
+            const m4 = mapMachine(form.machine4)
+            if (m4)
+                machines.push(m4)
+        }
+
         console.log(machines)
 
         const payload = {
@@ -320,7 +339,9 @@ async function handleGetHouseSummary() {
             console.log('data')
             console.log(data)
 
-            form.house_name = data.house_name || ''
+            form.house_name = data.house_name || form.house_name
+
+            // form.house_name = data.house_name || ''
             form.animal_type = data.type || ''
             form.breed = data.breed || ''
             form.sex = data.sex || ''
@@ -380,6 +401,11 @@ async function handleGetHouseSummary() {
 }
 
 const initialize = async () => {
+    console.log('route')
+    console.log(route.query.houseName)
+    if (route.query.houseName)
+        form.house_name = route.query.houseName
+
     await handleGetMachineAvailable()
     await handleGetMachineSilos()
     await handleGetChickenBreed()

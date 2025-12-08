@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, shallowRef, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import { useNumberFormat } from '@/composables/useNumberFormat'
 import { useRealtime } from '@/composables/useSocket'
@@ -10,12 +10,16 @@ import { useHouseStore } from '@/stores/houseStore'
 import AnalyticsSalesByCountriesV2 from '@/views/dashboard/AnalyticsSalesByCountriesV2.vue'
 import TestV2 from '@/views/dashboard/TestV2.vue'
 
-const props = defineProps<{ id: string }>()
+const props = defineProps<{
+  id: string
+  houseName: string
+}>()
 
 const { formatNumber } = useNumberFormat()
 
 const houseStore = useHouseStore()
 const router = useRouter()
+const route = useRoute()
 const houseId = Number.parseInt(props.id || '0', 10)
 const { scalesData } = useRealtime(houseId)
 
@@ -124,7 +128,8 @@ function submitForm() {
 
 function goToAddHouseDetail() {
   console.log(props.id)
-  router.push({ name: 'add-house-detail', query: { id: props.id } })
+  console.log(route.query.houseName)
+  router.push({ name: 'add-house-detail', query: { id: props.id, houseName: route.query.houseName } })
 }
 
 const statistics = computed(() => [
@@ -385,6 +390,35 @@ async function handleConfirmMarkHouseFinish() {
   }
 }
 
+function resetState() {
+  dialog.value = false
+  loaded.value = false
+  loading.value = false
+
+  selectedFilter.value = 'All Courses'
+  searchQuery.value = ''
+  page.value = 1
+
+  farmForm.value = {
+    name: '',
+    contact: '',
+    zip_code: '',
+    province_id: 0,
+    district_id: 0,
+    subdistrict_id: 0,
+  }
+
+  selectedDistricts.value = []
+  selectedSubdistricts.value = []
+
+  labels.value = []
+  chartData.value = []
+
+  confirmDialog.value = false
+
+  houseStore.clearHouseAll()
+}
+
 const initialize = async () => {
   await handleGetHouseSummary()
   await handleGetHouseWeekly()
@@ -393,8 +427,15 @@ const initialize = async () => {
 }
 
 onMounted(async () => {
+  console.log(props.id)
+  console.log(route.query.houseName)
+  resetState()
   await initialize()
 })
+
+// onBeforeRouteLeave(() => {
+//   resetState()
+// })
 </script>
 
 <template>

@@ -98,7 +98,7 @@ function goToHouseDetail(items: any) {
   console.log(items)
 
   // router.push('/farmDetail') // หรือใช้ชื่อ route: router.push({ name: 'about' })
-  router.push({ name: 'house-detail', params: { id: items.id } }) // หรือใช้ชื่อ route: router.push({ name: 'about' })
+  router.push({ name: 'house-detail', params: { id: items.id }, query: { houseName: items.house_name } }) // หรือใช้ชื่อ route: router.push({ name: 'about' })
 }
 
 const formRefFarm = ref(null)

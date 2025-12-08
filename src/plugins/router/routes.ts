@@ -27,7 +27,6 @@ export const routes = [
 
         component: () => import('@/pages/add-house-detail.vue'),
 
-        // component: () => import('@/views/pages/form-layouts/FormAddHouseDetail.vue'),
         props: true,
       },
       {
