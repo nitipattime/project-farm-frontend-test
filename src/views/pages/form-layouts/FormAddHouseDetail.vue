@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { createHouseDetail } from '@/services/houseService'
-import { useHouseStore } from '@/stores/houseStore'
-import { reactive, ref } from 'vue'
+import { createHouseDetail } from '@/services/houseService';
+import { useHouseStore } from '@/stores/houseStore';
+import { reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router'; // 👈 เพิ่มบรรทัดนี้
-import { VBtn, VCol, VDatePicker, VForm, VRow, VSelect, VTextField } from 'vuetify/components'
+import { VBtn, VCol, VDatePicker, VForm, VRow, VSelect, VTextField } from 'vuetify/components';
 
 const props = defineProps<{
     id: string
@@ -390,6 +390,32 @@ async function handleGetHouseSummary() {
                     )
 
                     form.machine2 = found2 ? found2.value : ''
+
+
+                }
+
+                if (data.machines[2]) {
+                    const m3 = data.machines[2]
+
+                    const found3 = machineOptions.value.find(
+                        m => m.title === m3.mac,
+
+                        // || m.title === m2.sn
+                    )
+
+                    form.machine3 = found3 ? found3.value : ''
+                }
+
+                if (data.machines[3]) {
+                    const m4 = data.machines[3]
+
+                    const found4 = machineOptions.value.find(
+                        m => m.title === m4.mac,
+
+                        // || m.title === m2.sn
+                    )
+
+                    form.machine4 = found4 ? found4.value : ''
                 }
             }
         }
