@@ -14,6 +14,7 @@ export interface HouseSummary {
   actual_end_date: string
   food: string
   weight_target: string
+  target_range: string[]
   machines: machines[]
   silo: silo
   sd: string

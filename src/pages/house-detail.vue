@@ -163,7 +163,10 @@ const statistics = computed(() => [
   },
   {
     title: 'ปริมาณอาหาร 1',
-    stats: formatNumber(houseStore.houseSummary.weight_target) ?? '-',
+
+    // stats: formatNumber(houseStore.houseSummary.weight_target) ?? '-',
+
+    stats: houseStore.houseSummary?.target_range?.[0] ? formatNumber(Number(houseStore.houseSummary.target_range[0])) : '-',
     unit: 'กรัม',
     icon: 'ri-restaurant-2-line',
     color: 'success',
@@ -172,7 +175,7 @@ const statistics = computed(() => [
   // houseStore.houseSummary.duration_days
   {
     title: 'ปริมาณอาหาร 2',
-    stats: formatNumber(houseStore.houseSummary.weight_target) ?? '-',
+    stats: houseStore.houseSummary?.target_range?.[1] ? formatNumber(Number(houseStore.houseSummary.target_range[1])) : '-',
     unit: 'กรัม',
     icon: 'ri-restaurant-2-line',
     color: 'success',
@@ -424,6 +427,8 @@ const initialize = async () => {
   await handleGetHouseWeekly()
   await handleGetHouseCVHistory()
   await handleGetHouseWeightChart()
+  console.log(houseStore.houseSummary)
+  console.log(houseStore.houseSummary.target_range[0])
 }
 
 onMounted(async () => {
