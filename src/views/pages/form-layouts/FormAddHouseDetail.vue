@@ -352,7 +352,7 @@ async function handleGetHouseSummary() {
             // form.start_date = data.start_date || ''
             // form.end_date = data.end_date || ''
             form.uniform = data.uniform_field || ''
-            form.silo_id = data.silo?.id || ''
+            form.silo_id = data.silo?.mac || ''
 
             // 🟢 Map เครื่องชั่งกลับเป็น id
             // if (data.machines?.length > 0) {
