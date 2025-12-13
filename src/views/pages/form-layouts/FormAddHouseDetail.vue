@@ -385,56 +385,77 @@ async function handleGetHouseSummary() {
             //         form.machine2 = found2 ? found2.value : ''
             //     }
             // }
-            // map เครื่องชั่ง
-            if (data.machines?.length > 0) {
-                const m1 = data.machines[0]
 
-                const found1 = machineOptions.value.find(
-                    m => m.title === m1.mac,
+            // console.log("machine")
+            // console.log(data.machines)
 
-                    // || m.title === m1.sn
-                )
+            if (data.machines?.length) {
+                form.machine1 = data.machines[0]?.mac
 
-                form.machine1 = found1 ? found1.value : ''
+                form.machine2 = data.machines[1]?.mac
 
-                if (data.machines[1]) {
-                    const m2 = data.machines[1]
+                form.machine3 = data.machines[2]?.mac
 
-                    const found2 = machineOptions.value.find(
-                        m => m.title === m2.mac,
+                form.machine4 = data.machines[3]?.mac
 
-                        // || m.title === m2.sn
-                    )
+                // form.machine2 = mapMachineFromSummary(data.machines[1]?.mac)
 
-                    form.machine2 = found2 ? found2.value : ''
+                // form.machine3 = mapMachineFromSummary(data.machines[2]?.mac)
 
-
-                }
-
-                if (data.machines[2]) {
-                    const m3 = data.machines[2]
-
-                    const found3 = machineOptions.value.find(
-                        m => m.title === m3.mac,
-
-                        // || m.title === m2.sn
-                    )
-
-                    form.machine3 = found3 ? found3.value : ''
-                }
-
-                if (data.machines[3]) {
-                    const m4 = data.machines[3]
-
-                    const found4 = machineOptions.value.find(
-                        m => m.title === m4.mac,
-
-                        // || m.title === m2.sn
-                    )
-
-                    form.machine4 = found4 ? found4.value : ''
-                }
+                // form.machine4 = mapMachineFromSummary(data.machines[3]?.mac)
             }
+
+
+            // map เครื่องชั่ง
+            // if (data.machines?.length > 0) {
+            //     const m1 = data.machines[0]
+
+            //     const found1 = machineOptions.value.find(
+            //         m => m.title === m1.mac,
+
+            //         // || m.title === m1.sn
+            //     )
+
+            //     form.machine1 = found1 ? found1.value : ''
+
+            //     if (data.machines[1]) {
+            //         const m2 = data.machines[1]
+
+            //         const found2 = machineOptions.value.find(
+            //             m => m.title === m2.mac,
+
+            //             // || m.title === m2.sn
+            //         )
+
+            //         form.machine2 = found2 ? found2.value : ''
+
+
+            //     }
+
+            //     if (data.machines[2]) {
+            //         const m3 = data.machines[2]
+
+            //         const found3 = machineOptions.value.find(
+            //             m => m.title === m3.mac,
+
+            //             // || m.title === m2.sn
+            //         )
+
+            //         form.machine3 = found3 ? found3.value : ''
+            //     }
+
+            //     if (data.machines[3]) {
+            //         const m4 = data.machines[3]
+
+            //         const found4 = machineOptions.value.find(
+            //             m => m.title === m4.mac,
+
+            //             // || m.title === m2.sn
+            //         )
+
+            //         form.machine4 = found4 ? found4.value : ''
+            //     }
+            // }
         }
     }
     catch (err) {
