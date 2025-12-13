@@ -172,7 +172,7 @@ async function handleGetMachineSilos() {
 
         //
         siloOptions.value = res.data.map((item: any) => ({
-            title: item.name,
+            title: item.mac,
             value: item.id,
         }))
 
@@ -183,6 +183,23 @@ async function handleGetMachineSilos() {
         console.error(err)
     }
 }
+
+// async function handleGetMachineSilos() {
+//     try {
+//         const res = await houseStore.fetchMachineSilos()
+
+//         siloOptions.value = res.data.data.map((item: any) => ({
+//             title: `${item.sn} (${item.mac})`, // 👈 เอาไว้แสดง
+//             value: item.id,                   // 👈 ค่าที่ bind
+//         }))
+
+//         if (siloOptions.value.length > 0)
+//             form.silo_id = siloOptions.value[0].value
+//     }
+//     catch (err) {
+//         console.error(err)
+//     }
+// }
 
 // watch(
 //     [() => houseStore.machines, () => form.machine1],
