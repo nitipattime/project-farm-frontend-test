@@ -166,7 +166,8 @@ const statistics = computed(() => [
 
     // stats: formatNumber(houseStore.houseSummary.weight_target) ?? '-',
 
-    stats: houseStore.houseSummary?.target_range?.[0] ? formatNumber(Number(houseStore.houseSummary.target_range[0])) : '-',
+    // stats: houseStore.houseSummary?.target_range?.[0] ? formatNumber(Number(houseStore.houseSummary.target_range[0])) : '-',
+    stats: houseStore.houseSummary?.silo?.latest_readings[0].weight ? formatNumber(Number(houseStore.houseSummary?.silo?.latest_readings[0].weight)) : '0',
     unit: 'กรัม',
     icon: 'ri-restaurant-2-line',
     color: 'success',
@@ -175,7 +176,8 @@ const statistics = computed(() => [
   // houseStore.houseSummary.duration_days
   {
     title: 'ปริมาณอาหาร 2',
-    stats: houseStore.houseSummary?.target_range?.[1] ? formatNumber(Number(houseStore.houseSummary.target_range[1])) : '-',
+    // stats: houseStore.houseSummary?.target_range?.[1] ? formatNumber(Number(houseStore.houseSummary.target_range[1])) : '-',
+    stats: houseStore.houseSummary?.silo?.latest_readings[1].weight ? formatNumber(Number(houseStore.houseSummary?.silo?.latest_readings[1].weight)) : '0',
     unit: 'กรัม',
     icon: 'ri-restaurant-2-line',
     color: 'success',
@@ -398,7 +400,7 @@ function resetState() {
   loaded.value = false
   loading.value = false
 
-  selectedFilter.value = 'All Courses'
+  // selectedFilter.value = 'All Courses'
   searchQuery.value = ''
   page.value = 1
 
@@ -434,7 +436,7 @@ const initialize = async () => {
 onMounted(async () => {
   console.log(props.id)
   console.log(route.query.houseName)
-  resetState()
+  // resetState()
   await initialize()
 })
 
@@ -452,6 +454,7 @@ onMounted(async () => {
     </VOverlay>
   -->
   <VRow>
+    <!-- {{ houseStore.houseSummary?.silo?.latest_readings[0].weight }} -->
     <VCol cols="12">
       <VCard title="">
         <template #subtitle>

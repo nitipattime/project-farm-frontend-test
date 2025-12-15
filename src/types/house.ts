@@ -31,6 +31,25 @@ export interface machines {
 export interface silo {
   id: string
   name: string
+  latest_readings: silo_detail[]
+}
+
+export interface silo_detail{
+  scale_id :string
+  weight:number
+  timestamp:string
+}
+
+export const defaultSiloDetail: silo_detail = {
+  scale_id: '',
+  weight: 0,
+  timestamp: '',
+}
+
+export const defaultSilo: silo = {
+  id: '',
+  name: '',
+  latest_readings: [],
 }
 
 export const defaultHouseSummary: HouseSummary = {
@@ -49,16 +68,18 @@ export const defaultHouseSummary: HouseSummary = {
   actual_end_date: '',
   food: '',
   weight_target: '',
+  target_range: [], // ✅ เพิ่มบรรทัดนี้
   machines: [],
-  silo: {
-    id: '',
-    name: '',
-  },
+  silo: defaultSilo,
   sd: '',
   cv: '',
   uniform: '',
   cv_range: '',
 }
+
+
+
+
 
 // "farm_name": "ฟาร์มลุงดำเนิน",
 //     "house_name": "โรงเรือนเพาะเลี้ยงไก่เนื้อ 01",
