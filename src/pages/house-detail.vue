@@ -167,8 +167,11 @@ const statistics = computed(() => [
     // stats: formatNumber(houseStore.houseSummary.weight_target) ?? '-',
 
     // stats: houseStore.houseSummary?.target_range?.[0] ? formatNumber(Number(houseStore.houseSummary.target_range[0])) : '-',
-    stats: houseStore.houseSummary?.silo?.latest_readings[0].weight ? formatNumber(Number(houseStore.houseSummary?.silo?.latest_readings[0].weight)) : '0',
-    unit: 'กรัม',
+    // stats: houseStore.houseSummary?.silo?.latest_readings[0].weight ? formatNumber(Number(houseStore.houseSummary?.silo?.latest_readings[0].weight)) : '0',
+    stats: houseStore.houseSummary?.silo?.latest_readings?.[0]?.weight
+      ? formatNumber(Number(houseStore.houseSummary.silo.latest_readings[0].weight))
+      : '0',
+    unit: 'กิโลกรัม',
     icon: 'ri-restaurant-2-line',
     color: 'success',
   },
@@ -177,8 +180,11 @@ const statistics = computed(() => [
   {
     title: 'ปริมาณอาหาร 2',
     // stats: houseStore.houseSummary?.target_range?.[1] ? formatNumber(Number(houseStore.houseSummary.target_range[1])) : '-',
-    stats: houseStore.houseSummary?.silo?.latest_readings[1].weight ? formatNumber(Number(houseStore.houseSummary?.silo?.latest_readings[1].weight)) : '0',
-    unit: 'กรัม',
+    // stats: houseStore.houseSummary?.silo?.latest_readings[1].weight ? formatNumber(Number(houseStore.houseSummary?.silo?.latest_readings[1].weight)) : '0',
+    stats: houseStore.houseSummary?.silo?.latest_readings?.[1]?.weight
+      ? formatNumber(Number(houseStore.houseSummary.silo.latest_readings[1].weight))
+      : '0',
+    unit: 'กิโลกรัม',
     icon: 'ri-restaurant-2-line',
     color: 'success',
   },
@@ -429,8 +435,8 @@ const initialize = async () => {
   await handleGetHouseWeekly()
   await handleGetHouseCVHistory()
   await handleGetHouseWeightChart()
-  console.log(houseStore.houseSummary)
-  console.log(houseStore.houseSummary.target_range[0])
+  // console.log(houseStore.houseSummary)
+  // console.log(houseStore.houseSummary.target_range[0])
 }
 
 onMounted(async () => {
@@ -443,6 +449,14 @@ onMounted(async () => {
 // onBeforeRouteLeave(() => {
 //   resetState()
 // })
+function formatDate(ts: string | number) {
+  if (!ts) return '-'
+
+  return new Date(ts).toLocaleString('th-TH', {
+    dateStyle: 'short',
+    timeStyle: 'medium',
+  })
+}
 </script>
 
 <template>
@@ -524,7 +538,7 @@ onMounted(async () => {
                 <div v-if="houseStore.houseSummary.machines && houseStore.houseSummary.machines.length">
                   <div v-for="machine in houseStore.houseSummary.machines" :key="machine.mac">
                     <div class="text-blue-600 text-md">
-                      {{ machine.mac }} {{ machine.sn }}
+                      {{ machine.mac }}
                     </div>
                   </div>
                 </div>
@@ -636,9 +650,22 @@ onMounted(async () => {
             v-if="scalesData && scalesData.machines && scalesData.machines.length" :key="machine.scale_name" cols="12"
             sm="6" md="6">
             <VCard elevation="2" class="pa-4 h-100 border border-solid border-gray-800">
-              <h2 class="text-lg font-semibold mb-4">
+              <!-- <h2 class="text-lg font-semibold mb-4">
                 Table by Scale {{ machine.scale_name }}
-              </h2>
+              </h2> -->
+              <!-- Header -->
+              <div class="d-flex justify-space-between align-center mb-4">
+                <h2 class="text-lg font-semibold">
+                  Table by Scale {{ machine.scale_name }}
+                </h2>
+
+                <!-- <h2 class="d-flex justify-end mb-2 text-sm text-medium-emphasis">
+                  Updated at: {{ formatDate(machine.timestamp) }}
+                </h2> -->
+                <span class="text-base font-medium text-medium-emphasis">
+                  {{ formatDate(machine.timestamp) }}
+                </span>
+              </div>
 
               <div class="overflow-x-auto">
                 <table class="w-full border-collapse">
