@@ -656,7 +656,7 @@ function formatDate(ts: string | number) {
               <!-- Header -->
               <div class="d-flex justify-space-between align-center mb-4">
                 <h2 class="text-lg font-semibold">
-                  Table by Scale {{ machine.scale_name }}
+                  Table by Scale {{ machine.mac }}
                 </h2>
 
                 <!-- <h2 class="d-flex justify-end mb-2 text-sm text-medium-emphasis">
