@@ -169,7 +169,7 @@ const statistics = computed(() => [
     // stats: houseStore.houseSummary?.target_range?.[0] ? formatNumber(Number(houseStore.houseSummary.target_range[0])) : '-',
     // stats: houseStore.houseSummary?.silo?.latest_readings[0].weight ? formatNumber(Number(houseStore.houseSummary?.silo?.latest_readings[0].weight)) : '0',
     stats: houseStore.houseSummary?.silo?.latest_readings?.[0]?.weight
-      ? formatNumber(Number(houseStore.houseSummary.silo.latest_readings[0].weight))
+      ? formatNumber(Number(houseStore.houseSummary.silo.latest_readings[1].weight))
       : '0',
     unit: 'กิโลกรัม',
     icon: 'ri-restaurant-2-line',
@@ -182,7 +182,7 @@ const statistics = computed(() => [
     // stats: houseStore.houseSummary?.target_range?.[1] ? formatNumber(Number(houseStore.houseSummary.target_range[1])) : '-',
     // stats: houseStore.houseSummary?.silo?.latest_readings[1].weight ? formatNumber(Number(houseStore.houseSummary?.silo?.latest_readings[1].weight)) : '0',
     stats: houseStore.houseSummary?.silo?.latest_readings?.[1]?.weight
-      ? formatNumber(Number(houseStore.houseSummary.silo.latest_readings[1].weight))
+      ? formatNumber(Number(houseStore.houseSummary.silo.latest_readings[0].weight))
       : '0',
     unit: 'กิโลกรัม',
     icon: 'ri-restaurant-2-line',
