@@ -3,7 +3,7 @@ import { computed, onMounted, ref, shallowRef, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { useNumberFormat } from '@/composables/useNumberFormat'
-import { useRealtime } from '@/composables/useSocket'
+import { useRealtime, useRealtimeSummary } from '@/composables/useSocket'
 import { getExport, getExportRaw } from '@/services/exportService'
 import { markHouseFinish } from '@/services/houseService'
 import { useHouseStore } from '@/stores/houseStore'
@@ -22,6 +22,7 @@ const router = useRouter()
 const route = useRoute()
 const houseId = Number.parseInt(props.id || '0', 10)
 const { scalesData } = useRealtime(houseId)
+const { scalesDataSummary } = useRealtimeSummary(houseId)
 
 const dialog = shallowRef(false)
 const loaded = ref(false)
@@ -135,28 +136,32 @@ function goToAddHouseDetail() {
 const statistics = computed(() => [
   {
     title: 'Uniform',
-    stats: formatNumber(houseStore.houseSummary.uniform) ?? '-',
+    // stats: formatNumber(houseStore.houseSummary.uniform) ?? '-',
+    stats: formatNumber(scalesDataSummary.value?.uniform) ?? 0,
     unit: 'กรัม',
     icon: 'ri-pie-chart-2-line',
     color: 'primary',
   },
   {
     title: 'SD',
-    stats: formatNumber(houseStore.houseSummary.sd) ?? '-',
+    // stats: formatNumber(houseStore.houseSummary.sd) ?? '-',
+    stats: formatNumber(scalesDataSummary.value?.sd) ?? 0,
     unit: 'กรัม',
     icon: 'ri-pie-chart-2-line',
     color: 'success',
   },
   {
     title: 'CV',
-    stats: formatNumber(houseStore.houseSummary.cv) ?? '-',
+    // stats: formatNumber(houseStore.houseSummary.cv) ?? '-',
+    stats: formatNumber(scalesDataSummary.value?.cv) ?? 0,
     unit: 'กรัม',
     icon: 'ri-pie-chart-2-line',
     color: 'warning',
   },
   {
     title: 'น้ำหนักโดยเฉลี่ย',
-    stats: formatNumber(houseStore.houseSummary.avg_weight) ?? '-',
+    // stats: formatNumber(houseStore.houseSummary.avg_weight) ?? '-',
+    stats: formatNumber(scalesDataSummary.value?.avg_weight) ?? 0,
     unit: 'กรัม',
     icon: 'ri-weight-line',
     color: 'info',
@@ -168,9 +173,12 @@ const statistics = computed(() => [
 
     // stats: houseStore.houseSummary?.target_range?.[0] ? formatNumber(Number(houseStore.houseSummary.target_range[0])) : '-',
     // stats: houseStore.houseSummary?.silo?.latest_readings[0].weight ? formatNumber(Number(houseStore.houseSummary?.silo?.latest_readings[0].weight)) : '0',
-    stats: houseStore.houseSummary?.silo?.latest_readings?.[0]?.weight
-      ? formatNumber(Number(houseStore.houseSummary.silo.latest_readings[1].weight))
-      : '0',
+    // stats: houseStore.houseSummary?.silo?.latest_readings?.[0]?.weight
+    //   ? formatNumber(Number(houseStore.houseSummary.silo.latest_readings[1].weight))
+    //   : '0',
+    stats: scalesDataSummary.value?.silo?.latest_readings?.[1]?.weight
+      ? formatNumber(Number(scalesDataSummary.value.silo.latest_readings[1].weight))
+      : 0,
     unit: 'กิโลกรัม',
     icon: 'ri-restaurant-2-line',
     color: 'success',
@@ -181,9 +189,12 @@ const statistics = computed(() => [
     title: 'ปริมาณอาหาร 2',
     // stats: houseStore.houseSummary?.target_range?.[1] ? formatNumber(Number(houseStore.houseSummary.target_range[1])) : '-',
     // stats: houseStore.houseSummary?.silo?.latest_readings[1].weight ? formatNumber(Number(houseStore.houseSummary?.silo?.latest_readings[1].weight)) : '0',
-    stats: houseStore.houseSummary?.silo?.latest_readings?.[1]?.weight
-      ? formatNumber(Number(houseStore.houseSummary.silo.latest_readings[0].weight))
-      : '0',
+    // stats: houseStore.houseSummary?.silo?.latest_readings?.[1]?.weight
+    //   ? formatNumber(Number(houseStore.houseSummary.silo.latest_readings[0].weight))
+    //   : '0',
+    stats: scalesDataSummary.value?.silo?.latest_readings?.[0]?.weight
+      ? formatNumber(Number(scalesDataSummary.value.silo.latest_readings[0].weight))
+      : 0,
     unit: 'กิโลกรัม',
     icon: 'ri-restaurant-2-line',
     color: 'success',
