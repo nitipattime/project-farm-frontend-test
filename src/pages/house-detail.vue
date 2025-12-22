@@ -133,6 +133,15 @@ function goToAddHouseDetail() {
   router.push({ name: 'add-house-detail', query: { id: props.id, houseName: route.query.houseName } })
 }
 
+function formatDate(ts: string | number) {
+  if (!ts) return '-'
+
+  return new Date(ts).toLocaleString('th-TH', {
+    dateStyle: 'short',
+    timeStyle: 'medium',
+  })
+}
+
 const statistics = computed(() => [
   {
     title: 'Uniform',
@@ -179,6 +188,9 @@ const statistics = computed(() => [
     stats: scalesDataSummary.value?.silo?.latest_readings?.[1]?.weight
       ? formatNumber(Number(scalesDataSummary.value.silo.latest_readings[1].weight))
       : 0,
+    subStats: scalesDataSummary.value?.silo?.latest_readings?.[1]?.timestamp
+      ? formatDate(scalesDataSummary.value.silo.latest_readings[1].timestamp)
+      : '-',
     unit: 'กิโลกรัม',
     icon: 'ri-restaurant-2-line',
     color: 'success',
@@ -195,6 +207,9 @@ const statistics = computed(() => [
     stats: scalesDataSummary.value?.silo?.latest_readings?.[0]?.weight
       ? formatNumber(Number(scalesDataSummary.value.silo.latest_readings[0].weight))
       : 0,
+    subStats: scalesDataSummary.value?.silo?.latest_readings?.[0]?.timestamp
+      ? formatDate(scalesDataSummary.value.silo.latest_readings[0].timestamp)
+      : '-',
     unit: 'กิโลกรัม',
     icon: 'ri-restaurant-2-line',
     color: 'success',
@@ -460,14 +475,7 @@ onMounted(async () => {
 // onBeforeRouteLeave(() => {
 //   resetState()
 // })
-function formatDate(ts: string | number) {
-  if (!ts) return '-'
 
-  return new Date(ts).toLocaleString('th-TH', {
-    dateStyle: 'short',
-    timeStyle: 'medium',
-  })
-}
 </script>
 
 <template>
@@ -525,6 +533,9 @@ function formatDate(ts: string | number) {
                   <h5 class="text-h5 text-grey-600">
                     {{ item.stats }} {{ item.unit }}
                   </h5>
+                  <p v-if="item.subStats" class="text text-grey-600">
+                    {{ item.subStats }}
+                  </p>
                 </div>
               </div>
             </VCol>
